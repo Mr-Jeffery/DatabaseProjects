@@ -1,6 +1,6 @@
 install library:
 ```bash
-pip install "psycopg[c]" 
+pip install "psycopg[c]" python-dotenv
 ```
 import sql:
 ```python
