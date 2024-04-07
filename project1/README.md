@@ -1,11 +1,9 @@
 # Project 1
-
-## Deploy C++ Version
-### Set Environment Variables
+## Set Environment Variables
 ```bash
 cd Cpp
 ```
-Plase add a `bash` scipt named `setenv.sh` in `Cpp` directory that looks like following:
+Plase add a `bash` scipt named `setenv.sh` in `project1` directory that looks like following:
 ```bash
 export DB_NAME= # Your database name
 export DB_USER= # Your user Name
@@ -18,6 +16,7 @@ then run the bash with
 source ./setenv.sh
 ```
 
+## Deploy C++ Version
 ### Compile
 ```bash
 chmod +x ./setup.sh
@@ -31,18 +30,6 @@ chmod +x ./load.sh
 ```
 
 ## Deploy Python Version
-### Set Environment Variables
-```bash
-cd Python
-```
-Plase add a `.env` file in `Python` directory that looks like following:
-```bash
-DB_NAME=
-DB_USER=
-DB_PASSWORD=
-DB_HOST=localhost
-DB_PORT=5432
-```
 ### Install Dependencies
 ```bash
 conda create -n sql -y
