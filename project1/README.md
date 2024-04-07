@@ -43,7 +43,7 @@ DB_PASSWORD=
 DB_HOST=localhost
 DB_PORT=5432
 ```
-### Install Dependenies
+### Install Dependencies
 ```bash
 conda create -n sql -y
 conda activate sql
