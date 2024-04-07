@@ -1,19 +1,33 @@
 # Project 1
 
-## Set Environment Variables
 
-Plase add a `bash` scipt named `setenv.sh` in current directory that looks like following:
+
+## Deploy C++ Version
+### Set Environment Variables
 ```bash
-export DB_NAME=project1 # Your database name
-export DB_USER=postgres # Your user Name
-export DB_PASSWORD=123456 # Your passoword
+cd Cpp
+```
+Plase add a `bash` scipt named `setenv.sh` in `Cpp` directory that looks like following:
+```bash
+export DB_NAME= # Your database name
+export DB_USER= # Your user Name
+export DB_PASSWORD= # Your passoword
 export DB_HOST=localhost # Your host address
 export DB_PORT=5432 # Port of the database
 ```
-
-## Deploy C++ Version
+then run the bash with
 ```bash
-cd Cpp
+source ./setenv.sh
+```
+
+### Compile
+```bash
+chmod +x ./setup.sh
+./setup.sh
+```
+
+### Execute
+```bash
 chmod +x ./load.sh
 ./load.sh
 ```
