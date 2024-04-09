@@ -1,4 +1,10 @@
 # Project 1
+##  E-R Diagram
+TODO
+## Relational Database Design
+TODO
+## Data Import
+### Set Environment Variables
 Plase add a `bash` scipt named `setenv.sh` in `project1` directory that looks like following:
 ```bash
 export DB_NAME= # Your database name
@@ -11,34 +17,31 @@ then run the bash with
 ```bash
 source ./setenv.sh
 ```
-## Set Environment Variables
+### Deploy Python Version
+#### Install Dependencies
+```bash
+conda create -n sql -y
+conda activate sql
+pip install -r requirements.txt
+```
+#### Execute
+TODO
+
+### Deploy C++ Version
 ```bash
 cd Cpp
 ```
-## Deploy C++ Version
-### Compile
+#### Compile
 ```bash
 chmod +x ./setup.sh
 ./setup.sh
 ```
 
-### Execute
+#### Execute
 ```bash
 chmod +x ./load.sh
 ./load.sh
 ```
 
-## Deploy Python Version
-### Install Dependencies
-```bash
-source ../setenv.sh
-conda create -n sql -y
-conda activate sql
-pip install -r requirements.txt
-```
-
-### Execute
-TODO
-
-## Deploy Java Version
+### Deploy Java Version
 TODO
