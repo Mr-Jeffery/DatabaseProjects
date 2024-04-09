@@ -1,8 +1,4 @@
 # Project 1
-## Set Environment Variables
-```bash
-cd Cpp
-```
 Plase add a `bash` scipt named `setenv.sh` in `project1` directory that looks like following:
 ```bash
 export DB_NAME= # Your database name
@@ -15,7 +11,10 @@ then run the bash with
 ```bash
 source ./setenv.sh
 ```
-
+## Set Environment Variables
+```bash
+cd Cpp
+```
 ## Deploy C++ Version
 ### Compile
 ```bash
@@ -32,6 +31,7 @@ chmod +x ./load.sh
 ## Deploy Python Version
 ### Install Dependencies
 ```bash
+source ../setenv.sh
 conda create -n sql -y
 conda activate sql
 pip install -r requirements.txt
