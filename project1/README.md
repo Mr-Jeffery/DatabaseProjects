@@ -3,7 +3,9 @@
 TODO
 ## Relational Database Design
 TODO
+
 ## Data Import
+
 ### Set Environment Variables
 Plase add a `bash` scipt named `setenv.sh` in `project1` directory that looks like following:
 ```bash
@@ -17,6 +19,7 @@ then run the bash with
 ```bash
 source ./setenv.sh
 ```
+
 ### Deploy Python Version
 #### Install Dependencies
 ```bash
@@ -24,6 +27,7 @@ conda create -n sql -y
 conda activate sql
 pip install -r requirements.txt
 ```
+
 #### Execute
 TODO
 
@@ -31,6 +35,7 @@ TODO
 ```bash
 cd Cpp
 ```
+
 #### Compile
 ```bash
 chmod +x ./setup.sh
