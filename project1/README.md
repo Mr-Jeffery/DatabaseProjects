@@ -1,6 +1,8 @@
 # Project 1
+
 ##  E-R Diagram
 TODO
+
 ## Relational Database Design
 TODO
 
