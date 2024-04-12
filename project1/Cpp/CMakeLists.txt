@@ -11,7 +11,7 @@ add_definitions(-O3)
 # Add libpqxx subdirectory
 add_subdirectory(lib/libpqxx)
 
-add_executable(LoadData src/main.cpp)
+add_executable(LoadData src/copy.cpp)
 
 # Link LoadData with libpqxx
 target_link_libraries(LoadData PRIVATE pqxx)

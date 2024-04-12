@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <pqxx/pqxx>
+#include <sys/stat.h>
 #include <ctime>
 #include "json.hpp"
 #define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
@@ -69,68 +70,31 @@ int main() {
     // w.exec(create_passengers_query);
     // w.commit();
 
-    // // Create the rides table
-    // std::string create_rides_query = "CREATE TABLE IF NOT EXISTS rides (rail_user VARCHAR(255), start_station VARCHAR(255), end_station VARCHAR(255), price DOUBLE PRECISION, start_time TIMESTAMP, end_time TIMESTAMP);";
-    // w.exec(create_rides_query);
+    // Create the rides table
+    std::string create_rides_query = "CREATE TABLE IF NOT EXISTS rides (rail_user VARCHAR(255), start_station VARCHAR(255), end_station VARCHAR(255), price DOUBLE PRECISION, start_time TIMESTAMP, end_time TIMESTAMP);";
+    w.exec(create_rides_query);
     // w.commit();
 
     // Start timing
     std::cout << "Inserting data into the database..." << std::endl;
     start = std::time(nullptr);
 
-    // // Prepare the SQL statement
-    // try {
-    //     // c.prepare("insert_card", "INSERT INTO cards (code, money, create_time) VALUES ($1, $2, $3)");
-    //     // c.prepare("insert_passenger", "INSERT INTO passengers (name, id_number, phone_number, gender, district) VALUES ($1, $2, $3, $4, $5)");
-    //     c.prepare("insert_ride", "INSERT INTO rides (rail_user, start_station, end_station, price, start_time, end_time) VALUES ($1, $2, $3, $4, $5, $6)");
-    // }
-    // catch (const std::exception &e) {
-    //         std::cerr << e.what() << std::endl;
-    // }
-    // size_t i;
-    // size_t total;
-    // // Loop over each instance in the cards array
-    // i = 0;
-    // total = cards.size();
-    // for (auto& card : cards) {
-    //     // Extract data from JSON
-    //     std::string code = card["code"];
-    //     double money = card["money"];
-    //     std::string create_time = card["create_time"];
-    //     try {
-    //         // Execute the prepared statement
-    //         w.exec_prepared("insert_card", code, money, create_time);
-    //         w.commit();
-    //         printProgress((double) ++i / total);
-    //     }
-    //     catch (const std::exception &e) {
-    //         std::cerr << e.what() << std::endl;
-    //     }
-    // }
+    // Loop over each instance in the rides array and write to a csv file
+    size_t i, total;
 
-    // // Loop over each instance in the passengers array
-    // i = 0;
-    // total = passengers.size();
-    // for (auto& passenger : passengers) {
-    //     // Extract data from JSON
-    //     std::string name = passenger["name"];
-    //     std::string id_number = passenger["id_number"];
-    //     std::string phone = passenger["phone_number"];
-    //     std::string gender = passenger["gender"];
-    //     std::string district = passenger["district"];
-    //     try {
-    //         // Execute the prepared statement
-    //         w.exec_prepared("insert_passenger", name, id_number, phone, gender, district);
-    //         w.commit();
-    //         printProgress((double) ++i / total);
-    //     }
-    //     catch (const std::exception &e) {
-    //         std::cerr << e.what() << std::endl;
-    //     }
-    // }
-
-    // Loop over each instance in the rides array
     
+    std::filesystem::path current_path = std::filesystem::current_path();
+    std::ofstream rides_csv("rides.csv");
+    if (!rides_csv.is_open()) {
+        std::cerr << "Error: could not open rides.csv" << std::endl;
+        return 1;
+    }
+    std::filesystem::path rides_csv_path = current_path / "rides.csv";
+    std::cout << "rides.csv path: " << rides_csv_path << std::endl;
+    std::cout << "Writing to rides.csv..." << std::endl;
+
+    std::string header = "rail_user,start_station,end_station,price,start_time,end_time\n";
+    rides_csv << header;
     i = 0;
     total = rides.size();
     printf("Total rides: %ld\n", total);
@@ -142,17 +106,25 @@ int main() {
         double price = ride["price"];
         std::string start_time = ride["start_time"];
         std::string end_time = ride["end_time"];
-        try {
-            // Execute the prepared statement
-            w.exec_prepared("insert_ride", user, start_station, end_station, price, start_time, end_time);
-            // w.commit();
-            printProgress((double) ++i / total);
-        }
-        catch (const std::exception &e) {
-            std::cerr << e.what() << std::endl;
-        }
+        std::string str = user + "," + start_station + "," + end_station + "," + std::to_string(price) + "," + start_time + "," + end_time;
+        str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
+        rides_csv << str << "\n";
+        // rides_csv << user << "," << start_station << "," << end_station << "," << price << "," << start_time << "," << end_time << "\n";
+        printProgress((double) ++i / total);
     }
-    w.commit();
+    rides_csv.close();
+
+
+    // // Write to the database
+    // const char* path = rides_csv_path.c_str();
+    // // Change the permissions to read/write for user, read for group, and read for others.
+    // if (chmod(path, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) == -1) {
+    //     std::perror("chmod");
+    //     return 1;
+    // }
+    // w.exec("COPY rides FROM '" + rides_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')");
+    // w.commit();
+
 
     end = std::time(nullptr);
     std::cout << std::endl;

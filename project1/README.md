@@ -7,7 +7,7 @@
 TODO
 
 ## Data Import
-
+<!-- psql -U postgres -d project1 -p 5432 -h localhost -->
 ### Set Environment Variables
 Plase add a `bash` scipt named `setenv.sh` in `project1` directory that looks like following:
 ```bash
