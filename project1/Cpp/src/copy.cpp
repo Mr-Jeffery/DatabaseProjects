@@ -3,7 +3,7 @@
 #include <pqxx/pqxx>
 #include <sys/stat.h>
 #include <cstdlib>
-#include <ctime>
+#include <sys/time.h>
 #include "json.hpp"
 #define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
 #define PBWIDTH 60
@@ -32,11 +32,14 @@ int main() {
 
 
     // timing
-    std::time_t start, end;
+    // std::time_t start, end;
+    struct timeval start, end;
+    double time_spent;
 
     std::cout << "Parsing JSON files..." << std::endl;
 
-    start = std::time(nullptr);
+    // start = std::time(nullptr);
+    gettimeofday(&start, NULL);
 
     // // Read from cards.json
     // std::ifstream file(data_path + "/cards.json");
@@ -53,9 +56,12 @@ int main() {
     json rides;
     file3 >> rides;
 
-    end = std::time(nullptr);   
+    // end = std::time(nullptr);   
+    gettimeofday(&end, NULL);
 
-    std::cout << "JSON parsing completed in " << end - start << " seconds." << std::endl;
+    time_spent = (double)(end.tv_sec - start.tv_sec) + ((end.tv_usec - start.tv_usec)/1000000.0);
+
+    std::cout << "JSON parsing completed in " << time_spent << " seconds." << std::endl;
 
     // Connect to the database
     pqxx::connection c(conn_str);
@@ -77,11 +83,12 @@ int main() {
     // w.commit();
 
     // Start timing
-    std::cout << "Inserting data into the database..." << std::endl;
-    start = std::time(nullptr);
+    // std::cout << "Inserting data into the database..." << std::endl;
+    // start = std::time(nullptr);
+    gettimeofday(&start, NULL);
 
     // Loop over each instance in the rides array and write to a csv file
-    size_t i, total;
+    // size_t i, total;
 
     
     std::filesystem::path current_path = std::filesystem::current_path();
@@ -96,9 +103,9 @@ int main() {
 
     std::string header = "rail_user,start_station,end_station,price,start_time,end_time\n";
     rides_csv << header;
-    i = 0;
-    total = rides.size();
-    printf("Total rides: %ld\n", total);
+    // i = 0;
+    // total = rides.size();
+    // printf("Total rides: %ld\n", total);
     for (auto& ride : rides) {
         // Extract data from JSON
         std::string user = ride["user"];
@@ -111,7 +118,7 @@ int main() {
         str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
         rides_csv << str << "\n";
         // rides_csv << user << "," << start_station << "," << end_station << "," << price << "," << start_time << "," << end_time << "\n";
-        printProgress((double) ++i / total);
+        // printProgress((double) ++i / total);
     }
     rides_csv.close();
 
@@ -126,9 +133,11 @@ int main() {
     // w.exec("COPY rides FROM '" + rides_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')");
     // w.commit();
 
-    end = std::time(nullptr);
-    std::cout << std::endl;
-    std::cout << "json to csv completed in " << end - start << " seconds." << std::endl;
+    // end = std::time(nullptr);
+    gettimeofday(&end, NULL);
+    time_spent = (double)(end.tv_sec - start.tv_sec) + ((end.tv_usec - start.tv_usec)/1000000.0);
+    // std::cout << std::endl;
+    std::cout << "json to csv completed in " << time_spent << " seconds." << std::endl;
 
     return 0;
 }
