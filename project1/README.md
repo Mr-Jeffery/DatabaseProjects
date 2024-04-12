@@ -1,5 +1,6 @@
 # Project 1
-
+## Project Report Link
+[text](https://sharelatex.cra.ac.cn/project/66193f1fafc1ee76074e378e)--In
 ##  E-R Diagram
 [text](https://drive.google.com/file/d/1jMEsJAmyB854fed85FdPmbHEwywHPCzk/view?usp=sharing)--In progress
 
