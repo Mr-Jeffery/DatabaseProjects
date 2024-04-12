@@ -28,6 +28,14 @@ int main() {
     std::string db_port = getenv("DB_PORT");
     std::string conn_str = "dbname=" + db_name + " user=" + db_user + " password=" + db_password + " host=" + db_host + " port=" + db_port;
 
+
+    // timing
+    std::time_t start, end;
+
+    std::cout << "Parsing JSON files..." << std::endl;
+
+    start = std::time(nullptr);
+
     // // Read from cards.json
     // std::ifstream file(data_path + "/cards.json");
     // json cards;
@@ -42,6 +50,10 @@ int main() {
     std::ifstream file3(data_path + "/rides.json");
     json rides;
     file3 >> rides;
+
+    end = std::time(nullptr);   
+
+    std::cout << "JSON parsing completed in " << end - start << " seconds." << std::endl;
 
     // Connect to the database
     pqxx::connection c(conn_str);
@@ -64,7 +76,7 @@ int main() {
 
     // Start timing
     std::cout << "Inserting data into the database..." << std::endl;
-    std::time_t start = std::time(nullptr);
+    start = std::time(nullptr);
 
     // Prepare the SQL statement
     try {
@@ -142,7 +154,7 @@ int main() {
     }
     w.commit();
 
-    std::time_t end = std::time(nullptr);
+    end = std::time(nullptr);
     std::cout << std::endl;
     std::cout << "Data insertion completed in " << end - start << " seconds." << std::endl;
 

@@ -10,3 +10,5 @@ psql --command="DROP TABLE IF EXISTS cards;" postgresql://$DB_USER:$DB_PASSWORD@
 psql --command="DROP TABLE IF EXISTS passengers;" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
 psql --command="DROP TABLE IF EXISTS rides;" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
 ./LoadData
+echo "Number of rides:"
+psql --command="SELECT COUNT(*) FROM rides;" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
