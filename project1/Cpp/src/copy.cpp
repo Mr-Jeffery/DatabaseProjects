@@ -2,6 +2,7 @@
 #include <fstream>
 #include <pqxx/pqxx>
 #include <sys/stat.h>
+#include <cstdlib>
 #include <ctime>
 #include "json.hpp"
 #define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
@@ -125,10 +126,9 @@ int main() {
     // w.exec("COPY rides FROM '" + rides_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')");
     // w.commit();
 
-
     end = std::time(nullptr);
     std::cout << std::endl;
-    std::cout << "Data insertion completed in " << end - start << " seconds." << std::endl;
+    std::cout << "json to csv completed in " << end - start << " seconds." << std::endl;
 
     return 0;
 }
