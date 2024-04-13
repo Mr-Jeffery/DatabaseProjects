@@ -41,15 +41,15 @@ int main() {
     // start = std::time(nullptr);
     gettimeofday(&start, NULL);
 
-    // // Read from cards.json
-    // std::ifstream file(data_path + "/cards.json");
-    // json cards;
-    // file >> cards;
+    // Read from cards.json
+    std::ifstream file(data_path + "/cards.json");
+    json cards;
+    file >> cards;
 
-    // // Read from passengers.json
-    // std::ifstream file2(data_path + "/passengers.json");
-    // json passengers;
-    // file2 >> passengers;
+    // Read from passengers.json
+    std::ifstream file2(data_path + "/passengers.json");
+    json passengers;
+    file2 >> passengers;
 
     // Read from rides.json
     std::ifstream file3(data_path + "/rides.json");
@@ -60,6 +60,11 @@ int main() {
     std::ifstream file4(data_path + "/lines.json");
     json lines;
     file4 >> lines;
+
+    // Read from stations.json
+    std::ifstream file5(data_path + "/stations.json");
+    json stations;
+    file5 >> stations;
 
     // end = std::time(nullptr);   
     gettimeofday(&end, NULL);
@@ -83,6 +88,55 @@ int main() {
     // Create the rides table
     std::string create_rides_query = "CREATE TABLE IF NOT EXISTS rides (rail_user VARCHAR(255), start_station VARCHAR(255), end_station VARCHAR(255), price DOUBLE PRECISION, start_time TIMESTAMP, end_time TIMESTAMP);";
     w.exec(create_rides_query);
+
+
+    // "5号线": {
+//     "stations": [
+//       "Chiwan",
+//       "Liwan",
+//       "Railway Park",
+//       "Mawan",
+//       "Qianwan Park",
+//       "Qianwan",
+//       "Guiwan",
+//       "Qianhaiwan",
+//       "Linhai",
+//       "Baohua",
+//       "Bao'an Center",
+//       "Fanshen",
+//       "Lingzhi",
+//       "Honglang North",
+//       "Xingdong",
+//       "Liuxiandong",
+//       "Xili",
+//       "University Town",
+//       "Tanglang",
+//       "Changlingpi",
+//       "Shenzhen North Station",
+//       "Minzhi",
+//       "Wuhe",
+//       "Bantian",
+//       "Yangmei",
+//       "Shangshuijing",
+//       "Xiashuijing",
+//       "Changlong",
+//       "Buji",
+//       "Baigelong",
+//       "Buxin",
+//       "Tai'an",
+//       "Yijing",
+//       "Huangbeiling"
+//     ],
+//     "start_time": "06:02",
+//     "end_time": "23:13",
+//     "intro": "深圳地铁5号线（Shenzhen Metro Line 5），是中国广东省深圳市境内的一条地铁线路，于2011年6月22日开通运营一期工程，2019年9月28日开通运营二期工程，其标志色为紫色  。截至2022年6月，深圳地铁5号线呈M形东南-西北-西南走向，东起于黄贝岭站，途经罗湖区、龙岗区、龙华区、南山区、宝安区，西至赤湾站。截至2022年6月，深圳地铁5号线全长47.393千米，共设34个车站，列车设计时速80千米/小时，采用6节编组A型列车 。截至2018年10月，深圳地铁5号线单日最大客流量为2018年9月21日的107.5万人次 。深圳地铁5号线（Shenzhen Metro Line 5），是中国广东省深圳市境内的一条地铁线路，于2011年6月22日开通运营一期工程，2019年9月28日开通运营二期工程，其标志色为紫色  。截至2022年6月，深圳地铁5号线呈M形东南-西北-西南走向，东起于黄贝岭站，途经罗湖区、龙岗区、龙华区、南山区、宝安区，西至赤湾站。截至2022年6月，深圳地铁5号线全长47.393千米，共设34个车站，列车设计时速80千米/小时，采用6节编组A型列车 。截至2018年10月，深圳地铁5号线单日最大客流量为2018年9月21日的107.5万人次 。",
+//     "mileage": "47.393",
+//     "color": "紫色",
+//     "first_opening": "2011-6-22",
+//     "url": "https://baike.baidu.com/item/深圳地铁5号线/396122?fromModule=lemma_inlink"
+//   },
+    // Create the lines table
+    std::string create_lines_query = "CREATE TABLE IF NOT EXISTS lines (line_id VARCHAR(255), stations VARCHAR[], );";
 
     // Commit the transaction
     w.commit();

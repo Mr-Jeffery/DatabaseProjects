@@ -1,4 +1,3 @@
-export DATA_PATH=$(cd ../Data && pwd)
 source ../setenv.sh
 
 cd build
