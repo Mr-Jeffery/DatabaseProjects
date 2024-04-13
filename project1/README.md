@@ -1,8 +1,11 @@
 # Project 1
+## Project Info
+【腾讯文档】Project1 introduce
+https://docs.qq.com/doc/DVmJ4Q2dNSGJnSXNv
 ## Project Report Link
-[text](https://sharelatex.cra.ac.cn/project/66193f1fafc1ee76074e378e)--In Progress
+[Latex report](https://sharelatex.cra.ac.cn/project/66193f1fafc1ee76074e378e)--In Progress
 ##  E-R Diagram
-[text](https://drive.google.com/file/d/1jMEsJAmyB854fed85FdPmbHEwywHPCzk/view?usp=sharing)--In progress
+[ER diagram](https://drive.google.com/file/d/1jMEsJAmyB854fed85FdPmbHEwywHPCzk/view?usp=sharing)--In progress
 
 ## Relational Database Design
 TODO
