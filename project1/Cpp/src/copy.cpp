@@ -77,8 +77,8 @@ int main() {
     // w.exec(create_cards_query);
 
     // // Create the passengers table
-    // std::string create_passengers_query = "CREATE TABLE IF NOT EXISTS passengers (name VARCHAR(255), id_number VARCHAR(255) PRIMARY KEY, phone_number, gender VARCHAR(255), district VARCHAR(255))";
-    // w.exec(create_passengers_query);
+    std::string create_passengers_query = "CREATE TABLE IF NOT EXISTS passengers (name VARCHAR(255), id_number VARCHAR(255) PRIMARY KEY, phone_number, gender VARCHAR(255), district VARCHAR(255))";
+    w.exec(create_passengers_query);
 
     // Create the rides table
     std::string create_rides_query = "CREATE TABLE IF NOT EXISTS rides (rail_user VARCHAR(255), start_station VARCHAR(255), end_station VARCHAR(255), price DOUBLE PRECISION, start_time TIMESTAMP, end_time TIMESTAMP);";
