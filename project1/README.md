@@ -5,7 +5,7 @@ https://docs.qq.com/doc/DVmJ4Q2dNSGJnSXNv
 ## Project Report Link
 [Latex report](https://sharelatex.cra.ac.cn/project/66193f1fafc1ee76074e378e)--In Progress
 ##  E-R Diagram
-[ER diagram](https://drive.google.com/file/d/1jMEsJAmyB854fed85FdPmbHEwywHPCzk/view?usp=sharing)--In progress
+[ER diagram](https://lucid.app/lucidchart/381208ad-beeb-4a6d-9209-00c39bd6f42d/edit?view_items=LPrsYmKL4.7G&invitationId=inv_45428aec-4b47-4305-88bb-a0c90220279f)--In progress
 
 ## Relational Database Design
 TODO

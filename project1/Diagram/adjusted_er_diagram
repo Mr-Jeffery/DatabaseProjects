@@ -1,0 +1,16 @@
+// Adjusted ER Diagram
+digraph {
+	Line [label="{Line|Line_Name \<PK\>|Start_Time|End_Time|Intro|Mileage|Color|First_Opening|URL}" shape=record]
+	Station [label="{Station|Station_Name \<PK\>|District|Intro|Chinese_Name}" shape=record]
+	User [label="{User|User_ID \<PK\>}" shape=record]
+	Passenger [label="{Passenger|User_ID \<PK\> (\<FK\>)|ID_Number \<UQ\>|Name|Phone_Number|Gender|District}" shape=record]
+	Card [label="{Card|User_ID \<PK\> (\<FK\>)|Code \<UQ\>|Money|Create_Time}" shape=record]
+	Ride [label="{Ride|User_ID \<FK\>|Start_Station|End_Station|Price|Start_Time|End_Time}" shape=record]
+	Landmark [label="{Landmark|Name|Location_Detail \<PK\>}" shape=record]
+	Line -> Station [label=contains]
+	Station -> Ride [label="start/endpoint for"]
+	User -> Ride [label="participates in"]
+	Passenger -> User [label="subtype of"]
+	Card -> User [label="subtype of"]
+	Station -> Landmark [label="adjacent to"]
+}
