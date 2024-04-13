@@ -56,6 +56,11 @@ int main() {
     json rides;
     file3 >> rides;
 
+    // Read from lines.json
+    std::ifstream file4(data_path + "/lines.json");
+    json lines;
+    file4 >> lines;
+
     // end = std::time(nullptr);   
     gettimeofday(&end, NULL);
 
@@ -70,17 +75,17 @@ int main() {
     // // Create the cards table
     // std::string create_cards_query = "CREATE TABLE IF NOT EXISTS cards (code VARCHAR(255) PRIMARY KEY, money DOUBLE PRECISION, create_time TIMESTAMP);";
     // w.exec(create_cards_query);
-    // w.commit();
 
     // // Create the passengers table
     // std::string create_passengers_query = "CREATE TABLE IF NOT EXISTS passengers (name VARCHAR(255), id_number VARCHAR(255) PRIMARY KEY, phone_number, gender VARCHAR(255), district VARCHAR(255))";
     // w.exec(create_passengers_query);
-    // w.commit();
 
     // Create the rides table
     std::string create_rides_query = "CREATE TABLE IF NOT EXISTS rides (rail_user VARCHAR(255), start_station VARCHAR(255), end_station VARCHAR(255), price DOUBLE PRECISION, start_time TIMESTAMP, end_time TIMESTAMP);";
     w.exec(create_rides_query);
-    // w.commit();
+
+    // Commit the transaction
+    w.commit();
 
     // Start timing
     // std::cout << "Inserting data into the database..." << std::endl;
@@ -88,21 +93,39 @@ int main() {
     gettimeofday(&start, NULL);
 
     // Loop over each instance in the rides array and write to a csv file
+
     // size_t i, total;
+    std::filesystem::path current_path = std::filesystem::current_path();
+
+    std::ofstream lines_csv("lines.csv");
+    if (!lines_csv.is_open()) {
+        std::cerr << "Error: could not open lines.csv" << std::endl;
+        return 1;
+    }
+
+    std::filesystem::path lines_csv_path = current_path / "lines.csv";
+    std::cout << "lines.csv path: " << lines_csv_path << std::endl;
+    std::cout << "Writing to lines.csv..." << std::endl;
+
+    std::string lines_header = "line_id,station_id\n";
+    lines_csv << lines_header;
 
     
-    std::filesystem::path current_path = std::filesystem::current_path();
+
+    
+    
     std::ofstream rides_csv("rides.csv");
     if (!rides_csv.is_open()) {
         std::cerr << "Error: could not open rides.csv" << std::endl;
         return 1;
     }
+
     std::filesystem::path rides_csv_path = current_path / "rides.csv";
     std::cout << "rides.csv path: " << rides_csv_path << std::endl;
     std::cout << "Writing to rides.csv..." << std::endl;
 
-    std::string header = "rail_user,start_station,end_station,price,start_time,end_time\n";
-    rides_csv << header;
+    std::string rides_header = "rail_user,start_station,end_station,price,start_time,end_time\n";
+    rides_csv << rides_header;
     // i = 0;
     // total = rides.size();
     // printf("Total rides: %ld\n", total);
