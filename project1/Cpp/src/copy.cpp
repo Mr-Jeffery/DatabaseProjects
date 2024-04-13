@@ -56,15 +56,15 @@ int main() {
     json rides;
     file3 >> rides;
 
-    // Read from lines.json
-    std::ifstream file4(data_path + "/lines.json");
-    json lines;
-    file4 >> lines;
+    // // Read from lines.json
+    // std::ifstream file4(data_path + "/lines.json");
+    // json lines;
+    // file4 >> lines;
 
-    // Read from stations.json
-    std::ifstream file5(data_path + "/stations.json");
-    json stations;
-    file5 >> stations;
+    // // Read from stations.json
+    // std::ifstream file5(data_path + "/stations.json");
+    // json stations;
+    // file5 >> stations;
 
     // end = std::time(nullptr);   
     gettimeofday(&end, NULL);
@@ -82,61 +82,17 @@ int main() {
     w.exec(create_cards_query);
 
     // // Create the passengers table
-    std::string create_passengers_query = "CREATE TABLE IF NOT EXISTS passengers (name VARCHAR(255), id_number VARCHAR(255) PRIMARY KEY, phone_number, gender VARCHAR(255), district VARCHAR(255))";
+    std::string create_passengers_query = "CREATE TABLE IF NOT EXISTS passengers (name VARCHAR(255), id_number VARCHAR(255) PRIMARY KEY, phone_number, gender VARCHAR(255), district VARCHAR(255));";
     w.exec(create_passengers_query);
 
     // Create the rides table
     std::string create_rides_query = "CREATE TABLE IF NOT EXISTS rides (rail_user VARCHAR(255), start_station VARCHAR(255), end_station VARCHAR(255), price DOUBLE PRECISION, start_time TIMESTAMP, end_time TIMESTAMP);";
     w.exec(create_rides_query);
 
-
-    // "5号线": {
-//     "stations": [
-//       "Chiwan",
-//       "Liwan",
-//       "Railway Park",
-//       "Mawan",
-//       "Qianwan Park",
-//       "Qianwan",
-//       "Guiwan",
-//       "Qianhaiwan",
-//       "Linhai",
-//       "Baohua",
-//       "Bao'an Center",
-//       "Fanshen",
-//       "Lingzhi",
-//       "Honglang North",
-//       "Xingdong",
-//       "Liuxiandong",
-//       "Xili",
-//       "University Town",
-//       "Tanglang",
-//       "Changlingpi",
-//       "Shenzhen North Station",
-//       "Minzhi",
-//       "Wuhe",
-//       "Bantian",
-//       "Yangmei",
-//       "Shangshuijing",
-//       "Xiashuijing",
-//       "Changlong",
-//       "Buji",
-//       "Baigelong",
-//       "Buxin",
-//       "Tai'an",
-//       "Yijing",
-//       "Huangbeiling"
-//     ],
-//     "start_time": "06:02",
-//     "end_time": "23:13",
-//     "intro": "深圳地铁5号线（Shenzhen Metro Line 5），是中国广东省深圳市境内的一条地铁线路，于2011年6月22日开通运营一期工程，2019年9月28日开通运营二期工程，其标志色为紫色  。截至2022年6月，深圳地铁5号线呈M形东南-西北-西南走向，东起于黄贝岭站，途经罗湖区、龙岗区、龙华区、南山区、宝安区，西至赤湾站。截至2022年6月，深圳地铁5号线全长47.393千米，共设34个车站，列车设计时速80千米/小时，采用6节编组A型列车 。截至2018年10月，深圳地铁5号线单日最大客流量为2018年9月21日的107.5万人次 。深圳地铁5号线（Shenzhen Metro Line 5），是中国广东省深圳市境内的一条地铁线路，于2011年6月22日开通运营一期工程，2019年9月28日开通运营二期工程，其标志色为紫色  。截至2022年6月，深圳地铁5号线呈M形东南-西北-西南走向，东起于黄贝岭站，途经罗湖区、龙岗区、龙华区、南山区、宝安区，西至赤湾站。截至2022年6月，深圳地铁5号线全长47.393千米，共设34个车站，列车设计时速80千米/小时，采用6节编组A型列车 。截至2018年10月，深圳地铁5号线单日最大客流量为2018年9月21日的107.5万人次 。",
-//     "mileage": "47.393",
-//     "color": "紫色",
-//     "first_opening": "2011-6-22",
-//     "url": "https://baike.baidu.com/item/深圳地铁5号线/396122?fromModule=lemma_inlink"
-//   },
-    // Create the lines table
-    std::string create_lines_query = "CREATE TABLE IF NOT EXISTS lines (line_id VARCHAR(255), stations VARCHAR[], );";
+    // // Create the stations table
+    // std::string create_stations_query = "CREATE TABLE IF NOT EXISTS stations (station_id VARCHAR(255) PRIMARY KEY, station_name VARCHAR(255), station_type VARCHAR(255),
+    // // Create the lines table
+    // std::string create_lines_query = "CREATE TABLE IF NOT EXISTS lines (line_id VARCHAR(255), stations VARCHAR[], start_time TIME, end_time TIME, intro TEXT, mileage DOUBLE PRECISION, color VARCHAR(255), first_opening DATE, url VARCHAR(255));";
 
     // Commit the transaction
     w.commit();
@@ -151,23 +107,50 @@ int main() {
     // size_t i, total;
     std::filesystem::path current_path = std::filesystem::current_path();
 
-    std::ofstream lines_csv("lines.csv");
-    if (!lines_csv.is_open()) {
-        std::cerr << "Error: could not open lines.csv" << std::endl;
+    std::cout << "Writing to cards.csv..." << std::endl;
+    std::ofstream cards_csv("cards.csv");
+    if (!cards_csv.is_open()) {
+        std::cerr << "Error: could not open cards.csv" << std::endl;
+        return 1;
+    }
+    std::filesystem::path cards_csv_path = current_path / "cards.csv";
+    std::cout << "\tcards.csv path: " << cards_csv_path << std::endl;
+    std::string cards_header = "code,money,create_time\n";
+    cards_csv << cards_header;
+    for (auto& card : cards) {
+        // Extract data from JSON
+        std::string code = card["code"];
+        double money = card["money"];
+        std::string create_time = card["create_time"];
+        cards_csv << code << "," << money << "," << create_time << "\n";
+    }
+    cards_csv.close();
+
+
+    std::cout << "Writing to passengers.csv..." << std::endl;
+    std::ofstream passengers_csv("passengers.csv");
+    if (!passengers_csv.is_open()) {
+        std::cerr << "Error: could not open passengers.csv" << std::endl;
         return 1;
     }
 
-    std::filesystem::path lines_csv_path = current_path / "lines.csv";
-    std::cout << "lines.csv path: " << lines_csv_path << std::endl;
-    std::cout << "Writing to lines.csv..." << std::endl;
-
-    std::string lines_header = "line_id,station_id\n";
-    lines_csv << lines_header;
-
+    std::filesystem::path passengers_csv_path = current_path / "passengers.csv";
+    std::cout << "\tpassengers.csv path: " << passengers_csv_path << std::endl;
+    passengers_csv << "name,id_number,phone_number,gender,district\n";
+    for (auto& passenger : passengers) {
+        // Extract data from JSON
+        std::string name = passenger["name"];
+        std::string id_number = passenger["id_number"];
+        std::string phone_number = passenger["phone_number"];
+        std::string gender = passenger["gender"];
+        std::string district = passenger["district"];
+        passengers_csv << name << "," << id_number << "," << phone_number << "," << gender << "," << district << "\n";
+    }
+    passengers_csv.close();
     
 
     
-    
+    std::cout << "Writing to rides.csv..." << std::endl;
     std::ofstream rides_csv("rides.csv");
     if (!rides_csv.is_open()) {
         std::cerr << "Error: could not open rides.csv" << std::endl;
@@ -175,8 +158,7 @@ int main() {
     }
 
     std::filesystem::path rides_csv_path = current_path / "rides.csv";
-    std::cout << "rides.csv path: " << rides_csv_path << std::endl;
-    std::cout << "Writing to rides.csv..." << std::endl;
+    std::cout << "\trides.csv path: " << rides_csv_path << std::endl;
 
     std::string rides_header = "rail_user,start_station,end_station,price,start_time,end_time\n";
     rides_csv << rides_header;
@@ -198,6 +180,19 @@ int main() {
         // printProgress((double) ++i / total);
     }
     rides_csv.close();
+
+    // std::ofstream lines_csv("lines.csv");
+    // if (!lines_csv.is_open()) {
+    //     std::cerr << "Error: could not open lines.csv" << std::endl;
+    //     return 1;
+    // }
+
+    // std::filesystem::path lines_csv_path = current_path / "lines.csv";
+    // std::cout << "lines.csv path: " << lines_csv_path << std::endl;
+    // std::cout << "Writing to lines.csv..." << std::endl;
+
+    // std::string lines_header = "line_id,station_id\n";
+    // lines_csv << lines_header;
 
 
     // // Write to the database
