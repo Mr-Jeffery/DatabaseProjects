@@ -78,16 +78,36 @@ int main() {
     pqxx::work w(c);
 
     // // Create the cards table
-    std::string create_cards_query = "CREATE TABLE IF NOT EXISTS cards (code VARCHAR(255) PRIMARY KEY, money DOUBLE PRECISION, create_time TIMESTAMP);";
+    std::string create_cards_query = std::string("CREATE TABLE IF NOT EXISTS cards(")
+        +"code VARCHAR(9) PRIMARY KEY CHECK (code ~ '^[0-9]{9}$'), "
+        +"money MONEY NOT NULL, "
+        +"create_time TIMESTAMP NOT NULL);";
     w.exec(create_cards_query);
 
     // // Create the passengers table
-    std::string create_passengers_query = "CREATE TABLE IF NOT EXISTS passengers (name VARCHAR(255), id_number VARCHAR(255) PRIMARY KEY, phone_number, gender VARCHAR(255), district VARCHAR(255));";
+    std::string create_passengers_query = std::string("CREATE TABLE IF NOT EXISTS passengers (")
+        +"name VARCHAR(255) NOT NULL, "
+        +"id_number VARCHAR(18) PRIMARY KEY NOT NULL CHECK (id_number ~ '^[0-9]{17}[0-9X]?$'), "
+        +"phone_number VARCHAR(11) NOT NULL CHECK (phone_number ~ '^[0-9]{11}$'), "
+        +"gender VARCHAR(255) NOT NULL, "
+        +"district VARCHAR(255) NOT NULL);";
     w.exec(create_passengers_query);
 
     // Create the rides table
-    std::string create_rides_query = "CREATE TABLE IF NOT EXISTS rides (rail_user VARCHAR(255), start_station VARCHAR(255), end_station VARCHAR(255), price DOUBLE PRECISION, start_time TIMESTAMP, end_time TIMESTAMP);";
+    std::string create_rides_query = std::string("CREATE TABLE IF NOT EXISTS rides (")
+        +"rail_user VARCHAR(255), "
+        +"start_station VARCHAR(255), "
+        +"end_station VARCHAR(255), "
+        +"price DOUBLE PRECISION, "
+        +"start_time TIMESTAMP, "
+        +"end_time TIMESTAMP);";
     w.exec(create_rides_query);
+
+
+    // Create the lines table
+    std::string create_lines_query = std::string("CREATE TABLE IF NOT EXISTS lines (")
+        +"line_id VARCHAR(255), "
+        +"station_id VARCHAR(255));";
 
     // // Create the stations table
     // std::string create_stations_query = "CREATE TABLE IF NOT EXISTS stations (station_id VARCHAR(255) PRIMARY KEY, station_name VARCHAR(255), station_type VARCHAR(255),
@@ -146,8 +166,7 @@ int main() {
         std::string district = passenger["district"];
         passengers_csv << name << "," << id_number << "," << phone_number << "," << gender << "," << district << "\n";
     }
-    passengers_csv.close();
-    
+    passengers_csv.close(); 
 
     
     std::cout << "Writing to rides.csv..." << std::endl;
@@ -181,18 +200,23 @@ int main() {
     }
     rides_csv.close();
 
+
+    // std::cout << "Writing to lines.csv..." << std::endl;
     // std::ofstream lines_csv("lines.csv");
     // if (!lines_csv.is_open()) {
     //     std::cerr << "Error: could not open lines.csv" << std::endl;
     //     return 1;
     // }
-
     // std::filesystem::path lines_csv_path = current_path / "lines.csv";
-    // std::cout << "lines.csv path: " << lines_csv_path << std::endl;
-    // std::cout << "Writing to lines.csv..." << std::endl;
-
-    // std::string lines_header = "line_id,station_id\n";
-    // lines_csv << lines_header;
+    // std::cout << "\tlines.csv path: " << lines_csv_path << std::endl;
+    // for (auto& line : lines.items()) {
+    //     std::cout << "Line: " << line.key() << std::endl;
+    //     for (const auto& station : line.value()["stations"]) {
+    //         std::cout << "  Station: " << station << std::endl;
+    //         // TODO
+    //     }
+    // }
+    // lines_csv.close();
 
 
     // // Write to the database
