@@ -4,6 +4,10 @@
 #include <sys/stat.h>
 #include <cstdlib>
 #include <sys/time.h>
+#include <algorithm>
+#include <string>
+#include <locale>
+#include <codecvt>
 #include "json.hpp"
 #define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
 #define PBWIDTH 60
@@ -61,10 +65,10 @@ int main() {
     json lines;
     file4 >> lines;
 
-    // // Read from stations.json
-    // std::ifstream file5(data_path + "/stations.json");
-    // json stations;
-    // file5 >> stations;
+    // Read from stations.json
+    std::ifstream file5(data_path + "/stations.json");
+    json stations;
+    file5 >> stations;
 
     // end = std::time(nullptr);   
     gettimeofday(&end, NULL);
@@ -119,7 +123,7 @@ int main() {
 
     // Create the line_details table
     std::string create_line_details_query = std::string("CREATE TABLE IF NOT EXISTS line_details (")
-        +"line_id VARCHAR(255), "
+        +"line_name VARCHAR(255), "
         +"station_name VARCHAR(255)"
         // +"station_id VARCHAR(255),"
         // +" FOREIGN KEY (line_id) REFERENCES lines(line_id), "
@@ -276,8 +280,9 @@ int main() {
 
     std::filesystem::path line_details_csv_path = current_path / "line_details.csv";
     std::cout << "\tline_details.csv path: " << line_details_csv_path << std::endl;
-    line_details_csv << "line_id,station_name\n";
-    int id = 0;
+    line_details_csv << "line_name,station_name\n";
+    int id;
+    id = 0;
     for (auto& line : lines.items()) {
         // std::cout << "Line: " << line.key() << std::endl;
         std::string line_id = std::to_string(id++);
@@ -297,7 +302,7 @@ int main() {
         
         for (const auto& station : line.value()["stations"]) {
             // std::cout << "  Station: " << station.get<std::string>() << std::endl;
-            std::string line_details_str = line_id + "," + station.get<std::string>();
+            std::string line_details_str = name + "," + station.get<std::string>();
             
             line_details_str.erase(std::remove(line_details_str.begin(), line_details_str.end(), '\n'), line_details_str.end());
             line_details_csv << line_details_str << "\n";
@@ -306,15 +311,36 @@ int main() {
     lines_csv.close();
     line_details_csv.close();
 
-    // std::cout << "Writing to stations.csv..." << std::endl;
-    // std::ofstream stations_csv("stations.csv");
-    // if (!stations_csv.is_open()) {
-    //     std::cerr << "Error: could not open stations.csv" << std::endl;
-    //     return 1;
-    // }
-    // std::filesystem::path stations_csv_path = current_path / "stations.csv";
-    // std::cout << "\tstations.csv path: " << stations_csv_path << std::endl;
-    // stations_csv << "station_id,name,district,intro,chinese_name\n";
+    std::cout << "Writing to stations.csv..." << std::endl;
+    std::ofstream stations_csv("stations.csv");
+    if (!stations_csv.is_open()) {
+        std::cerr << "Error: could not open stations.csv" << std::endl;
+        return 1;
+    }
+    std::filesystem::path stations_csv_path = current_path / "stations.csv";
+    std::cout << "\tstations.csv path: " << stations_csv_path << std::endl;
+    stations_csv << "station_id,name,district,intro,chinese_name\n";
+    id = 0;
+    for (auto& station : stations.items()) {
+        // Extract data from JSON
+        std::string station_id = std::to_string(id++);
+        std::string name = station.key();
+        std::string district = station.value()["district"];
+        std::string intro = station.value()["intro"];
+        std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
+        // Replace commas with Chinese commas, using wstring because the Chinese characters are longer than 1 byte
+        std::wstring intro_wstr = converter.from_bytes(intro);
+        std::replace(intro_wstr.begin(), intro_wstr.end(), L',', L'，');
+        intro = converter.to_bytes(intro_wstr);
+
+        std::string chinese_name = station.value()["chinese_name"];
+        std::string station_str = station_id + "," + name + "," + district + "," + intro + "," + chinese_name;
+        station_str.erase(std::remove(station_str.begin(), station_str.end(), '\n'), station_str.end());
+        stations_csv << station_str << "\n";
+
+        //TODO: add bus stations
+    }
+    stations_csv.close();
 
 
     // // Write to the database

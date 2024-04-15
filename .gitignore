@@ -1,6 +1,7 @@
 /project1/Cpp/build
 /project1/Cpp/lib/
 /project1/setenv.sh
+/project1/setenv.ps1
 /project1/Data/
 /project1/Data/cards.json
 /project1/Data/lines.json
