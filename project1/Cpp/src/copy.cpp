@@ -56,10 +56,10 @@ int main() {
     json rides;
     file3 >> rides;
 
-    // // Read from lines.json
-    // std::ifstream file4(data_path + "/lines.json");
-    // json lines;
-    // file4 >> lines;
+    // Read from lines.json
+    std::ifstream file4(data_path + "/lines.json");
+    json lines;
+    file4 >> lines;
 
     // // Read from stations.json
     // std::ifstream file5(data_path + "/stations.json");
@@ -104,35 +104,37 @@ int main() {
     w.exec(create_rides_query);
 
 
-    // // Create the lines table
-    // std::string create_lines_query = std::string("CREATE TABLE IF NOT EXISTS lines (")
-    //     +"line_id VARCHAR(255), "
-    //     +"name VARCHAR(255), "
-    //     +"start_time TIME, "
-    //     +"end_time TIME, "
-    //     +"mileage DOUBLE PRECISION, "
-    //     +"color VARCHAR(255), "
-    //     +"first_opening TIME, "
-    //     +"url TEXT,"
-    //     +"intro TEXT);";
-    // w.exec(create_lines_query);
+    // Create the lines table
+    std::string create_lines_query = std::string("CREATE TABLE IF NOT EXISTS lines (")
+        +"line_id VARCHAR(255) PRIMARY KEY, "
+        +"name VARCHAR(255), "
+        +"start_time TIME, "
+        +"end_time TIME, "
+        +"mileage DOUBLE PRECISION, "
+        +"color VARCHAR(255), "
+        +"first_opening DATE, "
+        +"url TEXT,"
+        +"intro TEXT);";
+    w.exec(create_lines_query);
 
-    // // Create the line_stations table
-    // std::string create_line_details_query = std::string("CREATE TABLE IF NOT EXISTS line_details (")
-    //     +"line_id VARCHAR(255), "
-    //     +"station_id VARCHAR(255), "
-    //     +"FOREIGN KEY (line_id) REFERENCES lines(line_id), "
-    //     +"FOREIGN KEY (station_id) REFERENCES stations(station_id));";
-    // w.exec(create_line_details_query);
+    // Create the line_details table
+    std::string create_line_details_query = std::string("CREATE TABLE IF NOT EXISTS line_details (")
+        +"line_id VARCHAR(255), "
+        +"station_name VARCHAR(255)"
+        // +"station_id VARCHAR(255),"
+        // +" FOREIGN KEY (line_id) REFERENCES lines(line_id), "
+        // +"FOREIGN KEY (station_id) REFERENCES stations(station_id)"
+        +");";
+    w.exec(create_line_details_query);
 
-    // // Create the stations table
-    // std::string create_stations_query = std::string("CREATE TABLE IF NOT EXISTS stations (")
-    //     +"station_id VARCHAR(255) PRIMARY KEY, "
-    //     +"name VARCHAR(255), "
-    //     +"district VARCHAR(255), "
-    //     +"intro TEXT, "
-    //     +"chinese_name VARCHAR(255));";
-    // w.exec(create_stations_query);
+    // Create the stations table
+    std::string create_stations_query = std::string("CREATE TABLE IF NOT EXISTS stations (")
+        +"station_id VARCHAR(255) PRIMARY KEY, "
+        +"name VARCHAR(255), "
+        +"district VARCHAR(255), "
+        +"intro TEXT, "
+        +"chinese_name VARCHAR(255));";
+    w.exec(create_stations_query);
 
     // // Create the bus_station table
     // std::string create_bus_station_query = std::string("CREATE TABLE IF NOT EXISTS bus_station (")
@@ -258,32 +260,61 @@ int main() {
     rides_csv.close();
 
 
-    // std::cout << "Writing to lines.csv..." << std::endl;
-    // std::ofstream lines_csv("lines.csv");
-    // if (!lines_csv.is_open()) {
-    //     std::cerr << "Error: could not open lines.csv" << std::endl;
-    //     return 1;
-    // }
-    // std::filesystem::path lines_csv_path = current_path / "lines.csv";
-    // std::cout << "\tlines.csv path: " << lines_csv_path << std::endl;
-    // for (auto& line : lines.items()) {
-    //     std::cout << "Line: " << line.key() << std::endl;
-    //     for (const auto& station : line.value()["stations"]) {
-    //         std::cout << "  Station: " << station << std::endl;
-    //         // TODO
-    //     }
-    // }
-    // lines_csv.close();
+    std::cout << "Writing to lines.csv..." << std::endl;
+    std::ofstream lines_csv("lines.csv");
 
-    std::cout << "Writing to stations.csv..." << std::endl;
-    std::ofstream stations_csv("stations.csv");
-    if (!stations_csv.is_open()) {
-        std::cerr << "Error: could not open stations.csv" << std::endl;
+    std::cout << "Writing to line_details..." << std::endl;
+    std::ofstream line_details_csv("line_details.csv");
+
+    if (!lines_csv.is_open()||!line_details_csv.is_open()) {
+        std::cerr << "Error: could not open csv" << std::endl;
         return 1;
     }
-    std::filesystem::path stations_csv_path = current_path / "stations.csv";
-    std::cout << "\tstations.csv path: " << stations_csv_path << std::endl;
-    stations_csv << "station_id,name,district,intro,chinese_name\n";
+    std::filesystem::path lines_csv_path = current_path / "lines.csv";
+    std::cout << "\tlines.csv path: " << lines_csv_path << std::endl;
+    lines_csv << "line_id,name,start_time,end_time,mileage,color,first_opening,url,intro\n";
+
+    std::filesystem::path line_details_csv_path = current_path / "line_details.csv";
+    std::cout << "\tline_details.csv path: " << line_details_csv_path << std::endl;
+    line_details_csv << "line_id,station_name\n";
+    int id = 0;
+    for (auto& line : lines.items()) {
+        // std::cout << "Line: " << line.key() << std::endl;
+        std::string line_id = std::to_string(id++);
+        std::string name = line.key();
+        
+        std::string start_time = line.value()["start_time"];
+        
+        std::string end_time = line.value()["end_time"];
+        std::string mileage = line.value()["mileage"];
+        std::string color = line.value()["color"];
+        std::string first_opening = line.value()["first_opening"];
+        std::string url = line.value()["url"];
+        std::string intro = line.value()["intro"];
+        std::string line_str = line_id + "," + name + "," + start_time + "," + end_time + "," + mileage + "," + color + "," + first_opening + "," + url + "," + intro;
+        line_str.erase(std::remove(line_str.begin(), line_str.end(), '\n'), line_str.end());
+        lines_csv << line_str << "\n";
+        
+        for (const auto& station : line.value()["stations"]) {
+            // std::cout << "  Station: " << station.get<std::string>() << std::endl;
+            std::string line_details_str = line_id + "," + station.get<std::string>();
+            
+            line_details_str.erase(std::remove(line_details_str.begin(), line_details_str.end(), '\n'), line_details_str.end());
+            line_details_csv << line_details_str << "\n";
+        }
+    }
+    lines_csv.close();
+    line_details_csv.close();
+
+    // std::cout << "Writing to stations.csv..." << std::endl;
+    // std::ofstream stations_csv("stations.csv");
+    // if (!stations_csv.is_open()) {
+    //     std::cerr << "Error: could not open stations.csv" << std::endl;
+    //     return 1;
+    // }
+    // std::filesystem::path stations_csv_path = current_path / "stations.csv";
+    // std::cout << "\tstations.csv path: " << stations_csv_path << std::endl;
+    // stations_csv << "station_id,name,district,intro,chinese_name\n";
 
 
     // // Write to the database
