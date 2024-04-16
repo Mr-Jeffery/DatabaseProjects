@@ -146,8 +146,8 @@ int main() {
     std::cout << create_stations_query << std::endl;
     w.exec(create_stations_query);
 
-    // Create the bus_station table
-    std::string create_bus_station_query = std::string("CREATE TABLE IF NOT EXISTS bus_station (")
+    // Create the bus_stations table
+    std::string create_bus_station_query = std::string("CREATE TABLE IF NOT EXISTS bus_stations (")
         // +"station_id VARCHAR(255), "
         +"name VARCHAR(255) PRIMARY KEY, "
         +"district VARCHAR(255));";
@@ -337,14 +337,14 @@ int main() {
     // id = 0;
 
 
-    std::cout << "Writing to bus_station.csv..." << std::endl;
-    std::ofstream bus_station_csv("bus_station.csv");
+    std::cout << "Writing to bus_stations.csv..." << std::endl;
+    std::ofstream bus_station_csv("bus_stations.csv");
     if (!bus_station_csv.is_open()) {
-        std::cerr << "Error: could not open bus_station.csv" << std::endl;
+        std::cerr << "Error: could not open bus_stations.csv" << std::endl;
         return 1;
     }
-    std::filesystem::path bus_station_csv_path = current_path / "bus_station.csv";
-    std::cout << "\tbus_station.csv path: " << bus_station_csv_path << std::endl;
+    std::filesystem::path bus_station_csv_path = current_path / "bus_stations.csv";
+    std::cout << "\tbus_stations.csv path: " << bus_station_csv_path << std::endl;
     bus_station_csv << "name,district\n";
 
 
@@ -369,7 +369,10 @@ int main() {
         for (const auto& bus_station : station.value()["bus_info"]) {
             if (bus_station.contains("busOutInfo") && !bus_station["busOutInfo"].empty()) {
                 std::string bus_station_name = bus_station["busOutInfo"][0]["busName"];
-                std::cout << bus_station_name << std::endl; 
+                if (bus_station_name.empty()) {// skip empty bus station names
+                    continue;
+                }
+                // std::cout << bus_station_name << std::endl; 
                 std::string bus_station_str = bus_station_name + "," + district;
                 bus_station_str.erase(std::remove(bus_station_str.begin(), bus_station_str.end(), '\n'), bus_station_str.end());
                 bus_station_csv << bus_station_str << "\n";

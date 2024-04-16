@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS rides (rail_user VARCHAR(255), start_station VARCHAR(
 CREATE TABLE IF NOT EXISTS lines (name VARCHAR(255)PRIMARY KEY, start_time TIME, end_time TIME, mileage DOUBLE PRECISION, color VARCHAR(255), first_opening DATE, url TEXT,intro TEXT);
 CREATE TABLE IF NOT EXISTS line_details (line_name VARCHAR(255), station_name VARCHAR(255));
 CREATE TABLE IF NOT EXISTS stations (name VARCHAR(255) PRIMARY KEY, district VARCHAR(255), intro TEXT, chinese_name VARCHAR(255));
-CREATE TABLE IF NOT EXISTS bus_station (name VARCHAR(255) PRIMARY KEY, district VARCHAR(255));
+CREATE TABLE IF NOT EXISTS bus_stations (name VARCHAR(255) PRIMARY KEY, district VARCHAR(255));
 CREATE TABLE IF NOT EXISTS bus_line (name VARCHAR(255) PRIMARY KEY);
-CREATE TABLE IF NOT EXISTS bus_line_details (bus_line_name VARCHAR(255), bus_station_name VARCHAR(255), FOREIGN KEY (bus_line_name) REFERENCES bus_line(name), FOREIGN KEY (bus_station_name) REFERENCES bus_station(name));
+CREATE TABLE IF NOT EXISTS bus_line_details (bus_line_name VARCHAR(255), bus_station_name VARCHAR(255), FOREIGN KEY (bus_line_name) REFERENCES bus_line(name), FOREIGN KEY (bus_station_name) REFERENCES bus_stations(name));
 CREATE TABLE IF NOT EXISTS exits (station_name VARCHAR(255), name VARCHAR(255),textt TEXT,FOREIGN KEY (station_name) REFERENCES stations(name),PRIMARY KEY (station_name, name));
