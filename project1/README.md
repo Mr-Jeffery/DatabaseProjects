@@ -15,6 +15,7 @@ in `stations.json`:
 "busName": "万科城①,万科城②"
 "busName": "A1、A2出入口丨鹏基工业区"
 "busName": "福田公交枢纽站公交信息"
+"chukou": "                                           B出入口"
 ```
 ```json
 {
