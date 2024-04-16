@@ -1,12 +1,34 @@
 # Project 1
 ## Project Info
-【腾讯文档】Project1 introduce
-https://docs.qq.com/doc/DVmJ4Q2dNSGJnSXNv
+[【腾讯文档】Project1 Introduction](https://docs.qq.com/doc/DVmJ4Q2dNSGJnSXNv)
 ## Project Report Link
 [Latex report](https://sharelatex.cra.ac.cn/project/66193f1fafc1ee76074e378e)--In Progress
 ##  E-R Diagram
 [ER diagram](https://lucid.app/lucidchart/381208ad-beeb-4a6d-9209-00c39bd6f42d/edit?view_items=LPrsYmKL4.7G&invitationId=inv_45428aec-4b47-4305-88bb-a0c90220279f)--In progress
 
+## Data Corruption Found
+in `stations.json`:
+```json
+"busName": "1、尚景欣园:802、低碳城假日专线、M276、M386、M556；2、盛平地铁站"
+```
+```json
+"busName": "万科城①,万科城②"
+```
+```json
+"Universiade",
+"Universiade Center",
+"  Longcheng Park",
+"Huanggekeng  station",
+"Yuyuan  station",
+"Huilongpu  station\n",
+```
+in `rides.json`:
+```json
+"start_station": "Huilongpu  station\n",
+```
+```json
+"end_station": "Dongjiang Column Memorial \nHall Station",
+```
 ## Relational Database Design
 TODO
 
@@ -38,6 +60,7 @@ pip install -r requirements.txt
 TODO
 
 ### Deploy C++ Version
+For windows version, replace `.sh` with `.ps1`
 ```bash
 cd Cpp
 ```

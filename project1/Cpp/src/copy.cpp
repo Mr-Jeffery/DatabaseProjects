@@ -86,6 +86,7 @@ int main() {
         +"code VARCHAR(9) PRIMARY KEY CHECK (code ~ '^[0-9]{9}$'), "
         +"money MONEY NOT NULL, "
         +"create_time TIMESTAMP NOT NULL);";
+    std::cout << create_cards_query << std::endl;
     w.exec(create_cards_query);
 
     // // Create the passengers table
@@ -95,6 +96,7 @@ int main() {
         +"phone_number VARCHAR(11) NOT NULL CHECK (phone_number ~ '^[0-9]{11}$'), "
         +"gender VARCHAR(255) NOT NULL, "
         +"district VARCHAR(255) NOT NULL);";
+    std::cout << create_passengers_query << std::endl;
     w.exec(create_passengers_query);
 
     // Create the rides table
@@ -105,13 +107,14 @@ int main() {
         +"price DOUBLE PRECISION, "
         +"start_time TIMESTAMP, "
         +"end_time TIMESTAMP);";
+    std::cout << create_rides_query << std::endl;
     w.exec(create_rides_query);
 
 
     // Create the lines table
     std::string create_lines_query = std::string("CREATE TABLE IF NOT EXISTS lines (")
-        +"line_id VARCHAR(255) PRIMARY KEY, "
-        +"name VARCHAR(255), "
+        // +"line_id VARCHAR(255) , "
+        +"name VARCHAR(255)PRIMARY KEY, "
         +"start_time TIME, "
         +"end_time TIME, "
         +"mileage DOUBLE PRECISION, "
@@ -119,6 +122,7 @@ int main() {
         +"first_opening DATE, "
         +"url TEXT,"
         +"intro TEXT);";
+    std::cout << create_lines_query << std::endl;
     w.exec(create_lines_query);
 
     // Create the line_details table
@@ -129,53 +133,63 @@ int main() {
         // +" FOREIGN KEY (line_id) REFERENCES lines(line_id), "
         // +"FOREIGN KEY (station_id) REFERENCES stations(station_id)"
         +");";
+    std::cout << create_line_details_query << std::endl;
     w.exec(create_line_details_query);
 
     // Create the stations table
     std::string create_stations_query = std::string("CREATE TABLE IF NOT EXISTS stations (")
-        +"station_id VARCHAR(255) PRIMARY KEY, "
-        +"name VARCHAR(255), "
+        // +"station_id VARCHAR(255) PRIMARY KEY, "
+        +"name VARCHAR(255) PRIMARY KEY, "
         +"district VARCHAR(255), "
         +"intro TEXT, "
         +"chinese_name VARCHAR(255));";
+    std::cout << create_stations_query << std::endl;
     w.exec(create_stations_query);
 
-    // // Create the bus_station table
-    // std::string create_bus_station_query = std::string("CREATE TABLE IF NOT EXISTS bus_station (")
-    //     +"station_id VARCHAR(255), "
-    //     +"name VARCHAR(255), "
-    //     +"district VARCHAR(255));";
-    // w.exec(create_bus_station_query);
+    // Create the bus_station table
+    std::string create_bus_station_query = std::string("CREATE TABLE IF NOT EXISTS bus_station (")
+        // +"station_id VARCHAR(255), "
+        +"name VARCHAR(255) PRIMARY KEY, "
+        +"district VARCHAR(255));";
+    std::cout << create_bus_station_query << std::endl;
+    w.exec(create_bus_station_query);
 
-    // // Create the bus_line table
-    // std::string create_bus_line_query = std::string("CREATE TABLE IF NOT EXISTS bus_line (")
-    //     +"bus_line_id VARCHAR(255), "
-    //     +"name VARCHAR(255));";
-    // w.exec(create_bus_line_query);
+    // Create the bus_line table
+    std::string create_bus_line_query = std::string("CREATE TABLE IF NOT EXISTS bus_line (")
+        // +"bus_line_id VARCHAR(255), "
+        +"name VARCHAR(255) PRIMARY KEY);";
+    std::cout << create_bus_line_query << std::endl;
+    w.exec(create_bus_line_query);
 
-    // // Create the bus_line_details table
-    // std::string create_bus_line_details_query = std::string("CREATE TABLE IF NOT EXISTS bus_line_details (")
-    //     +"bus_line_id VARCHAR(255), "
-    //     +"bus_station_name VARCHAR(255), "
-    //     +"FOREIGN KEY (bus_line_id) REFERENCES bus_line(bus_line_id), "
-    //     +"FOREIGN KEY (bus_station_name) REFERENCES bus_station(name));";
-    // w.exec(create_bus_line_details_query);
+    // Create the bus_line_details table
+    std::string create_bus_line_details_query = std::string("CREATE TABLE IF NOT EXISTS bus_line_details (")
+        +"bus_line_name VARCHAR(255), "
+        +"bus_station_name VARCHAR(255), "
+        +"FOREIGN KEY (bus_line_name) REFERENCES bus_line(name), "
+        +"FOREIGN KEY (bus_station_name) REFERENCES bus_station(name));";
+    std::cout << create_bus_line_details_query << std::endl;
+    w.exec(create_bus_line_details_query);
 
-    // // Create the exits table
-    // std::string create_exits_query = std::string("CREATE TABLE IF NOT EXISTS exits (")
-    //     +"exit_id VARCHAR(255), "
-    //     +"name VARCHAR(255), "
-    //     +"textt TEXT"
-    //     +"PRIMARY KEY exit_id);";
-    // w.exec(create_exits_query);
+    // Create the exits table
+    std::string create_exits_query = std::string("CREATE TABLE IF NOT EXISTS exits (")
+        // +"exit_id VARCHAR(255), "
+        +"station_name VARCHAR(255), "
+        +"name VARCHAR(255),"
+        +"textt TEXT,"
+        +"FOREIGN KEY (station_name) REFERENCES stations(name),"
+        +"PRIMARY KEY (station_name, name)"
+        // +"PRIMARY KEY exit_id"
+        +");";
+    std::cout << create_exits_query << std::endl;
+    w.exec(create_exits_query);
 
-    // // Create the exits_details table
-    // std::string create_exits_details_query = std::string("CREATE TABLE IF NOT EXISTS exits_details (")
-    //     +"station_name VARCHAR(255), "
-    //     +"name VARCHAR(255), "
-    //     +"textt TEXT"
-    //     +"PRIMARY KEY (station_name, name));";
-    // w.exec(create_exits_details_query);
+    // Create the exits_details table
+    std::string create_exits_details_query = std::string("CREATE TABLE IF NOT EXISTS exits_details (")
+        +"station_name VARCHAR(255), "
+        +"name VARCHAR(255), "
+        +"textt TEXT,"
+        +"PRIMARY KEY (station_name, name));";
+    w.exec(create_exits_details_query);
 
     // Commit the transaction
     w.commit();
@@ -276,16 +290,16 @@ int main() {
     }
     std::filesystem::path lines_csv_path = current_path / "lines.csv";
     std::cout << "\tlines.csv path: " << lines_csv_path << std::endl;
-    lines_csv << "line_id,name,start_time,end_time,mileage,color,first_opening,url,intro\n";
+    lines_csv << "name,start_time,end_time,mileage,color,first_opening,url,intro\n";
 
     std::filesystem::path line_details_csv_path = current_path / "line_details.csv";
     std::cout << "\tline_details.csv path: " << line_details_csv_path << std::endl;
     line_details_csv << "line_name,station_name\n";
-    int id;
-    id = 0;
+    // int id;
+    // id = 0;
     for (auto& line : lines.items()) {
         // std::cout << "Line: " << line.key() << std::endl;
-        std::string line_id = std::to_string(id++);
+        // std::string line_id = std::to_string(id++);
         std::string name = line.key();
         
         std::string start_time = line.value()["start_time"];
@@ -296,7 +310,7 @@ int main() {
         std::string first_opening = line.value()["first_opening"];
         std::string url = line.value()["url"];
         std::string intro = line.value()["intro"];
-        std::string line_str = line_id + "," + name + "," + start_time + "," + end_time + "," + mileage + "," + color + "," + first_opening + "," + url + "," + intro;
+        std::string line_str = name + "," + start_time + "," + end_time + "," + mileage + "," + color + "," + first_opening + "," + url + "," + intro;
         line_str.erase(std::remove(line_str.begin(), line_str.end(), '\n'), line_str.end());
         lines_csv << line_str << "\n";
         
@@ -319,11 +333,24 @@ int main() {
     }
     std::filesystem::path stations_csv_path = current_path / "stations.csv";
     std::cout << "\tstations.csv path: " << stations_csv_path << std::endl;
-    stations_csv << "station_id,name,district,intro,chinese_name\n";
-    id = 0;
+    stations_csv << "name,district,intro,chinese_name\n";
+    // id = 0;
+
+
+    std::cout << "Writing to bus_station.csv..." << std::endl;
+    std::ofstream bus_station_csv("bus_station.csv");
+    if (!bus_station_csv.is_open()) {
+        std::cerr << "Error: could not open bus_station.csv" << std::endl;
+        return 1;
+    }
+    std::filesystem::path bus_station_csv_path = current_path / "bus_station.csv";
+    std::cout << "\tbus_station.csv path: " << bus_station_csv_path << std::endl;
+    bus_station_csv << "name,district\n";
+
+
     for (auto& station : stations.items()) {
         // Extract data from JSON
-        std::string station_id = std::to_string(id++);
+        // std::string station_id = std::to_string(id++);
         std::string name = station.key();
         std::string district = station.value()["district"];
         std::string intro = station.value()["intro"];
@@ -334,13 +361,27 @@ int main() {
         intro = converter.to_bytes(intro_wstr);
 
         std::string chinese_name = station.value()["chinese_name"];
-        std::string station_str = station_id + "," + name + "," + district + "," + intro + "," + chinese_name;
+        std::string station_str = name + "," + district + "," + intro + "," + chinese_name;
         station_str.erase(std::remove(station_str.begin(), station_str.end(), '\n'), station_str.end());
         stations_csv << station_str << "\n";
-
+        
         //TODO: add bus stations
+        for (const auto& bus_station : station.value()["bus_info"]) {
+            if (bus_station.contains("busOutInfo") && !bus_station["busOutInfo"].empty()) {
+                std::string bus_station_name = bus_station["busOutInfo"][0]["busName"];
+                std::cout << bus_station_name << std::endl; 
+                std::string bus_station_str = bus_station_name + "," + district;
+                bus_station_str.erase(std::remove(bus_station_str.begin(), bus_station_str.end(), '\n'), bus_station_str.end());
+                bus_station_csv << bus_station_str << "\n";
+            }
+        }
     }
     stations_csv.close();
+
+
+
+
+    
 
 
     // // Write to the database

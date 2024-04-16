@@ -1,7 +1,21 @@
-CREATE TABLE IF NOT EXISTS cards (code VARCHAR(255) PRIMARY KEY, money DOUBLE PRECISION, create_time TIMESTAMP);
+DROP TABLE IF EXISTS cards;
+DROP TABLE IF EXISTS passengers;
+DROP TABLE IF EXISTS rides;
+DROP TABLE IF EXISTS lines;
+DROP TABLE IF EXISTS line_details;
+DROP TABLE IF EXISTS stations;
+DROP TABLE IF EXISTS bus_station;
+DROP TABLE IF EXISTS bus_line;
+DROP TABLE IF EXISTS bus_line_details;
+DROP TABLE IF EXISTS exits;
 
-CREATE TABLE IF NOT EXISTS passengers (name VARCHAR(255), id_number VARCHAR(255) PRIMARY KEY, phone_number, gender VARCHAR(255), district VARCHAR(255));
-
+CREATE TABLE IF NOT EXISTS cards(code VARCHAR(9) PRIMARY KEY CHECK (code ~ '^[0-9]{9}$'), money MONEY NOT NULL, create_time TIMESTAMP NOT NULL);
+CREATE TABLE IF NOT EXISTS passengers (name VARCHAR(255) NOT NULL, id_number VARCHAR(18) PRIMARY KEY NOT NULL CHECK (id_number ~ '^[0-9]{17}[0-9X]?$'), phone_number VARCHAR(11) NOT NULL CHECK (phone_number ~ '^[0-9]{11}$'), gender VARCHAR(255) NOT NULL, district VARCHAR(255) NOT NULL);
 CREATE TABLE IF NOT EXISTS rides (rail_user VARCHAR(255), start_station VARCHAR(255), end_station VARCHAR(255), price DOUBLE PRECISION, start_time TIMESTAMP, end_time TIMESTAMP);
-
-CREATE TABLE IF NOT EXISTS lines (line_id VARCHAR(255), stations VARCHAR[], start_time TIME, end_time TIME, intro TEXT, mileage DOUBLE PRECISION, color VARCHAR(255), first_opening DATE, url VARCHAR(255));
+CREATE TABLE IF NOT EXISTS lines (name VARCHAR(255)PRIMARY KEY, start_time TIME, end_time TIME, mileage DOUBLE PRECISION, color VARCHAR(255), first_opening DATE, url TEXT,intro TEXT);
+CREATE TABLE IF NOT EXISTS line_details (line_name VARCHAR(255), station_name VARCHAR(255));
+CREATE TABLE IF NOT EXISTS stations (name VARCHAR(255) PRIMARY KEY, district VARCHAR(255), intro TEXT, chinese_name VARCHAR(255));
+CREATE TABLE IF NOT EXISTS bus_station (name VARCHAR(255) PRIMARY KEY, district VARCHAR(255));
+CREATE TABLE IF NOT EXISTS bus_line (name VARCHAR(255) PRIMARY KEY);
+CREATE TABLE IF NOT EXISTS bus_line_details (bus_line_name VARCHAR(255), bus_station_name VARCHAR(255), FOREIGN KEY (bus_line_name) REFERENCES bus_line(name), FOREIGN KEY (bus_station_name) REFERENCES bus_station(name));
+CREATE TABLE IF NOT EXISTS exits (station_name VARCHAR(255), name VARCHAR(255),textt TEXT,FOREIGN KEY (station_name) REFERENCES stations(name),PRIMARY KEY (station_name, name));
