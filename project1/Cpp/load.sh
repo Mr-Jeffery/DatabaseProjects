@@ -31,7 +31,7 @@ if [ ${machine} == "Linux" ]; then
 elif [ ${machine} == "Mac" ]; then
     export CSV_PATH=$TMPDIR
 else
-    export CSV_PATH=$(pwd -W)
+    export CSV_PATH=$(pwd)
 fi
 time (
     ./LoadData
