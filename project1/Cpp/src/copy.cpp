@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdlib.h>
 #include <fstream>
 #include <pqxx/pqxx>
 #include <sys/stat.h>
@@ -25,6 +26,7 @@ void printProgress(double percentage) {
 
 int main() {
     std::string data_path = getenv("DATA_PATH");
+
 
     // Database connection string
     std::string db_name = getenv("DB_NAME");
@@ -109,6 +111,7 @@ int main() {
         +"end_time TIMESTAMP);";
     std::cout << create_rides_query << std::endl;
     w.exec(create_rides_query);
+    
 
 
     // Create the lines table
@@ -192,7 +195,7 @@ int main() {
     w.exec(create_exits_details_query);
 
     // Commit the transaction
-    w.commit();
+    // w.commit();
 
     // Start timing
     // std::cout << "Inserting data into the database..." << std::endl;
@@ -202,7 +205,14 @@ int main() {
     // Loop over each instance in the rides array and write to a csv file
 
     // size_t i, total;
-    std::filesystem::path current_path = std::filesystem::current_path();
+    // std::filesystem::path current_path = std::filesystem::current_path();
+    std::filesystem::path current_path = std::filesystem::path("/tmp");
+    // std::string permission_change = "sudo chown jeffery:postgres -R " + current_path.string(); + " && sudo chmod 640 -R " + current_path.string();
+    
+    // if (system(permission_change.c_str()) != 0) {
+    //     std::cerr << "Error: could not change permissions for build folder" << std::endl;
+    //     return 1;
+    // }
 
     std::cout << "Writing to cards.csv..." << std::endl;
     std::ofstream cards_csv("cards.csv");
@@ -222,6 +232,7 @@ int main() {
         cards_csv << code << "," << money << "," << create_time << "\n";
     }
     cards_csv.close();
+
 
 
     std::cout << "Writing to passengers.csv..." << std::endl;
@@ -244,6 +255,7 @@ int main() {
         passengers_csv << name << "," << id_number << "," << phone_number << "," << gender << "," << district << "\n";
     }
     passengers_csv.close(); 
+
 
     
     std::cout << "Writing to rides.csv..." << std::endl;
@@ -276,6 +288,7 @@ int main() {
         // printProgress((double) ++i / total);
     }
     rides_csv.close();
+
 
 
     std::cout << "Writing to lines.csv..." << std::endl;
@@ -324,6 +337,8 @@ int main() {
     }
     lines_csv.close();
     line_details_csv.close();
+
+
 
     std::cout << "Writing to stations.csv..." << std::endl;
     std::ofstream stations_csv("stations.csv");
@@ -380,28 +395,57 @@ int main() {
         }
     }
     stations_csv.close();
-
-
-
+    bus_station_csv.close();
 
     
-
-
-    // // Write to the database
-    // const char* path = rides_csv_path.c_str();
-    // // Change the permissions to read/write for user, read for group, and read for others.
-    // if (chmod(path, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) == -1) {
-    //     std::perror("chmod");
-    //     return 1;
-    // }
-    // w.exec("COPY rides FROM '" + rides_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')");
-    // w.commit();
+    
 
     // end = std::time(nullptr);
     gettimeofday(&end, NULL);
     time_spent = (double)(end.tv_sec - start.tv_sec) + ((end.tv_usec - start.tv_usec)/1000000.0);
     // std::cout << std::endl;
     std::cout << "json to csv completed in " << time_spent << " seconds." << std::endl;
+
+
+    // Copy the csv files to the database
+    gettimeofday(&start, NULL);
+    std::string copy_cards_query = "COPY cards FROM '" + cards_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')";
+    std::cout << copy_cards_query << std::endl;
+    w.exec(copy_cards_query);
+
+    std::string copy_passengers_query = "COPY passengers FROM '" + passengers_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')";
+    std::cout << copy_passengers_query << std::endl;
+    w.exec(copy_passengers_query);
+
+    std::string copy_rides_query = "COPY rides FROM '" + rides_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')";
+    std::cout << copy_rides_query << std::endl;
+    w.exec(copy_rides_query);
+
+    std::string copy_lines_query = "COPY lines FROM '" + lines_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')";
+    std::cout << copy_lines_query << std::endl;
+    w.exec(copy_lines_query);
+
+    std::string copy_line_details_query = "COPY line_details FROM '" + line_details_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')";
+    std::cout << copy_line_details_query << std::endl;
+    w.exec(copy_line_details_query);
+
+    std::string copy_stations_query = "COPY stations FROM '" + stations_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')";
+    std::cout << copy_stations_query << std::endl;
+    w.exec(copy_stations_query);
+    
+    std::string copy_bus_stations_query = std::string("CREATE TEMP TABLE tmp_bus_stations AS SELECT * FROM bus_stations LIMIT 0;")
+    +"COPY tmp_bus_stations FROM '"
+    + bus_station_csv_path.string()
+    +"' WITH (FORMAT CSV, HEADER, DELIMITER ',');"
+    +"INSERT INTO bus_stations SELECT * FROM tmp_bus_stations ON CONFLICT DO NOTHING;";
+    std::cout << copy_bus_stations_query << std::endl;
+    w.exec(copy_bus_stations_query);
+
+    w.commit();
+
+    gettimeofday(&end, NULL);
+    time_spent = (double)(end.tv_sec - start.tv_sec) + ((end.tv_usec - start.tv_usec)/1000000.0);
+    std::cout << "csv to database completed in " << time_spent << " seconds." << std::endl;
 
     return 0;
 }
