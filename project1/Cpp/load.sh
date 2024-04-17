@@ -18,7 +18,21 @@ psql --command="DROP TABLE IF EXISTS rides;\
                 DROP TABLE IF EXISTS stations;" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
 
 # CSV_PATH=$(pwd)
-CSV_PATH=/tmp
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     machine=Linux;;
+    Darwin*)    machine=Mac;;
+    *)          machine="UNKNOWN:${unameOut}"
+esac
+echo ${machine}
+
+if [ ${machine} == "Linux" ]; then
+    CSV_PATH=/tmp
+elif [ ${machine} == "Mac" ]; then
+    CSV_PATH=$TMPDIR
+else
+    CSV_PATH=$(pwd -W)
+fi
 time (
     ./LoadData
 )
