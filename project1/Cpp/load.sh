@@ -27,11 +27,11 @@ esac
 echo ${machine}
 
 if [ ${machine} == "Linux" ]; then
-    CSV_PATH=/tmp
+    export CSV_PATH=/tmp
 elif [ ${machine} == "Mac" ]; then
-    CSV_PATH=$TMPDIR
+    export CSV_PATH=$TMPDIR
 else
-    CSV_PATH=$(pwd -W)
+    export CSV_PATH=$(pwd -W)
 fi
 time (
     ./LoadData

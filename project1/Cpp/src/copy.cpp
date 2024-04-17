@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <fstream>
 #include <pqxx/pqxx>
-#include <sys/stat.h>
 #include <cstdlib>
 #include <sys/time.h>
 #include <algorithm>
@@ -25,17 +24,31 @@ void printProgress(double percentage) {
 
 
 int main() {
-    std::string data_path = getenv("DATA_PATH");
+    const char* data_path_cstr = getenv("DATA_PATH");
+    std::string data_path = data_path_cstr ? data_path_cstr : "";
 
 
     // Database connection string
-    std::string db_name = getenv("DB_NAME");
-    std::string db_user = getenv("DB_USER");
-    std::string db_password = getenv("DB_PASSWORD");
-    std::string db_host = getenv("DB_HOST");
-    std::string db_port = getenv("DB_PORT");
+    const char* db_name_cstr = getenv("DB_NAME");
+    std::string db_name = db_name_cstr ? db_name_cstr : "postgres";
+
+    const char* db_user_cstr = getenv("DB_USER");
+    std::string db_user = db_user_cstr ? db_user_cstr : "postgres";
+
+    const char* db_password_cstr = getenv("DB_PASSWORD");
+    std::string db_password = db_password_cstr ? db_password_cstr : "";
+
+    const char* db_host_cstr = getenv("DB_HOST");
+    std::string db_host = db_host_cstr ? db_host_cstr : "localhost";
+
+    const char* db_port_cstr = getenv("DB_PORT");
+    std::string db_port = db_port_cstr ? db_port_cstr : "5432";
+
     std::string conn_str = "dbname=" + db_name + " user=" + db_user + " password=" + db_password + " host=" + db_host + " port=" + db_port;
 
+    const char* csv_path_ctsr = getenv("CSV_PATH");
+    std::string csv_path = csv_path_ctsr ? csv_path_ctsr : "?";
+    std::filesystem::path current_path = std::filesystem::path(csv_path);
 
     // timing
     // std::time_t start, end;
@@ -206,13 +219,8 @@ int main() {
 
     // size_t i, total;
     // std::filesystem::path current_path = std::filesystem::current_path();
-    std::filesystem::path current_path = std::filesystem::path("/tmp");
-    // std::string permission_change = "sudo chown jeffery:postgres -R " + current_path.string(); + " && sudo chmod 640 -R " + current_path.string();
+    // std::filesystem::path current_path = std::filesystem::path("/tmp");
     
-    // if (system(permission_change.c_str()) != 0) {
-    //     std::cerr << "Error: could not change permissions for build folder" << std::endl;
-    //     return 1;
-    // }
 
     std::cout << "Writing to cards.csv..." << std::endl;
     std::ofstream cards_csv("cards.csv");
