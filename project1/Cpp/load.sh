@@ -8,14 +8,14 @@ make
 
 # psql -U $DB_USER -d $DB_NAME -p $DB_PORT -h $DB_HOST
 
-psql --command="DROP TABLE IF EXISTS rides;\
-                DROP TABLE IF EXISTS cards;\
-                DROP TABLE IF EXISTS passengers;\
-                DROP TABLE IF EXISTS line_details;\
-                DROP TABLE IF EXISTS lines;\
-                DROP TABLE IF EXISTS exits;\
-                DROP TABLE IF EXISTS bus_stations;\
-                DROP TABLE IF EXISTS stations;" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+psql --command="DROP TABLE IF EXISTS rides CASCADE;\
+                DROP TABLE IF EXISTS cards CASCADE;\
+                DROP TABLE IF EXISTS passengers CASCADE;\
+                DROP TABLE IF EXISTS line_details CASCADE;\
+                DROP TABLE IF EXISTS lines CASCADE;\
+                DROP TABLE IF EXISTS exits CASCADE;\
+                DROP TABLE IF EXISTS bus_stations CASCADE;\
+                DROP TABLE IF EXISTS stations CASCADE;" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
 
 # CSV_PATH=$(pwd)
 unameOut="$(uname -s)"
