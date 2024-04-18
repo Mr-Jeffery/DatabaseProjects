@@ -6,46 +6,7 @@
 ##  E-R Diagram
 [ER diagram](https://lucid.app/lucidchart/381208ad-beeb-4a6d-9209-00c39bd6f42d/edit?view_items=LPrsYmKL4.7G&invitationId=inv_45428aec-4b47-4305-88bb-a0c90220279f)--In progress
 
-## Data Corruption Found
-in `stations.json`:
-```json
-"busName": "1、尚景欣园:802、低碳城假日专线、M276、M386、M556；2、盛平地铁站"
-"busName": "中粮创芯公园北（原"
-"busName": "角塘西:M198、M309、M521、M568、M597、高峰专线221B出入口城市山海云汇"
-"busName": "万科城①,万科城②"
-"busName": "A1、A2出入口丨鹏基工业区"
-"busName": "福田公交枢纽站公交信息"
-"chukou": "                                           B出入口"
-```
-```json
-{
-"busInfo": "M165需删除、M361、M195需删除、M219、M276、E6、E7、E23、E33需删除、E34、M277、M304、M305、M359、818、M230、M136需删除、M266、高峰专线17（新增）",
-"busName": "双龙地铁站②③"
-}
-```
-```json
-{
-"busOutInfo": [],
-"chukou": "此站暂无数据"
-}
-```
 
-in `lines.json`:
-```json
-"Universiade",
-"Universiade Center",
-"  Longcheng Park",
-"Huanggekeng  station",
-"Yuyuan  station",
-"Huilongpu  station\n",
-```
-in `rides.json`:
-```json
-"start_station": "Huilongpu  station\n",
-```
-```json
-"end_station": "Dongjiang Column Memorial \nHall Station",
-```
 
 ## Relational Database Design
 TODO
@@ -97,8 +58,172 @@ chmod +x ./load.sh
 
 ### Deploy Java Version
 TODO
-    psql --command="CREATE TABLE tmp_table(name VARCHAR(255) PRIMARY KEY, district VARCHAR(255));" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
-    psql --command="\COPY tmp_table FROM '$CSV_PATH/bus_stations.csv'; \
-                    INSERT INTO bus_stations (station_id, station_name, line_id) \
-                    SELECT station_id, station_name, line_id FROM tmp_table \
-                    ON CONFLICT DO NOTHING;" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+
+## Data Corruption Found
+in `stations.json`:
+```json
+"busName": "1、尚景欣园:802、低碳城假日专线、M276、M386、M556；2、盛平地铁站"
+"busName": "中粮创芯公园北（原"
+"busName": "角塘西:M198、M309、M521、M568、M597、高峰专线221B出入口城市山海云汇"
+"busName": "万科城①,万科城②"
+"busName": "A1、A2出入口丨鹏基工业区"
+"busName": "福田公交枢纽站公交信息"
+"chukou": "                                           B出入口"
+```
+```json
+{
+"busInfo": "M165需删除、M361、M195需删除、M219、M276、E6、E7、E23、E33需删除、E34、M277、M304、M305、M359、818、M230、M136需删除、M266、高峰专线17（新增）",
+"busName": "双龙地铁站②③"
+}
+```
+```json
+{
+"busOutInfo": [],
+"chukou": "此站暂无数据"
+}
+```
+```json
+{
+"busInfo": "351、366、M239、M266、M295、M309、M570B出入口",
+"busName": "横岗地铁站①"
+}
+```
+```json
+{
+"busInfo": "103路 113路 12路 203路 214路 215路 3路 E8路 M156路 M190路 M192路 M559路 N3路",
+"busName": "门诊部1西行方向"
+},
+{
+"busInfo": "103路 113路 12路 203路 204路 204路快线 211路 214路 215路 337路 351路 3路 64路 E8路 M112路 M156路 M190路 M192路 M399路 M402路 M559路 N3路 N4路",
+"busName": "东行方向"
+},
+{
+"busInfo": "104路 10路 12路 203路 204路 204路快线 214路 215路 223路 29路 337路 3路 64路 85路 M112路 M156路 M239路 M559路 N3路 N4路",
+"busName": "人民桥"
+}
+```
+```json
+{
+"busInfo": "338；615；M371；M419；M472；M530",
+"busName": "福围"
+}
+```
+```json
+{
+"busInfo": "101路 B681路（过铁路桥，距离G出入口约300米）",
+"busName": "中医院一门诊"
+}
+```
+```json
+{
+"busInfo": "606、M425、M250、718、Peak Special Line102、B864、M393、M131、M313、M371、高峰专线138",
+"busName": "富盈门站"
+}
+```
+```json
+{
+"busInfo": "10路;12路;13路;216路;225路;303路;64路;M105路;M183路",
+"busName": "妇幼保健院红荔院区（注 红荔路）"
+}
+{
+"busInfo": "727；E31；M395",
+"busName": "机场海关"
+}
+{
+"busInfo": "10路;12路;13路;216路;225路;303路;64路;M105路;M183路",
+"busName": "妇幼保健院红荔院区（注 红荔路）"
+}
+{
+"busInfo": "B604、M267、M272、M346、M521、M572",
+"busName": "象角塘西:M198、M309、M521、M568、M597、高峰专线221B出入口城市山海云汇"
+}
+{
+"busInfo": "M317/M381/M466/M593.",
+"busName": "大运地铁接驳站2"
+}
+{
+"busInfo": "罗湖公安分局",
+"busName": "公交站名"
+}
+{
+"busOutInfo": [
+{
+"busInfo": "18路.63路.69路.303路.322路.323路.366路.371路.381路",
+"busName": "笋岗街道办"
+}
+],
+"chukou": "D出入口"
+},
+{
+"busOutInfo": [
+{
+"busInfo": "18路.63路.69路.303路.322路.323路.366路.371路.381路.M406",
+"busName": "笋岗街道办"
+}
+],
+"chukou": "C1出入口"
+},
+{
+"busOutInfo": [
+{
+"busInfo": "18路.57路.255路.322路.381路.M406",
+"busName": "笋岗村牌坊"
+}
+],
+"chukou": "C2出入口"
+}
+{
+"busInfo": "320.M131.M330.M350.M377.M382.M470.M507.高峰专线158.高峰专线32.西湾公园假日专线1C出入口",
+"busName": "坪洲地铁站"
+}
+{
+"busInfo": "B992  2.B1出入口",
+"busName": "前海湾地铁站"
+}
+{
+"busOutInfo": [
+{
+"busInfo": "M486、M487、N90、N4、21、26、70、90、101、42、113、223、M191、M312、高峰专线3.C出入口丨世界之窗②::M194、M222、M413、323、324、369、M448",
+"busName": "A出入口丨世界之窗①"
+},
+{
+"busInfo": "392、66、43、M535、M435、高峰专线36、395、320H出入口丨世界之窗①",
+"busName": "C、H出入口丨公交接驳站"
+},
+{
+"busInfo": "323、324、369、M191、M194、M222、M413、M448",
+"busName": "H出入口丨世界之窗②"
+}
+],
+"chukou": ""
+}
+          {
+            "busInfo": "暂无线路停靠",
+            "busName": "后瑞地铁站 ③"
+          }
+                    {
+            "busInfo": "m598、m552、m234",
+            "busName": "后亭地铁站"
+          }
+                    {
+            "busInfo": "366，833，915，b760，e20，m295，m326，m434，m439，m443，m479，m575，m576，高峰专线64",
+            "busName": "坪山电子城②"
+          }
+```
+
+in `lines.json`:
+```json
+"Universiade",
+"Universiade Center",
+"  Longcheng Park",
+"Huanggekeng  station",
+"Yuyuan  station",
+"Huilongpu  station\n",
+```
+in `rides.json`:
+```json
+"start_station": "Huilongpu  station\n",
+```
+```json
+"end_station": "Dongjiang Column Memorial \nHall Station",
+```
