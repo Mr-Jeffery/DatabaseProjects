@@ -15,3 +15,8 @@ add_executable(LoadData src/copy.cpp)
 
 # Link LoadData with libpqxx
 target_link_libraries(LoadData PRIVATE pqxx)
+# find_package(OpenMP)
+# if(OpenMP_CXX_FOUND)
+#     message("OpenMP found")
+#     target_link_libraries(LoadData PUBLIC OpenMP::OpenMP_CXX)
+# endif()

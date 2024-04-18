@@ -295,9 +295,10 @@ int main() {
         double price = ride["price"];
         std::string start_time = ride["start_time"];
         std::string end_time = ride["end_time"];
-        std::string str = user + "," + start_station + "," + end_station + "," + std::to_string(price) + "," + start_time + "," + end_time;
-        str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
-        rides_csv << str << "\n";
+        std::string str = user + "," + start_station + "," + end_station + "," + std::to_string(price) + "," + start_time + "," + end_time + "\n";
+        // str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
+        // rides_csv << str << "\n";
+        rides_csv << str;
         // rides_csv << user << "," << start_station << "," << end_station << "," << price << "," << start_time << "," << end_time << "\n";
         // printProgress((double) ++i / total);
     }
@@ -378,7 +379,7 @@ int main() {
         std::cerr << "Error: could not open csv" << std::endl;
         return 1;
     }
-
+    
     for (auto& station : stations.items()) {
         // Extract data from JSON
         // std::string station_id = std::to_string(id++);
@@ -442,12 +443,16 @@ int main() {
                         bus_line_details_arr.push_back(converter.to_bytes(token));
                     }
                 }
+                std::string bus_line_str;
                 for (const auto& bus_line : bus_line_details_arr) {
-                    std::string bus_line_str = bus_line + "," + bus_station_name;
-                    bus_line_str.erase(std::remove(bus_line_str.begin(), bus_line_str.end(), '\n'), bus_line_str.end());
+                    // bus_line_str = bus_line_str + bus_line + "," + bus_station_name + "\n";
+                    bus_line_str = bus_line + "," + bus_station_name;
+                    // bus_line_str.erase(std::remove(bus_line_str.begin(), bus_line_str.end(), '\n'), bus_line_str.end());
                     bus_line_str.erase(std::remove(bus_line_str.begin(), bus_line_str.end(), ' '), bus_line_str.end());
                     bus_line_details_csv << bus_line_str << "\n";
                 }
+                // bus_line_str.erase(std::remove(bus_line_str.begin(), bus_line_str.end(), ' '), bus_line_str.end());
+                // bus_line_details_csv << bus_line_str;
             }
         }
     }
