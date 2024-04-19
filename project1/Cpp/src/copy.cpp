@@ -106,7 +106,7 @@ int main() {
 
     time_spent = (double)(end.tv_sec - start.tv_sec) + ((end.tv_usec - start.tv_usec)/1000000.0);
 
-    std::cout << "JSON parsing completed in " << time_spent << " seconds." << std::endl;
+    std::cout << "\033[1;31mJSON parsing completed in " << time_spent << " seconds.\033[0m" << std::endl;
 
     // Connect to the database
     pqxx::connection c(conn_str);
@@ -141,7 +141,6 @@ int main() {
     std::cout << create_rides_query << std::endl;
     w.exec(create_rides_query);
     
-
 
     // Create the lines table
     std::string create_lines_query = std::string("CREATE TABLE IF NOT EXISTS lines (")
@@ -209,9 +208,8 @@ int main() {
         +"name VARCHAR(255),"
         +"textt TEXT,"
         +"FOREIGN KEY (station_name) REFERENCES stations(name),"
-        +"PRIMARY KEY (station_name,name)"
+        +"PRIMARY KEY (station_name, name)"
         +");";
-        
     std::cout << create_exits_query << std::endl;
     w.exec(create_exits_query);
 
@@ -220,9 +218,9 @@ int main() {
         +"station_name VARCHAR(255), "
         +"name VARCHAR(255), "
         +"bus_station_name VARCHAR(255)"
-        // +", FOREIGN KEY (station_name, name) REFERENCES exits(station_name,name), "
-        // +"FOREIGN KEY (bus_station_name) REFERENCES bus_stations(name) "
-        // +",PRIMARY KEY ((station_name, name)，bus_station_name)"
+        +", FOREIGN KEY (station_name, name) REFERENCES exits(station_name,name), "
+        +"FOREIGN KEY (bus_station_name) REFERENCES bus_stations(name) "
+        +",PRIMARY KEY (station_name, name, bus_station_name)"
         +");";
     w.exec(create_exit_details_query);
 
@@ -314,7 +312,6 @@ int main() {
         // str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
         // rides_csv << str << "\n";
         rides_csv << str << std::endl;
-        // rides_csv << user << "," << start_station << "," << end_station << "," << price << "," << start_time << "," << end_time << "\n";
         // printProgress((double) ++i / total);
     }
     rides_csv.close();
@@ -355,14 +352,14 @@ int main() {
         std::string url = line.value()["url"];
         std::string intro = line.value()["intro"];
         std::string line_str = name + "," + start_time + "," + end_time + "," + mileage + "," + color + "," + first_opening + "," + url + "," + intro;
-        line_str.erase(std::remove(line_str.begin(), line_str.end(), '\n'), line_str.end());
+        // line_str.erase(std::remove(line_str.begin(), line_str.end(), '\n'), line_str.end());
         lines_csv << line_str << std::endl;
         
         for (const auto& station : line.value()["stations"]) {
             // std::cout << "  Station: " << station.get<std::string>() << std::endl;
             std::string line_details_str = name + "," + station.get<std::string>();
             
-            line_details_str.erase(std::remove(line_details_str.begin(), line_details_str.end(), '\n'), line_details_str.end());
+            // line_details_str.erase(std::remove(line_details_str.begin(), line_details_str.end(), '\n'), line_details_str.end());
             line_details_csv << line_details_str << std::endl;
         }
     }
@@ -399,6 +396,7 @@ int main() {
     std::filesystem::path exit_details_csv_path = current_path / "exit_details.csv";
     std::ofstream exit_details_csv(exit_details_csv_path);
     std::cout << "\texit_details.csv path: " << exit_details_csv_path << std::endl;
+    exit_details_csv << "station_name,name,bus_station_name" << std::endl;
 
     if (!bus_line_details_csv.is_open()||!exits_csv.is_open()||!stations_csv.is_open()||!bus_stations_csv.is_open()||!exit_details_csv.is_open()){
         std::cerr << "Error: could not open csv" << std::endl;
@@ -418,7 +416,7 @@ int main() {
 
         std::string chinese_name = station.value()["chinese_name"];
         std::string station_str = name + "," + district + "," + intro + "," + chinese_name;
-        station_str.erase(std::remove(station_str.begin(), station_str.end(), '\n'), station_str.end());
+        // station_str.erase(std::remove(station_str.begin(), station_str.end(), '\n'), station_str.end());
         stations_csv << station_str << std::endl;
 
         // add exits for each station
@@ -461,7 +459,8 @@ int main() {
             }
             // std::cout << bus_station_name << std::endl; 
             std::string bus_station_str = bus_station_name + "," + district;
-            bus_station_str.erase(std::remove(bus_station_str.begin(), bus_station_str.end(), '\n'), bus_station_str.end());
+            // bus_station_str.erase(std::remove(bus_station_str.begin(), bus_station_str.end(), '\n'), bus_station_str.end());
+            bus_station_str.erase(std::remove(bus_station_str.begin(), bus_station_str.end(), ' '), bus_station_str.end());
             bus_stations_csv << bus_station_str << std::endl;
 
             // add bus line details for each bus station
@@ -518,9 +517,6 @@ int main() {
             exit_details_csv << exit_details_str << std::endl;
             
         }
-
-
-
     }
     stations_csv.close();
     exits_csv.close();
@@ -531,7 +527,7 @@ int main() {
     // end = std::time(nullptr);
     gettimeofday(&end, NULL);
     time_spent = (double)(end.tv_sec - start.tv_sec) + ((end.tv_usec - start.tv_usec)/1000000.0);
-    std::cout << "json to csv completed in " << time_spent << " seconds." << std::endl;
+    std::cout << "\033[1;31mjson to csv completed in " << time_spent << " seconds.\033[0m" << std::endl;
 
 
     // Copy the csv files to the database
@@ -585,6 +581,7 @@ int main() {
     +"COPY tmp_exit_details FROM '"
     + exit_details_csv_path.string()
     +"' WITH (FORMAT CSV, HEADER, DELIMITER ',');"
+    +"INSERT INTO exits SELECT station_name, name, bus_station_name AS textt FROM tmp_exit_details ON CONFLICT DO NOTHING;"
     +"INSERT INTO exit_details SELECT * FROM tmp_exit_details ON CONFLICT DO NOTHING;";
     std::cout << copy_exit_details_query << std::endl;
     w.exec(copy_exit_details_query);
@@ -595,7 +592,6 @@ int main() {
 
     gettimeofday(&end, NULL);
     time_spent = (double)(end.tv_sec - start.tv_sec) + ((end.tv_usec - start.tv_usec)/1000000.0);
-    std::cout << "csv to database completed in " << time_spent << " seconds." << std::endl;
-
+    std::cout << "\033[1;31mcsv to database completed in " << time_spent << " seconds.\033[0m" << std::endl;
     return 0;
 }
