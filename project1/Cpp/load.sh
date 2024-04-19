@@ -16,8 +16,9 @@ psql --command="DROP TABLE IF EXISTS rides CASCADE;\
                 DROP TABLE IF EXISTS exits CASCADE;\
                 DROP TABLE IF EXISTS bus_stations CASCADE;\
                 DROP TABLE IF EXISTS stations CASCADE;\
-                DROP TABLE IF EXISTS bus_line_details CASCADE; \
-                DROP TABLE IF EXISTS bus_lines CASCADE;" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+                DROP TABLE IF EXISTS bus_line_details CASCADE;\
+                DROP TABLE IF EXISTS bus_lines CASCADE;\
+                DROP TABLE IF EXISTS exit_details;" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
 
 # CSV_PATH=$(pwd)
 unameOut="$(uname -s)"

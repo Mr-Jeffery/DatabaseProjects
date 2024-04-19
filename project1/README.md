@@ -68,7 +68,10 @@ in `stations.json`:
 "busName": "万科城①,万科城②"
 "busName": "A1、A2出入口丨鹏基工业区"
 "busName": "福田公交枢纽站公交信息"
+"chukou": "坪山人民医院：M479,818,939路B线,M143,M546路外环,939路A线,M546路内环,964路B出入口"
 "chukou": "                                           B出入口"
+"chukou": "D/E出入口"
+"chukou": "B出入口/C出入口"
 ```
 ```json
 {
@@ -255,6 +258,7 @@ in `stations.json`:
         "textt": "深圳市大运综合交通枢纽"
       }
       "intro": "燕子湖站（Yanzihu Station），位于中国广东省深圳市坪山区，是深圳地铁16号线的一座地铁车站。 该站于2022年12月28日投入运营。 燕子湖站（Yanzihu Station），位于中国广东省深圳市坪山区，是深圳地铁16号线的一座地铁车站。 该站于2022年12月28日投入运营。 "
+      
 ```
 
 in `lines.json`:
@@ -265,6 +269,7 @@ in `lines.json`:
 "Huanggekeng  station",
 "Yuyuan  station",
 "Huilongpu  station\n",
+"Liuyue North",
 ```
 in `rides.json`:
 ```json
