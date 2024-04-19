@@ -46,10 +46,15 @@ int main() {
 
     std::string conn_str = "dbname=" + db_name + " user=" + db_user + " password=" + db_password + " host=" + db_host + " port=" + db_port;
 
+    // CSV path, /tmp by default
     const char* csv_path_ctsr = getenv("CSV_PATH");
     std::string csv_path = csv_path_ctsr ? csv_path_ctsr : "?";
-    std::filesystem::path current_path = std::filesystem::path(csv_path);
+    const std::filesystem::path current_path = std::filesystem::path(csv_path);
+
     std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
+
+    // Chinese string
+    const std::string chu1_ru4_kou3 = "出入口";
 
     // timing
     // std::time_t start, end;
@@ -172,7 +177,7 @@ int main() {
     w.exec(create_bus_stations_query);
 
     // Create the bus_line table
-    std::string create_bus_lines_query = std::string("CREATE TABLE IF NOT EXISTS bus_line (")
+    std::string create_bus_lines_query = std::string("CREATE TABLE IF NOT EXISTS bus_lines (")
         // +"bus_line_id VARCHAR(255), "
         +"name VARCHAR(255) PRIMARY KEY);";
     std::cout << create_bus_lines_query << std::endl;
@@ -234,14 +239,13 @@ int main() {
     }
     
     std::cout << "\tcards.csv path: " << cards_csv_path << std::endl;
-    std::string cards_header = "code,money,create_time\n";
-    cards_csv << cards_header;
+    cards_csv << "code,money,create_time" << std::endl;
     for (auto& card : cards) {
         // Extract data from JSON
         std::string code = card["code"];
         double money = card["money"];
         std::string create_time = card["create_time"];
-        cards_csv << code << "," << money << "," << create_time << "\n";
+        cards_csv << code << "," << money << "," << create_time << std::endl;
     }
     cards_csv.close();
 
@@ -257,7 +261,7 @@ int main() {
 
     
     std::cout << "\tpassengers.csv path: " << passengers_csv_path << std::endl;
-    passengers_csv << "name,id_number,phone_number,gender,district\n";
+    passengers_csv << "name,id_number,phone_number,gender,district" << std::endl;
     for (auto& passenger : passengers) {
         // Extract data from JSON
         std::string name = passenger["name"];
@@ -265,7 +269,7 @@ int main() {
         std::string phone_number = passenger["phone_number"];
         std::string gender = passenger["gender"];
         std::string district = passenger["district"];
-        passengers_csv << name << "," << id_number << "," << phone_number << "," << gender << "," << district << "\n";
+        passengers_csv << name << "," << id_number << "," << phone_number << "," << gender << "," << district << std::endl;
     }
     passengers_csv.close(); 
 
@@ -282,8 +286,7 @@ int main() {
     
     std::cout << "\trides.csv path: " << rides_csv_path << std::endl;
 
-    std::string rides_header = "rail_user,start_station,end_station,price,start_time,end_time\n";
-    rides_csv << rides_header;
+    rides_csv << "rail_user,start_station,end_station,price,start_time,end_time" << std::endl;
     // i = 0;
     // total = rides.size();
     // printf("Total rides: %ld\n", total);
@@ -295,10 +298,10 @@ int main() {
         double price = ride["price"];
         std::string start_time = ride["start_time"];
         std::string end_time = ride["end_time"];
-        std::string str = user + "," + start_station + "," + end_station + "," + std::to_string(price) + "," + start_time + "," + end_time + "\n";
+        std::string str = user + "," + start_station + "," + end_station + "," + std::to_string(price) + "," + start_time + "," + end_time;
         // str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
         // rides_csv << str << "\n";
-        rides_csv << str;
+        rides_csv << str << std::endl;
         // rides_csv << user << "," << start_station << "," << end_station << "," << price << "," << start_time << "," << end_time << "\n";
         // printProgress((double) ++i / total);
     }
@@ -310,7 +313,7 @@ int main() {
     std::filesystem::path lines_csv_path = current_path / "lines.csv";
     std::ofstream lines_csv(lines_csv_path);
     std::cout << "\tlines.csv path: " << lines_csv_path << std::endl;
-    lines_csv << "name,start_time,end_time,mileage,color,first_opening,url,intro\n";
+    lines_csv << "name,start_time,end_time,mileage,color,first_opening,url,intro" << std::endl;
 
 
 
@@ -318,7 +321,7 @@ int main() {
     std::filesystem::path line_details_csv_path = current_path / "line_details.csv";
     std::ofstream line_details_csv(line_details_csv_path);
     std::cout << "\tline_details.csv path: " << line_details_csv_path << std::endl;
-    line_details_csv << "line_name,station_name\n";
+    line_details_csv << "line_name,station_name" << std::endl;
     // int id;
     // id = 0;
     if (!lines_csv.is_open()||!line_details_csv.is_open()) {
@@ -341,14 +344,14 @@ int main() {
         std::string intro = line.value()["intro"];
         std::string line_str = name + "," + start_time + "," + end_time + "," + mileage + "," + color + "," + first_opening + "," + url + "," + intro;
         line_str.erase(std::remove(line_str.begin(), line_str.end(), '\n'), line_str.end());
-        lines_csv << line_str << "\n";
+        lines_csv << line_str << std::endl;
         
         for (const auto& station : line.value()["stations"]) {
             // std::cout << "  Station: " << station.get<std::string>() << std::endl;
             std::string line_details_str = name + "," + station.get<std::string>();
             
             line_details_str.erase(std::remove(line_details_str.begin(), line_details_str.end(), '\n'), line_details_str.end());
-            line_details_csv << line_details_str << "\n";
+            line_details_csv << line_details_str << std::endl;
         }
     }
     lines_csv.close();
@@ -360,22 +363,28 @@ int main() {
     std::filesystem::path stations_csv_path = current_path / "stations.csv";
     std::ofstream stations_csv(stations_csv_path);
     std::cout << "\tstations.csv path: " << stations_csv_path << std::endl;
-    stations_csv << "name,district,intro,chinese_name\n";
+    stations_csv << "name,district,intro,chinese_name"<< std::endl;
 
     std::cout << "Writing to bus_stations.csv..." << std::endl;
     std::filesystem::path bus_stations_csv_path = current_path / "bus_stations.csv";
     std::ofstream bus_stations_csv(bus_stations_csv_path);
     std::cout << "\tbus_stations.csv path: " << bus_stations_csv_path << std::endl;
-    bus_stations_csv << "name,district\n";
+    bus_stations_csv << "name,district" << std::endl;
+
+    std::cout << "Writing to exits.csv..." << std::endl;
+    std::filesystem::path exits_csv_path = current_path / "exits.csv";
+    std::ofstream exits_csv(exits_csv_path);
+    std::cout << "\texits.csv path: " << exits_csv_path << std::endl;
+    exits_csv << "station_name,name,textt" << std::endl;
 
 
     std::cout << "Writing to bus_line_details.csv..." << std::endl;
     std::filesystem::path bus_line_details_csv_path = current_path / "bus_line_details.csv";
     std::ofstream bus_line_details_csv(bus_line_details_csv_path);
     std::cout << "\tbus_line_details.csv path: " << bus_line_details_csv_path << std::endl;
-    bus_line_details_csv << "bus_line_name,station_name\n";    
+    bus_line_details_csv << "bus_line_name,station_name" << std::endl;    
 
-    if (!bus_line_details_csv.is_open()||!stations_csv.is_open()||!bus_stations_csv.is_open()){
+    if (!bus_line_details_csv.is_open()||!exits_csv.is_open()||!stations_csv.is_open()||!bus_stations_csv.is_open()){
         std::cerr << "Error: could not open csv" << std::endl;
         return 1;
     }
@@ -394,69 +403,104 @@ int main() {
         std::string chinese_name = station.value()["chinese_name"];
         std::string station_str = name + "," + district + "," + intro + "," + chinese_name;
         station_str.erase(std::remove(station_str.begin(), station_str.end(), '\n'), station_str.end());
-        stations_csv << station_str << "\n";
+        stations_csv << station_str << std::endl;
+
+        // add exits for each station
+        for (const auto& exit : station.value()["out_info"]) {
+            if (!exit.contains("textt") && exit["textt"].empty()) {
+                continue;
+            }
+            std::string exit_name = exit["outt"];
+            // exit_name.erase(std::remove_if(exit_name.begin(), exit_name.end(), [](unsigned char c) { return !std::isalnum(c); }), exit_name.end());
+            // std::wstring exit_name_wstr = converter.from_bytes(exit_name);
+
+            // Remove all spaces, both chinese and english, they are not the same!!!!!
+            // exit_name_wstr.erase(std::remove(exit_name_wstr.begin(), exit_name_wstr.end(), L' '), exit_name_wstr.end());
+            // exit_name_wstr.erase(std::remove(exit_name_wstr.begin(), exit_name_wstr.end(), L' '), exit_name_wstr.end());
+            // size_t pos = exit_name.find(chu1_ru4_kou3);
+            // size_t pos = exit_name.find("出");
+            // if (pos != std::wstring::npos) {
+            //     exit_name.replace(pos, chu1_ru4_kou3.length(), "");
+            // }
+
+            std::string exit_text = exit["textt"];
+            std::wstring exit_text_wstr = converter.from_bytes(exit_text);
+            std::replace(exit_text_wstr.begin(), exit_text_wstr.end(), L',', L'、');
+            std::replace(exit_text_wstr.begin(), exit_text_wstr.end(), L'，', L'、');
+            exit_text = converter.to_bytes(exit_text_wstr);
+
+            std::string exit_str = name + "," + exit_name + "," + exit_text;
+            exit_str.erase(std::remove(exit_str.begin() + name.size() - 1, exit_str.end(), ' '), exit_str.end());
+            exits_csv << exit_str << std::endl;
+        }
         
         // add bus stations for each station
         for (const auto& bus_station : station.value()["bus_info"]) {
-            if (bus_station.contains("busOutInfo") && !bus_station["busOutInfo"].empty()) {
-                std::string bus_station_name = bus_station["busOutInfo"][0]["busName"];
-                if (bus_station_name.empty()) {// skip empty bus station names
-                    continue;
-                }
-                // std::cout << bus_station_name << std::endl; 
-                std::string bus_station_str = bus_station_name + "," + district;
-                bus_station_str.erase(std::remove(bus_station_str.begin(), bus_station_str.end(), '\n'), bus_station_str.end());
-                bus_stations_csv << bus_station_str << "\n";
-
-                // add bus line details for each bus station
-                std::string bus_line_name = bus_station["busOutInfo"][0]["busInfo"].get<std::string>();
-                std::wstring bus_line_details = converter.from_bytes(bus_line_name);
-                size_t pos;
-
-                // while ((pos = bus_line_details.find(L',')) != std::wstring::npos) {
-                //     bus_line_details.replace(pos, 1, L"、");
-                // }
-
-                // while ((pos = bus_line_details.find(L'，')) != std::wstring::npos) {
-                //     bus_line_details.replace(pos, 1, L"、");
-                // }
-
-                // while ((pos = bus_line_details.find(L'路')) != std::wstring::npos) {
-                //     bus_line_details.replace(pos, 1, L" ");
-                // }
-                while ((pos = bus_line_details.find_first_of(L",，路")) != std::wstring::npos) {
-                    if (bus_line_details[pos] == L'路') {
-                        bus_line_details.replace(pos, 1, L" ");
-                    } else {
-                        bus_line_details.replace(pos, 1, L"、");
-                    }
-                }
-
-
-                std::wstringstream wss(bus_line_details);
-                std::wstring token;
-                std::vector<std::string> bus_line_details_arr;
-                std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
-
-                while (std::getline(wss, token, L'、')) {
-                    if (!token.empty()) {\
-                        bus_line_details_arr.push_back(converter.to_bytes(token));
-                    }
-                }
-                std::string bus_line_str;
-                for (const auto& bus_line : bus_line_details_arr) {
-                    // bus_line_str = bus_line_str + bus_line + "," + bus_station_name + "\n";
-                    bus_line_str = bus_line + "," + bus_station_name;
-                    // bus_line_str.erase(std::remove(bus_line_str.begin(), bus_line_str.end(), '\n'), bus_line_str.end());
-                    bus_line_str.erase(std::remove(bus_line_str.begin(), bus_line_str.end(), ' '), bus_line_str.end());
-                    bus_line_details_csv << bus_line_str << "\n";
-                }
-                // bus_line_str.erase(std::remove(bus_line_str.begin(), bus_line_str.end(), ' '), bus_line_str.end());
-                // bus_line_details_csv << bus_line_str;
+            if (!bus_station.contains("busOutInfo") || bus_station["busOutInfo"].empty()) {
+                continue;// skip stations without bus info
             }
+            std::string bus_station_name = bus_station["busOutInfo"][0]["busName"];
+            if (bus_station_name.empty()) {// skip empty bus station names
+                continue;
+            }
+            // std::cout << bus_station_name << std::endl; 
+            std::string bus_station_str = bus_station_name + "," + district;
+            bus_station_str.erase(std::remove(bus_station_str.begin(), bus_station_str.end(), '\n'), bus_station_str.end());
+            bus_stations_csv << bus_station_str << std::endl;
+
+            // add bus line details for each bus station
+            std::string bus_line_name = bus_station["busOutInfo"][0]["busInfo"].get<std::string>();
+            std::wstring bus_line_details = converter.from_bytes(bus_line_name);
+            size_t pos;
+
+            // while ((pos = bus_line_details.find(L',')) != std::wstring::npos) {
+            //     bus_line_details.replace(pos, 1, L"、");
+            // }
+
+            // while ((pos = bus_line_details.find(L'，')) != std::wstring::npos) {
+            //     bus_line_details.replace(pos, 1, L"、");
+            // }
+
+            // while ((pos = bus_line_details.find(L'路')) != std::wstring::npos) {
+            //     bus_line_details.replace(pos, 1, L" ");
+            // }
+            while ((pos = bus_line_details.find_first_of(L",，路")) != std::wstring::npos) {
+                if (bus_line_details[pos] == L'路') {
+                    bus_line_details.replace(pos, 1, L" ");
+                } else {
+                    bus_line_details.replace(pos, 1, L"、");
+                }
+            }
+
+
+            std::wstringstream wss(bus_line_details);
+            std::wstring token;
+            std::vector<std::string> bus_line_details_arr;
+            std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
+
+            while (std::getline(wss, token, L'、')) {
+                if (!token.empty()) {\
+                    bus_line_details_arr.push_back(converter.to_bytes(token));
+                }
+            }
+            std::string bus_line_str;
+            for (const auto& bus_line : bus_line_details_arr) {
+                // bus_line_str = bus_line_str + bus_line + "," + bus_station_name + "\n";
+                bus_line_str = bus_line + "," + bus_station_name;
+                // bus_line_str.erase(std::remove(bus_line_str.begin(), bus_line_str.end(), '\n'), bus_line_str.end());
+                bus_line_str.erase(std::remove(bus_line_str.begin(), bus_line_str.end(), ' '), bus_line_str.end());
+                bus_line_details_csv << bus_line_str << std::endl;
+            }
+            // bus_line_str.erase(std::remove(bus_line_str.begin(), bus_line_str.end(), ' '), bus_line_str.end());
+            // bus_line_details_csv << bus_line_str;
+            
         }
+
+
+
     }
     stations_csv.close();
+    exits_csv.close();
     bus_stations_csv.close();
     bus_line_details_csv.close();
 
@@ -491,6 +535,10 @@ int main() {
     std::string copy_stations_query = "COPY stations FROM '" + stations_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')";
     std::cout << copy_stations_query << std::endl;
     w.exec(copy_stations_query);
+
+    std::string copy_exits_query = "COPY exits FROM '" + exits_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')";
+    std::cout << copy_exits_query << std::endl;
+    w.exec(copy_exits_query);
     
     std::string copy_bus_stations_query = std::string("CREATE TEMP TABLE tmp_bus_stations AS SELECT * FROM bus_stations LIMIT 0;")
     +"COPY tmp_bus_stations FROM '"
@@ -503,6 +551,14 @@ int main() {
     std::string copy_bus_line_details_query = "COPY bus_line_details FROM '" + bus_line_details_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')";
     std::cout << copy_bus_line_details_query << std::endl;
     w.exec(copy_bus_line_details_query);
+
+    std::string make_bus_line_query = "INSERT INTO bus_lines SELECT DISTINCT bus_line_name FROM bus_line_details;";
+    std::cout << make_bus_line_query << std::endl;
+    w.exec(make_bus_line_query);
+
+
+
+    // Commit the transaction
 
     w.commit();
 
