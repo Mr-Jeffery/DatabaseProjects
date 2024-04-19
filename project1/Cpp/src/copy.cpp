@@ -512,31 +512,31 @@ int main() {
 
     // Copy the csv files to the database
     gettimeofday(&start, NULL);
-    std::string copy_cards_query = "COPY cards FROM '" + cards_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')";
+    std::string copy_cards_query = "COPY cards FROM '" + cards_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',');";
     std::cout << copy_cards_query << std::endl;
     w.exec(copy_cards_query);
 
-    std::string copy_passengers_query = "COPY passengers FROM '" + passengers_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')";
+    std::string copy_passengers_query = "COPY passengers FROM '" + passengers_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',');";
     std::cout << copy_passengers_query << std::endl;
     w.exec(copy_passengers_query);
 
-    std::string copy_rides_query = "COPY rides FROM '" + rides_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')";
+    std::string copy_rides_query = "COPY rides FROM '" + rides_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',');";
     std::cout << copy_rides_query << std::endl;
     w.exec(copy_rides_query);
 
-    std::string copy_lines_query = "COPY lines FROM '" + lines_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')";
+    std::string copy_lines_query = "COPY lines FROM '" + lines_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',');";
     std::cout << copy_lines_query << std::endl;
     w.exec(copy_lines_query);
 
-    std::string copy_line_details_query = "COPY line_details FROM '" + line_details_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')";
+    std::string copy_line_details_query = "COPY line_details FROM '" + line_details_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',');";
     std::cout << copy_line_details_query << std::endl;
     w.exec(copy_line_details_query);
 
-    std::string copy_stations_query = "COPY stations FROM '" + stations_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')";
+    std::string copy_stations_query = "COPY stations FROM '" + stations_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',');";
     std::cout << copy_stations_query << std::endl;
     w.exec(copy_stations_query);
 
-    std::string copy_exits_query = "COPY exits FROM '" + exits_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')";
+    std::string copy_exits_query = "COPY exits FROM '" + exits_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',');";
     std::cout << copy_exits_query << std::endl;
     w.exec(copy_exits_query);
     
@@ -548,7 +548,7 @@ int main() {
     std::cout << copy_bus_stations_query << std::endl;
     w.exec(copy_bus_stations_query);
 
-    std::string copy_bus_line_details_query = "COPY bus_line_details FROM '" + bus_line_details_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',')";
+    std::string copy_bus_line_details_query = "COPY bus_line_details FROM '" + bus_line_details_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',');";
     std::cout << copy_bus_line_details_query << std::endl;
     w.exec(copy_bus_line_details_query);
 
