@@ -1,5 +1,5 @@
 source ../setenv.sh
-
+export DATA_PATH=$(cd .. && pwd)/Data
 cd build
 rm -f ./LoadData
 make
