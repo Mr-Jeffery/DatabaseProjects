@@ -32,3 +32,15 @@ COPY exits FROM '/tmp/exits.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');
 CREATE TEMP TABLE tmp_bus_stations AS SELECT * FROM bus_stations LIMIT 0;COPY tmp_bus_stations FROM '/tmp/bus_stations.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');INSERT INTO bus_stations SELECT * FROM tmp_bus_stations ON CONFLICT DO NOTHING;
 COPY bus_line_details FROM '/tmp/bus_line_details.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');
 INSERT INTO bus_lines SELECT DISTINCT bus_line_name FROM bus_line_details;
+
+UPDATE bus_line_details
+SET bus_line_name = REGEXP_REPLACE(bus_line_name, '[A-Z]*[0-9]*出入口$', '')
+WHERE bus_line_name LIKE '%出入口%';
+
+-- UPDATE bus_line_details
+-- SET bus_line_name = REGEXP_REPLACE(bus_line_name, '（(.*)', '')
+-- WHERE bus_line_name LIKE '%（%';
+
+-- UPDATE bus_line_details
+-- SET bus_line_name = REGEXP_REPLACE(bus_line_name, '\((.*)', '')
+-- WHERE bus_line_name LIKE '%\(%';

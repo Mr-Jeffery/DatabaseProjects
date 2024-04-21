@@ -55,11 +55,15 @@ chmod +x ./setup.sh
 chmod +x ./load.sh
 ./load.sh
 ```
-
+#### Access Postgres in WSL2
+[link](https://askubuntu.com/questions/1222184/how-to-connect-datagrip-on-ubuntu-wsl-inside-windows)
 ### Deploy Java Version
 TODO
 
 ## Data Corruption Found
+in `rides.json` :
+![spacing](image.png)
+
 in `stations.json`:
 ```json
 "busName": "1、尚景欣园:802、低碳城假日专线、M276、M386、M556；2、盛平地铁站"
@@ -84,11 +88,33 @@ in `stations.json`:
 "busOutInfo": [],
 "chukou": "此站暂无数据"
 }
+{
+  "busInfo": "无B出入口",
+  "busName": "吉祥地铁站"
+}
+```
+```json
+{
+"busInfo": "B3出入口",
+"busName": "海航城"
+}
+```
+```json
+          {
+            "busInfo": "21、22、37、201、226、324高峰专线62、高峰专线138、M176、M343、M349、M425、M475、M492、M506",
+            "busName": "中山公园东门"
+          }
 ```
 ```json
 {
 "busInfo": "351、366、M239、M266、M295、M309、M570B出入口",
 "busName": "横岗地铁站①"
+}
+```
+```json
+{
+"busInfo": "101路 B681路（过铁路桥，距离G出入口约300米）",
+"busName": "中医院一门诊"
 }
 ```
 ```json
@@ -183,6 +209,10 @@ in `stations.json`:
 "busInfo": "B992  2.B1出入口",
 "busName": "前海湾地铁站"
 }
+          {
+            "busInfo": "无",
+            "busName": "红花山地铁站"
+          }
 {
 "busOutInfo": [
 {
