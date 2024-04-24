@@ -308,3 +308,6 @@ in `rides.json`:
 ```json
 "end_station": "Dongjiang Column Memorial \nHall Station",
 ```
+
+in `stations.json`:
+the original district for nonglin station is "\西丽线"， we corrected it into "福田区"
