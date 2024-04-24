@@ -55,7 +55,7 @@ int main() {
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 
     // Chinese string
-    const std::string chu1_ru4_kou3 = "出入口";
+    // const std::string chu1_ru4_kou3 = "出入口";
 
     // timing
     // std::time_t start, end;
@@ -97,7 +97,7 @@ int main() {
 
     time_spent = (double)(end.tv_sec - start.tv_sec) + ((end.tv_usec - start.tv_usec)/1000000.0);
 
-    std::cout << "\033[1;31mJSON parsing completed in " << time_spent << " seconds.\033[0m" << '\n';
+    std::cout << "\033[92mJSON parsing completed in " << time_spent << " seconds.\033[0m" << '\n';
 
     // Connect to the database
     pqxx::connection c(conn_str);
@@ -558,7 +558,7 @@ int main() {
     // end = std::time(nullptr);
     gettimeofday(&end, NULL);
     time_spent = (double)(end.tv_sec - start.tv_sec) + ((end.tv_usec - start.tv_usec)/1000000.0);
-    std::cout << "\033[1;31mjson to csv completed in " << time_spent << " seconds.\033[0m" << '\n';
+    std::cout << "\033[92mjson to csv completed in " << time_spent << " seconds.\033[0m" << '\n';
 
 
     // Copy the csv files to the database
@@ -617,12 +617,15 @@ int main() {
     std::cout << copy_exit_details_query << '\n';
     w.exec(copy_exit_details_query);
 
+    // std::string copy_bus_lines_query = "INSERT INTO bus_lines SELECT DISTINCT bus_line_name FROM bus_line_details;";
+    // std::cout << copy_bus_lines_query << '\n';
+    // w.exec(copy_bus_lines_query);
+    
     // Commit the transaction
-
     w.commit();
 
     gettimeofday(&end, NULL);
     time_spent = (double)(end.tv_sec - start.tv_sec) + ((end.tv_usec - start.tv_usec)/1000000.0);
-    std::cout << "\033[1;31mcsv to database completed in " << time_spent << " seconds.\033[0m" << '\n';
+    std::cout << "\033[92mcsv to database completed in " << time_spent << " seconds.\033[0m" << '\n';
     return 0;
 }
