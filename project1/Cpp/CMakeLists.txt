@@ -12,6 +12,7 @@ add_definitions(-O3)
 add_subdirectory(lib/libpqxx)
 
 add_executable(LoadData src/copy.cpp)
+add_executable(SpeedTest src/speed.cpp)
 
 # Link LoadData with libpqxx
 target_link_libraries(LoadData PRIVATE pqxx)
