@@ -33,14 +33,24 @@ CREATE TEMP TABLE tmp_bus_stations AS SELECT * FROM bus_stations LIMIT 0;COPY tm
 COPY bus_line_details FROM '/tmp/bus_line_details.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');
 INSERT INTO bus_lines SELECT DISTINCT bus_line_name FROM bus_line_details;
 
+
+-- for data cleaning
+select distinct bus_line_name
+from bus_line_details
+where bus_line_name like '%出入口%';
+
+UPDATE bus_line_details
+SET bus_line_name = REGEXP_REPLACE(bus_line_name, '（新增）(.*)', '')
+WHERE bus_line_name LIKE '%（新增）%';
+
 UPDATE bus_line_details
 SET bus_line_name = REGEXP_REPLACE(bus_line_name, '[A-Z]*[0-9]*出入口$', '')
 WHERE bus_line_name LIKE '%出入口%';
 
--- UPDATE bus_line_details
--- SET bus_line_name = REGEXP_REPLACE(bus_line_name, '（(.*)', '')
--- WHERE bus_line_name LIKE '%（%';
+UPDATE bus_line_details
+SET bus_line_name = REGEXP_REPLACE(bus_line_name, '（原(.*)', '')
+WHERE bus_line_name LIKE '%（原%';
 
--- UPDATE bus_line_details
--- SET bus_line_name = REGEXP_REPLACE(bus_line_name, '\((.*)', '')
--- WHERE bus_line_name LIKE '%\(%';
+UPDATE bus_line_details
+SET bus_line_name = REGEXP_REPLACE(bus_line_name, '\(原(.*)', '')
+WHERE bus_line_name LIKE '%\(原%';
