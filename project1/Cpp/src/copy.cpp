@@ -105,19 +105,19 @@ int main() {
 
     // // Create the cards table
     std::string create_cards_query = std::string("CREATE TABLE IF NOT EXISTS cards(")
-        +"code VARCHAR(9) PRIMARY KEY CHECK (code ~ '^[0-9]{9}$'), "
-        +"money MONEY NOT NULL, "
-        +"create_time TIMESTAMP NOT NULL);";
+        +"\n\tcode VARCHAR(9) PRIMARY KEY CHECK (code ~ '^[0-9]{9}$'), "
+        +"\n\tmoney MONEY NOT NULL, "
+        +"\n\tcreate_time TIMESTAMP NOT NULL);";
     std::cout << create_cards_query << '\n';
     w.exec(create_cards_query);
 
     // // Create the passengers table
     std::string create_passengers_query = std::string("CREATE TABLE IF NOT EXISTS passengers (")
-        +"name VARCHAR(255) NOT NULL, "
-        +"id_number VARCHAR(18) PRIMARY KEY NOT NULL CHECK (id_number ~ '^[0-9]{17}[0-9X]?$'), "
-        +"phone_number VARCHAR(11) NOT NULL CHECK (phone_number ~ '^[0-9]{11}$'), "
-        +"gender VARCHAR(255) NOT NULL, "
-        +"district VARCHAR(255) NOT NULL);";
+        +"\n\tname VARCHAR(255) NOT NULL, "
+        +"\n\tid_number VARCHAR(18) PRIMARY KEY NOT NULL CHECK (id_number ~ '^[0-9]{17}[0-9X]?$'), "
+        +"\n\tphone_number VARCHAR(11) NOT NULL CHECK (phone_number ~ '^[0-9]{11}$'), "
+        +"\n\tgender VARCHAR(255) NOT NULL, "
+        +"\n\tdistrict VARCHAR(255) NOT NULL);";
     std::cout << create_passengers_query << '\n';
     w.exec(create_passengers_query);
     
@@ -125,37 +125,37 @@ int main() {
     // Create the lines table
     std::string create_lines_query = std::string("CREATE TABLE IF NOT EXISTS lines (")
         // +"line_id VARCHAR(255) , "
-        +"name VARCHAR(255)PRIMARY KEY, "
-        +"start_time TIME, "
-        +"end_time TIME, "
-        +"mileage DOUBLE PRECISION, "
-        +"color VARCHAR(255), "
-        +"first_opening DATE, "
-        +"url TEXT,"
-        +"intro TEXT);";
+        +"\n\tname VARCHAR(255)PRIMARY KEY, "
+        +"\n\tstart_time TIME, "
+        +"\n\tend_time TIME, "
+        +"\n\tmileage DOUBLE PRECISION, "
+        +"\n\tcolor VARCHAR(255), "
+        +"\n\tfirst_opening DATE, "
+        +"\n\turl TEXT,"
+        +"\n\tintro TEXT);";
     std::cout << create_lines_query << '\n';
     w.exec(create_lines_query);
 
     // Create the stations table
     std::string create_stations_query = std::string("CREATE TABLE IF NOT EXISTS stations (")
         // +"station_id VARCHAR(255) PRIMARY KEY, "
-        +"name VARCHAR(255) PRIMARY KEY, "
-        +"district VARCHAR(255), "
-        +"intro TEXT, "
-        +"chinese_name VARCHAR(255));";
+        +"\n\tname VARCHAR(255) PRIMARY KEY, "
+        +"\n\tdistrict VARCHAR(255), "
+        +"\n\tintro TEXT, "
+        +"\n\tchinese_name VARCHAR(255));";
     std::cout << create_stations_query << '\n';
     w.exec(create_stations_query);
 
     // Create the rides table
     std::string create_rides_query = std::string("CREATE TABLE IF NOT EXISTS rides (")
-        +"rail_user VARCHAR(255), "
-        +"start_station VARCHAR(255), "
-        +"end_station VARCHAR(255), "
-        +"price DOUBLE PRECISION, "
-        +"start_time TIMESTAMP, "
-        +"end_time TIMESTAMP"
-        +", FOREIGN KEY (start_station) REFERENCES stations(name), "
-        +"FOREIGN KEY (end_station) REFERENCES stations(name)"
+        +"\n\trail_user VARCHAR(255), "
+        +"\n\tstart_station VARCHAR(255), "
+        +"\n\tend_station VARCHAR(255), "
+        +"\n\tprice DOUBLE PRECISION, "
+        +"\n\tstart_time TIMESTAMP, "
+        +"\n\tend_time TIMESTAMP"
+        +", \n\tFOREIGN KEY (start_station) REFERENCES stations(name), "
+        +"\n\tFOREIGN KEY (end_station) REFERENCES stations(name)"
         +");";
     std::cout << create_rides_query << '\n';
     w.exec(create_rides_query);
@@ -187,33 +187,33 @@ int main() {
 
     // Create the bus_line_details table
     std::string create_bus_line_details_query = std::string("CREATE TABLE IF NOT EXISTS bus_line_details (")
-        +"bus_line_name VARCHAR(255), "
-        +"bus_station_name VARCHAR(255)"
-        // +", FOREIGN KEY (bus_line_name) REFERENCES bus_lines(name), "
-        // +"FOREIGN KEY (bus_station_name) REFERENCES bus_stations(name)"
+        +"\n\tbus_line_name VARCHAR(255), "
+        +"\n\tbus_station_name VARCHAR(255), "
+        // +"\n\tFOREIGN KEY (bus_line_name) REFERENCES bus_lines(name), "// this line is commented because the bus_lines itself is created by copying the bus_line_details
+        +"\n\tFOREIGN KEY (bus_station_name) REFERENCES bus_stations(name)"
         +");";
     std::cout << create_bus_line_details_query << '\n';
     w.exec(create_bus_line_details_query);
 
     // Create the exits table
     std::string create_exits_query = std::string("CREATE TABLE IF NOT EXISTS exits (")
-        +"station_name VARCHAR(255), "
-        +"name VARCHAR(255),"
-        +"textt TEXT,"
-        +"FOREIGN KEY (station_name) REFERENCES stations(name),"
-        +"PRIMARY KEY (station_name, name)"
+        +"\n\tstation_name VARCHAR(255), "
+        +"\n\tname VARCHAR(255),"
+        +"\n\ttextt TEXT,"
+        +"\n\tFOREIGN KEY (station_name) REFERENCES stations(name),"
+        +"\n\tPRIMARY KEY (station_name, name)"
         +");";
     std::cout << create_exits_query << '\n';
     w.exec(create_exits_query);
 
     // Create the exit_details table
     std::string create_exit_details_query = std::string("CREATE TABLE IF NOT EXISTS exit_details (")
-        +"station_name VARCHAR(255), "
-        +"name VARCHAR(255), "
-        +"bus_station_name VARCHAR(255)"
-        +", FOREIGN KEY (station_name, name) REFERENCES exits(station_name,name), "
-        +"FOREIGN KEY (bus_station_name) REFERENCES bus_stations(name) "
-        +",PRIMARY KEY (station_name, name, bus_station_name)"
+        +"\n\tstation_name VARCHAR(255), "
+        +"\n\tname VARCHAR(255), "
+        +"\n\tbus_station_name VARCHAR(255)"
+        +", \n\tFOREIGN KEY (station_name, name) REFERENCES exits(station_name,name), "
+        +"\n\tFOREIGN KEY (bus_station_name) REFERENCES bus_stations(name) "
+        +", \n\tPRIMARY KEY (station_name, name, bus_station_name)"
         +");";
     w.exec(create_exit_details_query);
 
@@ -383,7 +383,7 @@ int main() {
     std::filesystem::path bus_line_details_csv_path = current_path / "bus_line_details.csv";
     std::ofstream bus_line_details_csv(bus_line_details_csv_path);
     std::cout << "\tbus_line_details.csv path: " << bus_line_details_csv_path << '\n';
-    bus_line_details_csv << "bus_line_name,station_name" << '\n';  
+    bus_line_details_csv << "bus_line_name,bus_station_name" << '\n';  
     
     std::cout << "Writing to exit_details.csv..." << '\n';
     std::filesystem::path exit_details_csv_path = current_path / "exit_details.csv";
@@ -592,34 +592,37 @@ int main() {
     w.exec(copy_exits_query);
     
     std::string copy_bus_stations_query = std::string("CREATE TEMP TABLE tmp_bus_stations AS SELECT * FROM bus_stations LIMIT 0;")
-    +"COPY tmp_bus_stations FROM '"
+    +"\n\tCOPY tmp_bus_stations FROM '"
     + bus_stations_csv_path.string()
     +"' WITH (FORMAT CSV, HEADER, DELIMITER ',');"
-    +"INSERT INTO bus_stations SELECT * FROM tmp_bus_stations ON CONFLICT DO NOTHING;";
+    +"\n\tINSERT INTO bus_stations SELECT * FROM tmp_bus_stations ON CONFLICT DO NOTHING;";
     std::cout << copy_bus_stations_query << '\n';
     w.exec(copy_bus_stations_query);
 
-    std::string make_bus_line_query = "INSERT INTO bus_lines SELECT DISTINCT bus_line_name FROM bus_line_details;";
-    std::cout << make_bus_line_query << '\n';
-    w.exec(make_bus_line_query);
-
-    std::string copy_bus_line_details_query = "COPY bus_line_details FROM '" + bus_line_details_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',');";
+    // std::string copy_bus_line_details_query = "COPY bus_line_details FROM '" + bus_line_details_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',');";
+    std::string copy_bus_line_details_query = std::string("CREATE TEMP TABLE tmp_bus_line_details AS SELECT * FROM bus_line_details LIMIT 0;")
+    /*create a temp table based on bus_line_details*/
+    +"\n\tCOPY tmp_bus_line_details FROM '"
+    + bus_line_details_csv_path.string()
+    +"' WITH (FORMAT CSV, HEADER, DELIMITER ',');"
+    +"\n\tINSERT INTO bus_line_details (SELECT DISTINCT * FROM tmp_bus_line_details) ON CONFLICT DO NOTHING;";
     std::cout << copy_bus_line_details_query << '\n';
     w.exec(copy_bus_line_details_query);
 
+    // the following query has been moved to be executed after data cleaning
+    // std::string make_bus_line_query = "INSERT INTO bus_lines SELECT DISTINCT bus_line_name FROM bus_line_details;";
+    // std::cout << make_bus_line_query << '\n';
+    // w.exec(make_bus_line_query);
+
     // std::string copy_exit_details_query = "COPY exit_details FROM '" + exit_details_csv_path.string() + "' WITH (FORMAT CSV, HEADER, DELIMITER ',');";
     std::string copy_exit_details_query = std::string("CREATE TEMP TABLE tmp_exit_details AS SELECT * FROM exit_details LIMIT 0;")
-    +"COPY tmp_exit_details FROM '"
+    +"\n\tCOPY tmp_exit_details FROM '"
     + exit_details_csv_path.string()
     +"' WITH (FORMAT CSV, HEADER, DELIMITER ',');"
-    +"INSERT INTO exits SELECT station_name, name, bus_station_name AS textt FROM tmp_exit_details ON CONFLICT DO NOTHING;"
-    +"INSERT INTO exit_details SELECT * FROM tmp_exit_details ON CONFLICT DO NOTHING;";
+    +"\n\tINSERT INTO exits (SELECT station_name, name, bus_station_name AS textt FROM tmp_exit_details) ON CONFLICT DO NOTHING;"
+    +"\n\tINSERT INTO exit_details (SELECT * FROM tmp_exit_details) ON CONFLICT DO NOTHING;";
     std::cout << copy_exit_details_query << '\n';
     w.exec(copy_exit_details_query);
-
-    // std::string copy_bus_lines_query = "INSERT INTO bus_lines SELECT DISTINCT bus_line_name FROM bus_line_details;";
-    // std::cout << copy_bus_lines_query << '\n';
-    // w.exec(copy_bus_lines_query);
     
     // Commit the transaction
     w.commit();
