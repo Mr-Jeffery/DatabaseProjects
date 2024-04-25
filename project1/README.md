@@ -37,6 +37,10 @@ DB_PORT=5432 # Port of the database
 TODO
 
 ### Deploy C++ Version
+#### Requirements
+[libpqxx](https://github.com/jtv/libpqxx/blob/master/BUILDING-cmake.md)
+cmake
+postgesql
 #### Set Environment Variables
 Plase add a `bash` scipt named `setenv.sh` in `project1` directory that looks like following:
 ```bash
