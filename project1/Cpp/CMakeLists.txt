@@ -16,6 +16,7 @@ add_executable(SpeedTest src/speed.cpp)
 
 # Link LoadData with libpqxx
 target_link_libraries(LoadData PRIVATE pqxx)
+target_link_libraries(SpeedTest PRIVATE pqxx)
 # find_package(OpenMP)
 # if(OpenMP_CXX_FOUND)
 #     message("OpenMP found")
