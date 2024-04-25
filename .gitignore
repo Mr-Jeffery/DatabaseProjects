@@ -3,4 +3,5 @@
 /project1/setenv.sh
 /project1/setenv.ps1
 /project1/Python/.env
-
+/project1/Data/fakerides.json
+/project1/Python/fakerides.json
