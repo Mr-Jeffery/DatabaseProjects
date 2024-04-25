@@ -66,7 +66,7 @@ ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'new_pass
 FLUSH PRIVILEGES;
 exit;
 ```
-And try again.\
+And try again.
 
 Next, we will create user for both local and remote clients:
 ```sql
