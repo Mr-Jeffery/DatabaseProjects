@@ -13,7 +13,31 @@ TODO
 
 ## Data Import
 <!-- psql -U postgres -d project1 -p 5432 -h localhost -->
-### Set Environment Variables
+
+
+### Deploy Python Version
+#### Install Dependencies
+```bash
+conda create -n sql -y
+conda activate sql
+pip install -r requirements.txt
+```
+
+#### Set Environment Variables
+Plase add a file named `.env` in `project1/Python` directory that looks like following:
+```python
+DB_NAME= # Your database name
+DB_USER= # Your user Name
+DB_PASSWORD= # Your passoword
+DB_HOST=localhost # Your host address
+DB_PORT=5432 # Port of the database
+```
+
+#### Execute
+TODO
+
+### Deploy C++ Version
+#### Set Environment Variables
 Plase add a `bash` scipt named `setenv.sh` in `project1` directory that looks like following:
 ```bash
 export DB_NAME= # Your database name
@@ -27,24 +51,10 @@ then run the bash with
 source ./setenv.sh
 ```
 
-### Deploy Python Version
-#### Install Dependencies
-```bash
-conda create -n sql -y
-conda activate sql
-pip install -r requirements.txt
-```
-
-#### Execute
-TODO
-
-### Deploy C++ Version
-For windows version, replace `.sh` with `.ps1`
+#### Compile
 ```bash
 cd Cpp
 ```
-
-#### Compile
 ```bash
 chmod +x ./setup.sh
 ./setup.sh
@@ -55,10 +65,27 @@ chmod +x ./setup.sh
 chmod +x ./load.sh
 ./load.sh
 ```
-#### Access Postgres in WSL2
+
+#### Access Postgresql in WSL2
 [link](https://askubuntu.com/questions/1222184/how-to-connect-datagrip-on-ubuntu-wsl-inside-windows)
+
 ### Deploy Java Version
 TODO
+
+### Load Speed Test
+#### Fake Data Generation
+```bash
+cd ./Python
+python fakeData.py
+mv ./fakerides.json ../Data/fakerides.json
+```
+
+#### Execute
+```bash
+cd ./Cpp
+./speed.sh
+```
+
 
 ## Data Corruption Found
 in `rides.json` :
