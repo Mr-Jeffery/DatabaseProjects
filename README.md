@@ -2,7 +2,7 @@
 Projects for CS307
 ## Set Your Own Server
 [ssh](https://www.makeuseof.com/tag/beginners-guide-setting-ssh-linux-testing-setup/)
-
+## Set Up MySQL Service
 ### Install MySQL
 Based on [official doc](https://ubuntu.com/server/docs/install-and-configure-a-mysql-server)
 ```bash
@@ -85,7 +85,7 @@ then access the server with
 mysql -u client -p -h 11.4.51.4
 ```
 Replace `client` with your username, and replace the ip address with the actual ip of your server.
-
+## Set Up PostgreSQL Service
 ### Install PostgreSQL
 Based on [official doc](https://ubuntu.com/server/docs/install-and-configure-postgresql)
 ```bash
