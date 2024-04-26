@@ -2,6 +2,8 @@
 Projects for CS307
 ## Set Your Own Server
 [ssh](https://www.makeuseof.com/tag/beginners-guide-setting-ssh-linux-testing-setup/)
+[firewall](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-with-ufw-on-ubuntu)
+port 5432 allowed for postgresql, port 3306 allowed for mysql.
 ## Set Up MySQL Service
 ### Install MySQL
 Based on [official doc](https://ubuntu.com/server/docs/install-and-configure-a-mysql-server)
