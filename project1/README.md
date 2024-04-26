@@ -342,6 +342,8 @@ in `rides.json`:
 
 in `stations.json`:
 the original district for nonglin station is "\西丽线"， we corrected it into "福田区"
+
+in ‘stations.json': the "K578(右环)" is correctetd to "K578 (右环)" since the latter one is more commonly used.
 ```json
 "Pingshan wei": {
 ```
