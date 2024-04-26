@@ -143,6 +143,55 @@ ALTER TABLE exit_details
     DROP COLUMN station_name;
 
 
+-- Query to check entries that contain specific unwanted patterns
+SELECT DISTINCT bus_line_name
+FROM bus_line_details
+WHERE bus_line_name LIKE '%出入口%'
+   OR bus_line_name LIKE '%（新增）%'
+   OR bus_line_name LIKE '%（原%'
+   Or bus_line_name Like '%（右环）%'
+   Or bus_line_name Like '%（左环）%';
+
+-- Update to remove '(新增)' and everything following it
+UPDATE bus_line_details
+SET bus_line_name = REGEXP_REPLACE(bus_line_name, '（新增）.*$', '')
+WHERE bus_line_name LIKE '%（新增）%';
+
+-- Update to remove any pattern ending with '出入口' (including preceding numbers and letters)
+UPDATE bus_line_details
+SET bus_line_name = REGEXP_REPLACE(bus_line_name, '[A-Z]*[0-9]*出入口$', '')
+WHERE bus_line_name LIKE '%出入口%';
+
+-- Update to remove '(原' and everything following it
+UPDATE bus_line_details
+SET bus_line_name = REGEXP_REPLACE(bus_line_name, '（原.*$', '')
+WHERE bus_line_name LIKE '%（原%';
+
+-- Update to remove '(右)' and everything following it
+UPDATE bus_line_details
+SET bus_line_name = REGEXP_REPLACE(bus_line_name, '（右环）.*$', '')
+WHERE bus_line_name LIKE '%(右环)%';
+
+-- Update to remove '(右)' and everything following it
+UPDATE bus_line_details
+SET bus_line_name = REGEXP_REPLACE(bus_line_name, '（右环）.*$', '')
+WHERE bus_line_name LIKE '% (右环)%';
+
+-- Update to remove '(左)' and everything following it
+UPDATE bus_line_details
+SET bus_line_name = REGEXP_REPLACE(bus_line_name, '（左环）.*$', '')
+WHERE bus_line_name LIKE '%(左环)%';
+-- Update to remove '(左)' and everything following it
+UPDATE bus_line_details
+SET bus_line_name = REGEXP_REPLACE(bus_line_name, '（左环）.*$', '')
+WHERE bus_line_name LIKE '% (左环)%';
+
+
+-- Additional regex to clean up '(原' followed by any characters
+UPDATE bus_line_details
+SET bus_line_name = REGEXP_REPLACE(bus_line_name, '\(原.*$', '')
+WHERE bus_line_name LIKE '%\(原%';
+
 
 
 -- Step 5: Insert unique bus_line_name values into the bus_lines table
