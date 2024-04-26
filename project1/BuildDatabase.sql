@@ -214,11 +214,11 @@ ALTER TABLE bus_line_details
     ADD CONSTRAINT fk_bus_line_details_bus_line
     FOREIGN KEY (bus_line_ID) REFERENCES bus_lines(bus_lines_ID);
 
--- Add a 'passenger_ID' column to 'passengers' and set it as the primary key
-Alter table passengers drop constraint passengers_pkey cascade;
-ALTER TABLE passengers
-    ADD COLUMN IF NOT EXISTS passenger_ID BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY;
-
+-- -- Add a 'passenger_ID' column to 'passengers' and set it as the primary key
+-- Alter table passengers drop constraint passengers_pkey cascade;
+-- ALTER TABLE passengers
+--     ADD COLUMN IF NOT EXISTS passenger_ID BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY;
+--
 
 -- Drop table identifier cascade;
 
@@ -253,4 +253,3 @@ REFERENCES identifier (ID);
 
 ALTER TABLE rides
     ADD CONSTRAINT fk_rides_rail_user FOREIGN KEY (rail_user) REFERENCES identifier(ID);
-
