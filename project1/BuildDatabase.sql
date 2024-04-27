@@ -65,6 +65,8 @@ ALTER TABLE line_details
     ADD CONSTRAINT fk_line_details_line FOREIGN KEY (line_id) REFERENCES lines(line_ID),
     ADD CONSTRAINT fk_line_details_station FOREIGN KEY (station_id) REFERENCES stations(station_id);
 
+Alter table line_details
+    ADD PRIMARY KEY (line_id, station_id);
 -- Optionally, set the new columns as NOT NULL after verifying all data is correctly populated
 ALTER TABLE line_details
     ALTER COLUMN line_id SET NOT NULL,
