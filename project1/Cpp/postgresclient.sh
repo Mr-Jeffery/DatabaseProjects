@@ -29,7 +29,7 @@ esac
 echo ${machine}
 
 if [ ${machine} == "Linux" ]; then
-    export CSV_PATH=/tmp
+    export CSV_PATH=$CSV_PATH
 elif [ ${machine} == "Mac" ]; then
     export CSV_PATH=$TMPDIR
 else
@@ -90,22 +90,22 @@ time (
                             FOREIGN KEY (station_name, name) REFERENCES exits(station_name,name), 
                             FOREIGN KEY (bus_station_name) REFERENCES bus_stations(name) , 
                             PRIMARY KEY (station_name, name, bus_station_name));" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
-    psql --command="\copy cards FROM '/tmp/cards.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',')" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
-    psql --command="\copy passengers FROM '/tmp/passengers.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',')" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
-    psql --command="\copy lines FROM '/tmp/lines.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',')" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
-    psql --command="\copy stations FROM '/tmp/stations.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',')" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
-    psql --command="\copy rides FROM '/tmp/rides.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',')" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
-    psql --command="\copy line_details FROM '/tmp/line_details.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',')" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
-    psql --command="\copy exits FROM '/tmp/exits.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',')" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+    psql --command="\copy cards FROM '$CSV_PATH/cards.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',')" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+    psql --command="\copy passengers FROM '$CSV_PATH/passengers.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',')" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+    psql --command="\copy lines FROM '$CSV_PATH/lines.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',')" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+    psql --command="\copy stations FROM '$CSV_PATH/stations.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',')" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+    psql --command="\copy rides FROM '$CSV_PATH/rides.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',')" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+    psql --command="\copy line_details FROM '$CSV_PATH/line_details.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',')" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+    psql --command="\copy exits FROM '$CSV_PATH/exits.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',')" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
     psql postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME <<EOF
     CREATE TEMP TABLE tmp_bus_stations AS SELECT * FROM bus_stations LIMIT 0;
-    \copy tmp_bus_stations FROM '/tmp/bus_stations.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');
+    \copy tmp_bus_stations FROM '$CSV_PATH/bus_stations.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');
     INSERT INTO bus_stations SELECT * FROM tmp_bus_stations ON CONFLICT DO NOTHING;
     CREATE TEMP TABLE tmp_bus_line_details AS SELECT * FROM bus_line_details LIMIT 0;
-    \copy tmp_bus_line_details FROM '/tmp/bus_line_details.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');
+    \copy tmp_bus_line_details FROM '$CSV_PATH/bus_line_details.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');
     INSERT INTO bus_line_details SELECT DISTINCT * FROM tmp_bus_line_details ON CONFLICT DO NOTHING;
     CREATE TEMP TABLE tmp_exit_details AS SELECT * FROM exit_details LIMIT 0;
-    \copy tmp_exit_details FROM '/tmp/exit_details.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');
+    \copy tmp_exit_details FROM '$CSV_PATH/exit_details.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');
     INSERT INTO exits SELECT station_name, name, bus_station_name AS textt FROM tmp_exit_details ON CONFLICT DO NOTHING;
     INSERT INTO exit_details SELECT * FROM tmp_exit_details ON CONFLICT DO NOTHING;
 EOF
