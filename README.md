@@ -79,9 +79,11 @@ GRANT FILE ON *.* TO 'client'@'%';
 You can replace `client` with whatever username you like, `'%'` means from any ip, you can also replace it with a specific ip if you like. 
   More specific [here](https://tableplus.com/blog/2018/10/how-to-create-a-superuser-in-mysql.html)
 
-From the client side, we should install `mysql-client`:
+From the client side, we should install `mysql-client` and header file:
 ```bash
 sudo apt install mysql-client
+sudo apt-get install libmysqlcppconn-dev
+sudo apt-get install libmysqlclient-dev
 ```
 then access the server with
 ```bash
