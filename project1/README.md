@@ -73,6 +73,11 @@ chmod +x ./load.sh
 #### Access Postgresql in WSL2
 [link](https://askubuntu.com/questions/1222184/how-to-connect-datagrip-on-ubuntu-wsl-inside-windows)
 
+#### MySQL Version
+```bash
+sudo apt-get install libmysqlclient-dev
+```
+
 ### Deploy Java Version
 TODO
 
