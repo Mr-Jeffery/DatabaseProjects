@@ -1,3 +1,4 @@
+/*Postgres version speed test, only loads fakerides.json, works only locally*/
 #include <iostream>
 #include <fstream>
 #include <pqxx/pqxx>

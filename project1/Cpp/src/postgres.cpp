@@ -1,3 +1,4 @@
+/*Postgres version data loader,  works only locally*/
 #include <pqxx/pqxx>
 #include "json2csv.hpp"
 
@@ -98,10 +99,10 @@ int main(){
 
     // Create the line_details table
     std::string create_line_details_query = std::string("CREATE TABLE IF NOT EXISTS line_details (")
-        +"line_name VARCHAR(255), "
-        +"station_name VARCHAR(255)"
-        +", FOREIGN KEY (line_name) REFERENCES lines(name), "
-        +"FOREIGN KEY (station_name) REFERENCES stations(name)"
+        +"\n\tline_name VARCHAR(255), "
+        +"\n\tstation_name VARCHAR(255)"
+        +", \n\tFOREIGN KEY (line_name) REFERENCES lines(name), "
+        +"\n\tFOREIGN KEY (station_name) REFERENCES stations(name)"
         +");";
     std::cout << create_line_details_query << '\n';
     w.exec(create_line_details_query);

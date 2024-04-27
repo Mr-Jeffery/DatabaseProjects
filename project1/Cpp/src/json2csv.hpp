@@ -1,3 +1,5 @@
+/* file for loading json into csv, 
+will be used by both postgres and mysql*/
 #include <iostream>
 #include <stdlib.h>
 #include <fstream>

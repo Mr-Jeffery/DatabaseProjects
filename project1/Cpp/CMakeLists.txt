@@ -1,4 +1,3 @@
-
 cmake_minimum_required(VERSION 3.10)
 project(LoadData)
 
@@ -11,12 +10,22 @@ add_definitions(-O3)
 # Add libpqxx subdirectory
 add_subdirectory(lib/libpqxx)
 
+# Add MySQL include directory
+include_directories(/usr/include/mysql)
+
 add_executable(LoadData src/copy.cpp)
 add_executable(SpeedTest src/speed.cpp)
+add_executable(Postgres src/postgres.cpp)
+add_executable(Mysql src/mysql.cpp)
 
 # Link LoadData with libpqxx
 target_link_libraries(LoadData PRIVATE pqxx)
 target_link_libraries(SpeedTest PRIVATE pqxx)
+target_link_libraries(Postgres PRIVATE pqxx)
+
+# Link Mysql with mysqlclient
+target_link_libraries(Mysql PRIVATE mysqlclient)
+
 # find_package(OpenMP)
 # if(OpenMP_CXX_FOUND)
 #     message("OpenMP found")

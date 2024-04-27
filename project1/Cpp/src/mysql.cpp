@@ -1,3 +1,4 @@
+/*MySQL version data loader, works both locally and remotely*/
 #include <mysql.h>
 #include "json2csv.hpp"
 
