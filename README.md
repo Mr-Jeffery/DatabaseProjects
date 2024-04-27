@@ -74,6 +74,7 @@ Next, we will create user for both local and remote clients:
 ```sql
 create user 'client'@'%' IDENTIFIED BY 'new_password';
 GRANT ALL PRIVILEGES ON *.* TO 'client'@'%' WITH GRANT OPTION;
+GRANT FILE ON *.* TO 'client'@'%';
 ```
 You can replace `client` with whatever username you like, `'%'` means from any ip, you can also replace it with a specific ip if you like. 
   More specific [here](https://tableplus.com/blog/2018/10/how-to-create-a-superuser-in-mysql.html)
@@ -87,6 +88,26 @@ then access the server with
 mysql -u client -p -h 11.4.51.4
 ```
 Replace `client` with your username, and replace the ip address with the actual ip of your server.
+
+### Enable Local Infile
+This has to be enabled on both server and client sides:
+#### Server Side
+Add the following lines to `/etc/mysql/my.cnf` or `/etc/mysql/my.ini`, then restart the service.
+```
+[mysqld]
+local_infile=1
+```
+#### Client Side
+For normal use, start `mysql` with `mysql --local-infile=1 -u myusername -p`, and the execute the following `sql` querys:
+```
+USE project1;
+CREATE TABLE IF NOT EXISTS rides (rail_user VARCHAR(255), start_station VARCHAR(255), end_station VARCHAR(255), price DOUBLE PRECISION, start_time TIMESTAMP, end_time TIMESTAMP);
+LOAD DATA LOCAL INFILE "/tmp/rides.csv" into table `rides`
+FIELDS TERMINATED BY ',' 
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+```
+this should up
 ## Set Up PostgreSQL Service
 ### Install PostgreSQL
 Based on [official doc](https://ubuntu.com/server/docs/install-and-configure-postgresql)
