@@ -29,7 +29,11 @@ CREATE TABLE IF NOT EXISTS rides (
         price DOUBLE PRECISION, 
         start_time TIMESTAMP, 
         end_time TIMESTAMP);
-CREATE TABLE IF NOT EXISTS line_details ( line_name CHAR(255), station_name CHAR(255), FOREIGN KEY (line_name) REFERENCES `lines`(name), FOREIGN KEY (station_name) REFERENCES stations(name));
+CREATE TABLE IF NOT EXISTS line_details ( 
+        line_name CHAR(255), 
+        station_name CHAR(255), 
+        FOREIGN KEY (line_name) REFERENCES `lines`(name), 
+        FOREIGN KEY (station_name) REFERENCES stations(name));
 CREATE TABLE IF NOT EXISTS bus_stations (name CHAR(255) PRIMARY KEY, district CHAR(255));
 CREATE TABLE IF NOT EXISTS bus_lines (name CHAR(255) PRIMARY KEY);
 CREATE TABLE IF NOT EXISTS bus_line_details (

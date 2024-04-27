@@ -136,10 +136,10 @@ std::string create_cards_query = std::string("CREATE TABLE IF NOT EXISTS cards( 
 
     // Create the line_details table
     std::string create_line_details_query = std::string("CREATE TABLE IF NOT EXISTS line_details ( ")
-        +"line_name CHAR(255), "
-        +"station_name CHAR(255)"
-        +", FOREIGN KEY (line_name) REFERENCES `lines`(name), "
-        +"FOREIGN KEY (station_name) REFERENCES stations(name)"
+        +"\n\tline_name CHAR(255), "
+        +"\n\tstation_name CHAR(255)"
+        +", \n\tFOREIGN KEY (line_name) REFERENCES `lines`(name), "
+        +"\n\tFOREIGN KEY (station_name) REFERENCES stations(name)"
         +");";
     std::cout << create_line_details_query << '\n';
     if (mysql_query(con, create_line_details_query.c_str())) {

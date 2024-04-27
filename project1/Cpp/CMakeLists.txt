@@ -17,6 +17,7 @@ add_executable(LoadData src/copy.cpp)
 add_executable(SpeedTest src/speed.cpp)
 add_executable(Postgres src/postgres.cpp)
 add_executable(Mysql src/mysql.cpp)
+add_executable(Data src/dataonly.cpp)
 
 # Link LoadData with libpqxx
 target_link_libraries(LoadData PRIVATE pqxx)

@@ -35,12 +35,8 @@ elif [ ${machine} == "Mac" ]; then
 else
     export CSV_PATH=$(pwd)
 fi
-# time (
-#     ./LoadData
-# )
-
-
 time (
+    ./Data
     psql --command="CREATE TABLE IF NOT EXISTS cards(
                             code VARCHAR(9) PRIMARY KEY CHECK (code ~ '^[0-9]{9}$'), 
                             money MONEY NOT NULL, 
@@ -78,36 +74,13 @@ time (
                             line_name VARCHAR(255), 
                             station_name VARCHAR(255), 
                             FOREIGN KEY (line_name) REFERENCES lines(name), 
-                            FOREIGN KEY (station_name) REFERENCES stations(name));
-                    CREATE TABLE IF NOT EXISTS bus_stations (name VARCHAR(255) PRIMARY KEY, district VARCHAR(255));
-                    CREATE TABLE IF NOT EXISTS bus_lines (name VARCHAR(255) PRIMARY KEY);
-                    CREATE TABLE IF NOT EXISTS bus_line_details (
-                            bus_line_name VARCHAR(255), 
-                            bus_station_name VARCHAR(255), 
-                            FOREIGN KEY (bus_station_name) REFERENCES bus_stations(name));
-                    CREATE TABLE IF NOT EXISTS exits (
-                            station_name VARCHAR(255), 
-                            name VARCHAR(255),
-                            textt TEXT,
-                            FOREIGN KEY (station_name) REFERENCES stations(name),
-                            PRIMARY KEY (station_name, name));
-                    \COPY cards FROM '/tmp/cards.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');
-                    \COPY passengers FROM '/tmp/passengers.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');
-                    \COPY lines FROM '/tmp/lines.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');
-                    \COPY stations FROM '/tmp/stations.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');
-                    \COPY rides FROM '/tmp/rides.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');
-                    \COPY line_details FROM '/tmp/line_details.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');
-                    \COPY exits FROM '/tmp/exits.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');
-                    CREATE TEMP TABLE tmp_bus_stations AS SELECT * FROM bus_stations LIMIT 0;
-                            \COPY tmp_bus_stations FROM '/tmp/bus_stations.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');
-                            INSERT INTO bus_stations SELECT * FROM tmp_bus_stations ON CONFLICT DO NOTHING;
-                    CREATE TEMP TABLE tmp_bus_line_details AS SELECT * FROM bus_line_details LIMIT 0;
-                            \COPY tmp_bus_line_details FROM '/tmp/bus_line_details.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');
-                            INSERT INTO bus_line_details (SELECT DISTINCT * FROM tmp_bus_line_details) ON CONFLICT DO NOTHING;
-                    CREATE TEMP TABLE tmp_exit_details AS SELECT * FROM exit_details LIMIT 0;
-                            \COPY tmp_exit_details FROM '/tmp/exit_details.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');
-                            INSERT INTO exits (SELECT station_name, name, bus_station_name AS textt FROM tmp_exit_details) ON CONFLICT DO NOTHING;
-                            INSERT INTO exit_details (SELECT * FROM tmp_exit_details) ON CONFLICT DO NOTHING;" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+                            FOREIGN KEY (station_name) REFERENCES stations(name));" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+    psql --command="\copy cards FROM '$CSV_PATH/cards.csv' WITH (FORMAT CSV, HEADER)" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+    psql --command="\copy passengers FROM '$CSV_PATH/passengers.csv' WITH (FORMAT CSV, HEADER)" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+    psql --command="\copy lines FROM '$CSV_PATH/lines.csv' WITH (FORMAT CSV, HEADER)" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+    psql --command="\copy stations FROM '$CSV_PATH/stations.csv' WITH (FORMAT CSV, HEADER)" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+    psql --command="\copy rides FROM '$CSV_PATH/rides.csv' WITH (FORMAT CSV, HEADER)" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+    psql --command="\copy line_details FROM '$CSV_PATH/line_details.csv' WITH (FORMAT CSV, HEADER)" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
 )
 # psql --command="\COPY lines FROM '$CSV_PATH/lines.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',');" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
 
