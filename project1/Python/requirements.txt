@@ -1,3 +1,4 @@
 psycopg[c]
 python-dotenv
 graphviz
+faker
