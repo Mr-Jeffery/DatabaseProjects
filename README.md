@@ -98,7 +98,7 @@ Add the following lines to `/etc/mysql/my.cnf` or `/etc/mysql/my.ini`, then rest
 local_infile=1
 ```
 #### Client Side
-For normal use, start `mysql` with `mysql --local-infile=1 -u myusername -p`, and the execute the following `sql` querys:
+For normal use, start `mysql` with `mysql --local-infile=1 -u myusername -p`, and the execute the following `sql` queries:
 ```
 USE project1;
 CREATE TABLE IF NOT EXISTS rides (rail_user VARCHAR(255), start_station VARCHAR(255), end_station VARCHAR(255), price DOUBLE PRECISION, start_time TIMESTAMP, end_time TIMESTAMP);
@@ -107,7 +107,7 @@ FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 ```
-this should up
+this should upload `rides.csv` to the database.
 ## Set Up PostgreSQL Service
 ### Install PostgreSQL
 Based on [official doc](https://ubuntu.com/server/docs/install-and-configure-postgresql)
