@@ -216,6 +216,7 @@ int main() {
         +"\n\tFOREIGN KEY (bus_station_name) REFERENCES bus_stations(name) "
         +", \n\tPRIMARY KEY (station_name, name, bus_station_name)"
         +");";
+    std::cout << create_exit_details_query << '\n';
     w.exec(create_exit_details_query);
 
 
