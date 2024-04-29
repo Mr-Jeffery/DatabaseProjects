@@ -529,6 +529,10 @@ in `stations.json`:
 the original district for nonglin station is "\西丽线"， we corrected it into "福田区"
 
 in ‘stations.json': the "K578(右环)" is correctetd to “K578（右环）" since the latter one is more commonly used.
+
+in 'station.json': the "103路（改M103路）" is changed to "103路"
+
+in 'station.json': the "358（快线）" “358快” “358(快线)” and "358快线" are unified to "358（快线）"
 ```json
 "Pingshan wei": {
 ```
