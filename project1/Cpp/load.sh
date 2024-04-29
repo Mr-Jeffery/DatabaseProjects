@@ -40,10 +40,6 @@ time (
 )
 
 psql --command="
-select distinct bus_line_name
-from bus_line_details
-where bus_line_name like '%出入口%';
-
 UPDATE bus_line_details
 SET bus_line_name = REGEXP_REPLACE(bus_line_name, '（新增）(.*)', '')
 WHERE bus_line_name LIKE '%（新增）%';
