@@ -1,4 +1,4 @@
-/*Postgres version data loader, old version, can work without json2csv.hpp, works only locally*/
+/*Postgres version data loader, old version, can work without json2csv.hpp, works only locally, now deprecated*/
 #include <iostream>
 #include <stdlib.h>
 #include <fstream>
