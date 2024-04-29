@@ -99,3 +99,11 @@ WHERE bus_line_name LIKE '%（原%';
 UPDATE bus_line_details
 SET bus_line_name = REGEXP_REPLACE(bus_line_name, '\(原(.*)', '')
 WHERE bus_line_name LIKE '%\(原%';
+
+UPDATE bus_line_details
+SET bus_line_name = REGEXP_REPLACE(bus_line_name, '\(', '（')
+WHERE bus_line_name LIKE '%\(%';
+
+UPDATE bus_line_details
+SET bus_line_name = REGEXP_REPLACE(bus_line_name, '\)', '）')
+WHERE bus_line_name LIKE '%\)%';

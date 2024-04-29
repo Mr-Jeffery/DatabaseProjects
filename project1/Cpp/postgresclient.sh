@@ -109,3 +109,31 @@ time (
     INSERT INTO exit_details SELECT * FROM tmp_exit_details ON CONFLICT DO NOTHING;
 EOF
 )
+psql --command="
+select distinct bus_line_name
+from bus_line_details
+where bus_line_name like '%出入口%';
+
+UPDATE bus_line_details
+SET bus_line_name = REGEXP_REPLACE(bus_line_name, '（新增）(.*)', '')
+WHERE bus_line_name LIKE '%（新增）%';
+
+UPDATE bus_line_details
+SET bus_line_name = REGEXP_REPLACE(bus_line_name, '[A-Z]*[0-9]*出入口$', '')
+WHERE bus_line_name LIKE '%出入口%';
+
+UPDATE bus_line_details
+SET bus_line_name = REGEXP_REPLACE(bus_line_name, '（原(.*)', '')
+WHERE bus_line_name LIKE '%（原%';
+
+UPDATE bus_line_details
+SET bus_line_name = REGEXP_REPLACE(bus_line_name, '\(原(.*)', '')
+WHERE bus_line_name LIKE '%\(原%';
+
+UPDATE bus_line_details
+SET bus_line_name = REGEXP_REPLACE(bus_line_name, '\(', '（')
+WHERE bus_line_name LIKE '%\(%';
+
+UPDATE bus_line_details
+SET bus_line_name = REGEXP_REPLACE(bus_line_name, '\)', '）')
+WHERE bus_line_name LIKE '%\)%';" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME

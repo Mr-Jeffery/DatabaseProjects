@@ -313,24 +313,33 @@ std::filesystem::path json2csv() {
             std::wstring bus_line_details = converter.from_bytes(bus_line_name);
             size_t pos;
             
-            // while ((pos = bus_line_details.find(L',')) != std::wstring::npos) {
-            //     bus_line_details.replace(pos, 1, L"、");
-            // }
-
-            // while ((pos = bus_line_details.find(L'，')) != std::wstring::npos) {
-            //     bus_line_details.replace(pos, 1, L"、");
-            // }
-
-            // while ((pos = bus_line_details.find(L'路')) != std::wstring::npos) {
-            //     bus_line_details.replace(pos, 1, L" ");
-            // }
-            while ((pos = bus_line_details.find_first_of(L",，路号")) != std::wstring::npos) {
-                if (bus_line_details[pos] == L'路'||bus_line_details[pos] == L'号') {
-                    bus_line_details.replace(pos, 1, L" ");
-                } else {
-                    bus_line_details.replace(pos, 1, L"、");
-                }
+            while ((pos = bus_line_details.find(L',')) != std::wstring::npos) {
+                bus_line_details.replace(pos, 1, L"、");
             }
+
+            while ((pos = bus_line_details.find(L'，')) != std::wstring::npos) {
+                bus_line_details.replace(pos, 1, L"、");
+            }
+
+            while ((pos = bus_line_details.find(L'路')) != std::wstring::npos) {
+                bus_line_details.replace(pos, 1, L" ");
+            }
+            while ((pos = bus_line_details.find(L'号')) != std::wstring::npos) {
+                bus_line_details.replace(pos, 1, L" ");
+            }
+            while ((pos = bus_line_details.find(L'(')) != std::wstring::npos) {
+                bus_line_details.replace(pos, 1, L"（");
+            }
+            while ((pos = bus_line_details.find(L')')) != std::wstring::npos) {
+                bus_line_details.replace(pos, 1, L"）");
+            }
+            // while ((pos = bus_line_details.find_first_of(L",，路号")) != std::wstring::npos) {
+            //     if (bus_line_details[pos] == L'路'||bus_line_details[pos] == L'号') {
+            //         bus_line_details.replace(pos, 1, L" ");
+            //     } else {
+            //         bus_line_details.replace(pos, 1, L"、");
+            //     }
+            // }
             std::wstringstream wss(bus_line_details);
             std::wstring token;
             std::vector<std::string> bus_line_details_arr;
