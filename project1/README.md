@@ -1,4 +1,53 @@
 # Project 1
+## File Tree
+```
+├── CS307 Project 1.pdf
+├── Cpp
+│   ├── CMakeLists.txt
+│   ├── data.sh
+│   ├── load.sh
+│   ├── mysql.sh
+│   ├── mysqlclient.sh
+│   ├── postgresclient.sh
+│   ├── remote.sh
+│   ├── setup.sh
+│   ├── speed.sh
+│   └── src
+│       ├── copy.cpp
+│       ├── dataonly.cpp
+│       ├── fakedata.cpp
+│       ├── json.hpp
+│       ├── json2csv.hpp
+│       ├── mysql.cpp
+│       ├── postgres.cpp
+│       ├── prilimiary.cpp
+│       ├── priliminary.cpp
+│       └── speed.cpp
+├── Data
+│   ├── cards.json
+│   ├── lines.json
+│   ├── passengers.json
+│   ├── rides.json
+│   └── stations.json
+├── Diagram
+│   ├── Database Project 1 ER Diagram (1).png
+│   └── er_diagram.png
+├── Python
+│   ├── fakeData.py
+│   ├── loadByPython.ipynb
+│   ├── project.md
+│   ├── requirements.txt
+│   └── test.ipynb
+├── README.md
+├── SQL
+│   ├── AccuracyCheckForRawData.sql
+│   ├── AccuracyCheckForRevisedDatabase.sql
+│   ├── Database System Concepts.pdf
+│   ├── ReformatDatabase.sql
+│   ├── mysql.sql
+│   └── raw.sql
+└── screenshotInDataGrip.png
+```
 ## Project Info
 [【腾讯文档】Project1 Introduction](https://docs.qq.com/doc/DVmJ4Q2dNSGJnSXNv)
 ## Project Report Link
