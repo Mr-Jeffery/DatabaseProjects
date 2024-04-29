@@ -39,19 +39,15 @@ time (
     # ./LoadData
 )
 
-psql --command="
-UPDATE bus_line_details
-SET bus_line_name = REGEXP_REPLACE(bus_line_name, '（新增）(.*)', '')
-WHERE bus_line_name LIKE '%（新增）%';
+# psql --command="
+# UPDATE bus_line_details
+# SET bus_line_name = REGEXP_REPLACE(bus_line_name, '（新增）(.*)', '')
+# WHERE bus_line_name LIKE '%（新增）%';
 
-UPDATE bus_line_details
-SET bus_line_name = REGEXP_REPLACE(bus_line_name, '[A-Z]*[0-9]*出入口$', '')
-WHERE bus_line_name LIKE '%出入口%';
+# UPDATE bus_line_details
+# SET bus_line_name = REGEXP_REPLACE(bus_line_name, '[A-Z]*[0-9]*出入口$', '')
+# WHERE bus_line_name LIKE '%出入口%';
 
-UPDATE bus_line_details
-SET bus_line_name = REGEXP_REPLACE(bus_line_name, '（原(.*)', '')
-WHERE bus_line_name LIKE '%（原%';
-
-UPDATE bus_line_details
-SET bus_line_name = REGEXP_REPLACE(bus_line_name, '\(原(.*)', '')
-WHERE bus_line_name LIKE '%\(原%';" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+# UPDATE bus_line_details
+# SET bus_line_name = REGEXP_REPLACE(bus_line_name, '（原(.*)', '')
+# WHERE bus_line_name LIKE '%（原%';" postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME

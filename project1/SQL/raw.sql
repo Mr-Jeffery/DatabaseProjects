@@ -80,19 +80,20 @@ CREATE TEMP TABLE tmp_exit_details AS SELECT * FROM exit_details LIMIT 0;
 
 
 -- for data cleaning
-select distinct bus_line_name
-from bus_line_details
-where bus_line_name like '%出入口%';
+-- select distinct bus_line_name
+-- from bus_line_details
+-- where bus_line_name like '%出入口%';
+
+-- UPDATE bus_line_details
+-- SET bus_line_name = REGEXP_REPLACE(bus_line_name, '\(', '（')
+-- WHERE bus_line_name LIKE '%\(%';
+
+-- UPDATE bus_line_details
+-- SET bus_line_name = REGEXP_REPLACE(bus_line_name, '\)', '）')
+-- WHERE bus_line_name LIKE '%\)%';
+-- UPDATE bus_line_details
 
 UPDATE bus_line_details
-SET bus_line_name = REGEXP_REPLACE(bus_line_name, '\(', '（')
-WHERE bus_line_name LIKE '%\(%';
-
-UPDATE bus_line_details
-SET bus_line_name = REGEXP_REPLACE(bus_line_name, '\)', '）')
-WHERE bus_line_name LIKE '%\)%';
-UPDATE bus_line_details
-
 SET bus_line_name = REGEXP_REPLACE(bus_line_name, '（新增）(.*)', '')
 WHERE bus_line_name LIKE '%（新增）%';
 
