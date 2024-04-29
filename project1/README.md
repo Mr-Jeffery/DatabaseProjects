@@ -158,7 +158,12 @@ DB_PORT=5432 # Port of the database
 ```
 
 #### Execute
-TODO
+First reformat 5 `json` files into `csv` files that match our database design:
+```bash
+cd Cpp
+./
+```
+Open `LoadByPython.ipynb` and you are good to go.
 
 ### Deploy C++ Version
 #### Requirements
