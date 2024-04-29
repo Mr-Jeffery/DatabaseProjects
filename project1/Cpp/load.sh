@@ -1,8 +1,7 @@
 source ../setenv.sh
 export DATA_PATH=$(cd .. && pwd)/Data
 cd build
-# rm -f ./LoadData
-make
+make # can be commented out if the executable is already built
 
 # psql --command="" postgresql://<user>:<password>@<host>:<port>/<db>
 

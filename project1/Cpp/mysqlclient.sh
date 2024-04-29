@@ -1,8 +1,7 @@
 source ../setenv.sh
 export DATA_PATH=$(cd .. && pwd)/Data
 cd build
-# rm -f ./LoadData
-make
+make # can be commented out if the executable is already built
 
 mysql -e "DROP DATABASE IF EXISTS $DB_NAME; CREATE DATABASE $DB_NAME;" -u $DB_USER -h $DB_HOST -P 3306 -p$DB_PASSWORD
 
