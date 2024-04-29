@@ -1,7 +1,6 @@
 source ../setenv.sh
 export DATA_PATH=$(cd .. && pwd)/Data
 cd build
-# rm -f ./LoadData
 make
 
 # psql --command="" postgresql://<user>:<password>@<host>:<port>/<db>
@@ -29,7 +28,7 @@ esac
 echo ${machine}
 
 if [ ${machine} == "Linux" ]; then
-    export CSV_PATH=$CSV_PATH
+    export CSV_PATH=/tmp
 elif [ ${machine} == "Mac" ]; then
     export CSV_PATH=$TMPDIR
 else
