@@ -230,7 +230,7 @@ cd ./Cpp
 
 ## Data Corruption Found
 in `rides.json` :
-![spacing](project1/screenshotInDataGrip.png)
+![spacing](screenshotInDataGrip.png)
 
 in `stations.json`:
 ```json
