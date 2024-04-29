@@ -20,7 +20,6 @@
 │       ├── json2csv.hpp
 │       ├── mysql.cpp
 │       ├── postgres.cpp
-│       ├── prilimiary.cpp
 │       ├── priliminary.cpp
 │       └── speed.cpp
 ├── Data
