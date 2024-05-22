@@ -1,177 +1,97 @@
-# Import necessary libraries
-from fastapi import FastAPI
-from pydantic import BaseModel
-import uvicorn
-import asyncio
-from pywebio import start_server
-from pywebio.output import put_html, clear, popup, put_buttons, put_row, put_column
-from pywebio.input import input, select, textarea
+import gradio as gr
+from backend import crud
+from backend import database
+from backend import schemas
 
-# Define FastAPI application
-app = FastAPI()
+def add_station(name, location):
+    db = database.SessionLocal()
+    new_station = schemas.StationCreate(name=name, location=location)
+    station = crud.create_station(db, new_station)
+    db.close()
+    return station
 
-# Define data models
-class Station(BaseModel):
-    name: str
-    status: str = "operational"  # Default status is operational
+def add_line(name):
+    db = database.SessionLocal()
+    new_line = schemas.LineCreate(name=name)
+    line = crud.create_line(db, new_line)
+    db.close()
+    return line
 
-class Line(BaseModel):
-    name: str
+def place_station_on_line(line_id, station_id):
+    db = database.SessionLocal()
+    line_station = crud.add_station_to_line(db, line_id=line_id, station_id=station_id)
+    db.close()
+    return line_station
 
-class PathQuery(BaseModel):
-    start_station: str
-    end_station: str
+def search_stations(line_id, station_id, n_ahead, n_behind):
+    db = database.SessionLocal()
+    ahead = crud.get_nth_station_ahead(db, line_id=line_id, station_id=station_id, n=n_ahead)
+    behind = crud.get_nth_station_behind(db, line_id=line_id, station_id=station_id, n=n_behind)
+    db.close()
+    return ahead, behind
 
-# Simulated data
-stations = ["Station A", "Station B", "Station C"]
-lines = ["Line 1", "Line 2", "Line 3"]
+def board_passenger(passenger_id, start_station_id, start_time):
+    db = database.SessionLocal()
+    boarding_info = schemas.BoardingCreate(passenger_id=passenger_id, start_station_id=start_station_id, start_time=start_time)
+    boarding = crud.board_passenger(db, boarding_info)
+    db.close()
+    return boarding
 
-# Define API endpoints
-@app.post("/add_station")
-async def add_station(station: Station):
-    # Simulate adding station to the database
-    stations.append(station.name)
-    return {"message": f"Station {station.name} with status {station.status} added successfully!"}
+def exit_passenger(passenger_id, end_station_id, end_time):
+    db = database.SessionLocal()
+    exit_info = schemas.ExitCreate(passenger_id=passenger_id, end_station_id=end_station_id, end_time=end_time)
+    exit = crud.exit_passenger(db, exit_info)
+    db.close()
+    return exit
 
-@app.post("/add_line")
-async def add_line(line: Line):
-    # Simulate adding line to the database
-    lines.append(line.name)
-    return {"message": f"Line {line.name} added successfully!"}
+def view_all_boardings():
+    db = database.SessionLocal()
+    boardings = crud.get_all_boardings(db)
+    db.close()
+    return boardings
 
-@app.post("/path_query")
-async def path_query(query: PathQuery):
-    # Simulate path query
-    return {"message": f"Path found from {query.start_station} to {query.end_station}."}
+with gr.Blocks() as demo:
+    with gr.Tab("Add Station"):
+        name = gr.Textbox(label="Station Name")
+        location = gr.Textbox(label="Station Location")
+        add_station_btn = gr.Button("Add Station")
+        add_station_btn.click(add_station, inputs=[name, location], outputs="text")
+    
+    with gr.Tab("Add Line"):
+        line_name = gr.Textbox(label="Line Name")
+        add_line_btn = gr.Button("Add Line")
+        add_line_btn.click(add_line, inputs=line_name, outputs="text")
+    
+    with gr.Tab("Place Station on Line"):
+        line_id = gr.Number(label="Line ID")
+        station_id = gr.Number(label="Station ID")
+        place_station_btn = gr.Button("Place Station")
+        place_station_btn.click(place_station_on_line, inputs=[line_id, station_id], outputs="text")
+    
+    with gr.Tab("Search Stations"):
+        line_id = gr.Number(label="Line ID")
+        station_id = gr.Number(label="Station ID")
+        n_ahead = gr.Number(label="N-th Station Ahead")
+        n_behind = gr.Number(label="N-th Station Behind")
+        search_btn = gr.Button("Search")
+        search_btn.click(search_stations, inputs=[line_id, station_id, n_ahead, n_behind], outputs=["text", "text"])
+    
+    with gr.Tab("Board Passenger"):
+        passenger_id = gr.Number(label="Passenger ID")
+        start_station_id = gr.Number(label="Start Station ID")
+        start_time = gr.Textbox(label="Start Time")
+        board_btn = gr.Button("Board")
+        board_btn.click(board_passenger, inputs=[passenger_id, start_station_id, start_time], outputs="text")
+    
+    with gr.Tab("Exit Passenger"):
+        passenger_id = gr.Number(label="Passenger ID")
+        end_station_id = gr.Number(label="End Station ID")
+        end_time = gr.Textbox(label="End Time")
+        exit_btn = gr.Button("Exit")
+        exit_btn.click(exit_passenger, inputs=[passenger_id, end_station_id, end_time], outputs="text")
+    
+    with gr.Tab("View All Boardings"):
+        view_btn = gr.Button("View All Boardings")
+        view_btn.click(view_all_boardings, inputs=None, outputs="text")
 
-# Function to run the FastAPI app
-async def app_runner():
-    config = uvicorn.Config(app=app, host="127.0.0.1", port=8000, log_level="info")
-    server = uvicorn.Server(config)
-    await server.serve()
-
-# Start the event loop
-loop = asyncio.get_event_loop()
-task = loop.create_task(app_runner())
-
-# Function to apply custom CSS
-def set_custom_style():
-    put_html("""
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .pywebio-output-separator { display: none; }
-        button { margin: 5px; padding: 10px 20px; border-radius: 5px; border: none; background-color: #4CAF50; color: white; cursor: pointer; }
-        button:hover { background-color: #45a049; }
-        h2 { color: #333; }
-    </style>
-    """)
-
-# Admin Interface
-def admin_interface():
-    clear()
-    put_html("<h2>Administrator Interface</h2>")
-    put_row([
-        put_column([
-            put_buttons([("Add Station",)], onclick=[add_station_interface]),
-            put_buttons([("Modify Station",)], onclick=[modify_station_interface]),
-            put_buttons([("Delete Station",)], onclick=[delete_station_interface])
-        ]),
-        put_column([
-            put_buttons([("Add Line",)], onclick=[add_line_interface]),
-            put_buttons([("Modify Line",)], onclick=[modify_line_interface]),
-            put_buttons([("Delete Line",)], onclick=[delete_line_interface])
-        ]),
-        put_column([
-            put_buttons([("View Onboard Passengers",)], onclick=[view_onboard_passengers]),
-            put_buttons([("Path Query",)], onclick=[path_query_interface]),
-            put_buttons([("Update Station Status",)], onclick=[update_station_status_interface])
-        ])
-    ])
-
-def add_station_interface():
-    station_name = input("Enter station name:")
-    status = select("Select station status", ["operational", "under construction", "closed"])
-    # Simulate API call
-    popup("Success", f"Station '{station_name}' with status '{status}' added.")
-
-def modify_station_interface():
-    station_name = select("Select station to modify", stations)
-    new_name = input("Enter new station name:")
-    # Simulate API call
-    popup("Success", f"Station '{station_name}' renamed to '{new_name}'.")
-
-def delete_station_interface():
-    station_name = select("Select station to delete", stations)
-    # Simulate API call
-    stations.remove(station_name)
-    popup("Success", f"Station '{station_name}' deleted.")
-
-def add_line_interface():
-    line_name = input("Enter line name:")
-    # Simulate API call
-    lines.append(line_name)
-    popup("Success", f"Line '{line_name}' added.")
-
-def modify_line_interface():
-    line_name = select("Select line to modify", lines)
-    new_name = input("Enter new line name:")
-    # Simulate API call
-    popup("Success", f"Line '{line_name}' renamed to '{new_name}'.")
-
-def delete_line_interface():
-    line_name = select("Select line to delete", lines)
-    # Simulate API call
-    lines.remove(line_name)
-    popup("Success", f"Line '{line_name}' deleted.")
-
-def view_onboard_passengers():
-    # Simulate fetching and displaying onboard passengers
-    popup("Onboard Passengers", "Passenger 1, Passenger 2")
-
-def path_query_interface():
-    start_station = input("Enter start station:")
-    end_station = input("Enter end station:")
-    # Simulate path query
-    popup("Path Query Result", f"Path found from {start_station} to {end_station}.")
-
-def update_station_status_interface():
-    station_name = select("Select station to update status", stations)
-    status = select("Select new status", ["operational", "under construction", "closed"])
-    # Simulate status update
-    popup("Status Updated", f"Station '{station_name}' status updated to '{status}'.")
-
-# User Interface
-def user_interface():
-    clear()
-    put_html("<h2>User Interface</h2>")
-    put_buttons([
-        ("Board Passenger", board_passenger_interface),
-        ("Exit Passenger", exit_passenger_interface),
-        ("Search Ride Records", search_ride_records_interface)
-    ])
-
-def board_passenger_interface():
-    station_name = input("Enter boarding station:")
-    # Simulate API call for boarding
-    popup("Boarding Successful at", station_name)
-
-def exit_passenger_interface():
-    station_name = input("Enter exit station:")
-    # Simulate API call for exiting
-    popup("Exit Successful from", station_name)
-
-def search_ride_records_interface():
-    params = textarea("Enter search parameters (e.g., station name, passenger name, time period):")
-    # Simulate search
-    popup("Search Results", f"Results for: {params}")
-
-# Main function to manage session and layout
-def main():
-    set_custom_style()
-    put_buttons(['Admin Interface', 'User Interface'], onclick=[
-        admin_interface,
-        user_interface
-    ])
-
-# Start the PyWebIO server
-start_server(main, port=8080, debug=True)
+demo.launch()

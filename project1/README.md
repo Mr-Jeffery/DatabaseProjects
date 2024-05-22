@@ -131,6 +131,7 @@ Next, we will create user for both local and remote clients:
 create user 'client'@'%' IDENTIFIED BY 'new_password';
 GRANT ALL PRIVILEGES ON *.* TO 'client'@'%' WITH GRANT OPTION;
 GRANT FILE ON *.* TO 'client'@'%';
+FLUSH PRIVILEGES;
 ```
 You can replace `client` with whatever username you like, `'%'` means from any ip, you can also replace it with a specific ip if you like. 
   More specific [here](https://tableplus.com/blog/2018/10/how-to-create-a-superuser-in-mysql.html)
