@@ -1,6 +1,6 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, Float, DateTime, CheckConstraint, Text
 from sqlalchemy.orm import relationship
-from database import Base, engine
+from .database import Base, engine
 from sqlalchemy import MetaData
 
 # initialize metadata
@@ -18,7 +18,7 @@ class Card(Base):
     money = Column(Float, nullable=False)
     create_time = Column(DateTime, nullable=False)
     rides = relationship('CardRide', backref='card')
-    __table_args__ = (CheckConstraint("code ~ '^[0-9]{9}$'"),)
+    # __table_args__ = (CheckConstraint("code ~ '^[0-9]{9}$'"),)
 
 class Passenger(Base):
     __tablename__ = 'passengers'
@@ -28,7 +28,17 @@ class Passenger(Base):
     gender = Column(String(255), nullable=False)
     district = Column(String(255), nullable=False)
     rides = relationship('PassengerRide', backref='passenger')
-    __table_args__ = (CheckConstraint("id_number ~ '^[0-9]{17}[0-9X]?$'"),)
+    # __table_args__ = (CheckConstraint("id_number ~ '^[0-9]{17}[0-9X]?$'"),)
+
+
+class Station(Base):
+    __tablename__ = 'stations'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255))
+    district = Column(String(255))
+    intro = Column(String(1023))
+    chinese_name = Column(String(255))
+    lines = relationship('Line', secondary='line_details', backref='stations')
 
 class Line(Base):
     __tablename__ = 'lines'
@@ -39,28 +49,18 @@ class Line(Base):
     mileage = Column(Float)
     color = Column(String(255))
     first_opening = Column(DateTime)
-    url = Column(String)
-    intro = Column(String)
-    stations = relationship('Station', secondary='line_details', backref='lines')
-
-class Station(Base):
-    __tablename__ = 'stations'
-    id = Column(Integer, primary_key=True)
-    name = Column(String(255))
-    district = Column(String(255))
-    intro = Column(String)
-    chinese_name = Column(String(255))
-    lines = relationship('Line', secondary='line_details', backref='stations')
+    url = Column(String(255))
+    intro = Column(String(2047))
 
 class LineDetail(Base):
     __tablename__ = 'line_details'
-    line_name = Column(String(255), ForeignKey('lines.name'), primary_key=True)
-    station_name = Column(String(255), ForeignKey('stations.name'), primary_key=True)
+    line_id = Column(Integer, ForeignKey('lines.id'), primary_key=True)
+    station_id = Column(Integer, ForeignKey('stations.id'), primary_key=True)
 
 class RideBase(Base):
     __abstract__ = True
-    start_station = Column(String(255), ForeignKey('stations.name'))
-    end_station = Column(String(255), ForeignKey('stations.name'))
+    start_station = Column(Integer, ForeignKey('stations.id'))
+    end_station = Column(Integer, ForeignKey('stations.id'))
     price = Column(Float)
     start_time = Column(DateTime, primary_key=True)
     end_time = Column(DateTime)
@@ -86,10 +86,10 @@ class BusLine(Base):
 class BusLineDetail(Base):
     __tablename__ = 'bus_line_details'
     bus_line_name = Column(String(255), ForeignKey('bus_lines.name'), primary_key=True)
-    bus_station_name = Column(String(255), ForeignKey('bus_stations.name'), primary_key=True)
+    bus_station_name = Column(Integer, ForeignKey('bus_stations.id'), primary_key=True)
 
 class Exit(Base):
     __tablename__ = 'exits'
-    station_name = Column(String(255), ForeignKey('stations.name'), primary_key=True)
+    station_name = Column(Integer, ForeignKey('stations.id'), primary_key=True)
     name = Column(String(255), primary_key=True)
     textt = Column(Text)
