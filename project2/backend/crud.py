@@ -116,6 +116,47 @@ def get_nth_station_behind(db: Session, line_id: int, station_id: int, n: int):
         return None
 
 
+def create_passenger(db: Session, passenger: schemas.PassengerCreate):
+    db_passenger = models.Passenger(**passenger.dict())
+    db.add(db_passenger)
+    db.commit()
+    db.refresh(db_passenger)
+    return db_passenger
+
+def get_passenger(db: Session, passenger_id: int):
+    return db.query(models.Passenger).filter(models.Passenger.id == passenger_id).first()
+
+def get_passengers(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Passenger).offset(skip).limit(limit).all()
+
+def update_passenger(db: Session, passenger_id: int, passenger: schemas.PassengerUpdate):
+    db_passenger = db.query(models.Passenger).filter(models.Passenger.id == passenger_id).first()
+    if db_passenger:
+        for key, value in passenger.dict().items():
+            setattr(db_passenger, key, value)
+        db.commit()
+        db.refresh(db_passenger)
+    return db_passenger
+
+def delete_passenger(db: Session, passenger_id: int):
+    db_passenger = db.query(models.Passenger).filter(models.Passenger.id == passenger_id).first()
+    if db_passenger:
+        db.delete(db_passenger)
+        db.commit()
+    return db_passenger
+
+
+# Existing CRUD operations for stations and lines (unchanged)
+
+# View APIs
+def get_all_stations(db: Session):
+    return db.query(models.Station).all()
+
+def get_all_lines(db: Session):
+    return db.query(models.Line).all()
+
+def get_all_passengers(db: Session):
+    return db.query(models.Passenger).all()
 # import re
 
 # def is_valid_id(id_number):
