@@ -25,8 +25,6 @@ def create_station(db: Session, station: schemas.StationCreate):
 def update_station(db: Session, station_id: int, station: schemas.StationUpdate):
     db_station = db.query(models.Station).filter(models.Station.id == station_id).first()
     db_station.name = station.name
-    db_station.latitude = station.latitude
-    db_station.longitude = station.longitude
     db.commit()
     db.refresh(db_station)
     return db_station
@@ -82,6 +80,7 @@ def add_station_to_line(db: Session, line_id: int, station_id: int):
     db_station = db.query(models.Station).filter(models.Station.id == station_id).first()
     db_line.stations.append(db_station)
     db.commit()
+    
 
 def remove_station_from_line(db: Session, line_id: int, station_id: int):
     db_line = db.query(models.Line).filter(models.Line.id == line_id).first()
@@ -159,8 +158,51 @@ def get_all_passengers(db: Session):
 def get_all_boardings(db: Session):
     return db.query(models.Passenger).filter(models.Passenger.on_board == True).all()
 
-def get_line_stations(db: Session, line_id: int):
+def get_all_line_stations(db: Session, line_id: int):
     return db.query(models.Station).join(models.Line.stations).filter(models.Line.id == line_id).all()
+
+# Boarding Functionality
+def board_passenger(db: Session, boarding: schemas.Boarding):
+    passenger_ride = models.PassengerRide(**boarding.dict())
+    db.add(passenger_ride)
+    db.commit()
+    return passenger_ride
+
+def board_card(db: Session, boarding: schemas.Boarding):
+    card_ride = models.CardRide(**boarding.dict())
+    db.add(card_ride)
+    db.commit()
+    return card_ride
+
+# Exit Functionality
+def exit_passenger(db: Session, passenger_id: str, exit_info: schemas.ExitInfo):
+    ride = db.query(models.PassengerRide).filter(models.PassengerRide.passenger_id == passenger_id, models.PassengerRide.end_time == None).first()
+    if ride:
+        ride.end_station = exit_info.end_station
+        ride.end_time = exit_info.end_time
+        ride.price = calculate_price(ride.start_station, ride.end_station)
+        db.commit()
+    return ride
+
+def exit_card(db: Session, card_code: str, exit_info: schemas.ExitInfo):
+    ride = db.query(models.CardRide).filter(models.CardRide.card_code == card_code, models.CardRide.end_time == None).first()
+    if ride:
+        ride.end_station = exit_info.end_station
+        ride.end_time = exit_info.end_time
+        ride.price = calculate_price(ride.start_station, ride.end_station)
+        db.commit()
+    return ride
+
+# View Current Boardings
+def get_current_boardings(db: Session):
+    passengers = db.query(models.PassengerRide).filter(models.PassengerRide.end_time == None).all()
+    cards = db.query(models.CardRide).filter(models.CardRide.end_time == None).all()
+    return {"passengers": passengers, "cards": cards}
+
+def calculate_price(start_station, end_station):
+    # Implement price calculation logic based on Price.xlsx
+    return 0  # Placeholder
+
 # import re
 
 # def is_valid_id(id_number):

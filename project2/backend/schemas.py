@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from datetime import datetime
-
+from sqlalchemy import Column
 class BaseModel(BaseModel):
     created_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
     updated_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
@@ -98,3 +98,11 @@ class CardRideUpdate(CardRideBase):
 class CardRide(CardRideBase):
     class Config:
         orm_mode = True
+        
+class Boarding(BaseModel):
+    start_station: int
+    start_time: datetime
+
+class ExitInfo(BaseModel):
+    end_station: int
+    end_time: datetime

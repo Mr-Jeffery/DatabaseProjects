@@ -95,3 +95,23 @@ class Exit(Base):
     name = Column(String(255), primary_key=True)
     textt = Column(Text)
     
+class PassengerRide(RideBase):
+    __tablename__ = 'passenger_rides'
+    passenger_id = Column(String(18), ForeignKey('passengers.id'), primary_key=True)
+
+class CardRide(RideBase):
+    __tablename__ = 'card_rides'
+    card_code = Column(String(9), ForeignKey('cards.code'), primary_key=True)
+
+class Passenger(Base):
+    __tablename__ = 'passengers'
+    id = Column(String(18), primary_key=True)
+    name = Column(String(255))
+    phone_number = Column(String(255))
+    gender = Column(String(255))
+    district = Column(String(255))
+
+class Card(Base):
+    __tablename__ = 'cards'
+    code = Column(String(9), primary_key=True)
+    owner_name = Column(String(255))
