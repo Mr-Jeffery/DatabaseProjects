@@ -43,8 +43,6 @@ def delete_station(db: Session, station_id: int):
 def get_station_by_name(db: Session, station_name: str):
     return db.query(models.Station).filter(models.Station.name.ilike(f"%{station_name}%")).first()
 
-
-
 def get_line(db: Session, line_id: int):
     return db.query(models.Line).filter(models.Line.id == line_id).first()
 
@@ -157,6 +155,12 @@ def get_all_lines(db: Session):
 
 def get_all_passengers(db: Session):
     return db.query(models.Passenger).all()
+
+def get_all_boardings(db: Session):
+    return db.query(models.Passenger).filter(models.Passenger.on_board == True).all()
+
+def get_line_stations(db: Session, line_id: int):
+    return db.query(models.Station).join(models.Line.stations).filter(models.Line.id == line_id).all()
 # import re
 
 # def is_valid_id(id_number):

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Float, DateTime, CheckConstraint, Text
+from sqlalchemy import Column, ForeignKey, Integer, String, Float, DateTime, CheckConstraint, Text, Boolean
 from sqlalchemy.orm import relationship
 from .database import Base, engine
 from sqlalchemy import MetaData
@@ -28,6 +28,7 @@ class Passenger(Base):
     gender = Column(String(255), nullable=False)
     district = Column(String(255), nullable=False)
     rides = relationship('PassengerRide', backref='passenger')
+    on_board = Column(Boolean, default=False)
     # __table_args__ = (CheckConstraint("id_number ~ '^[0-9]{17}[0-9X]?$'"),)
 
 
@@ -93,3 +94,4 @@ class Exit(Base):
     station_name = Column(Integer, ForeignKey('stations.id'), primary_key=True)
     name = Column(String(255), primary_key=True)
     textt = Column(Text)
+    
