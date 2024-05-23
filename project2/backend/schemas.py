@@ -33,8 +33,8 @@ class PassengerCreate(PassengerBase):
 class PassengerUpdate(PassengerBase):
     pass
 
-class Passenger(PassengerBase):
-
+# schemas.py
+class PassengerCreate(BaseModel):
     class Config:
         orm_mode = True
 

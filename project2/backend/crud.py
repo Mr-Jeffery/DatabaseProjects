@@ -6,7 +6,9 @@ def get_station(db: Session, station_id: int):
 
 def get_stations_by_name(db: Session, station_name: str):
     # if contains station_name in the station_name column
-    return db.query(models.Station).filter(station_name in models.Station.name).all()
+    #return db.query(models.Station).filter(station_name in models.Station.name).all()
+    return db.query(models.Station).filter(models.Station.name.ilike(f"%{station_name}%")).all()
+    #return db.query(models.Line).filter(models.Line.name.ilike(f"%{line_name}%")).all()
 
 def get_stations(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Station).offset(skip).limit(limit).all()
