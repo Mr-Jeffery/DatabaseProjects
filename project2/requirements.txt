@@ -4,3 +4,4 @@ python-dotenv
 mysqlclient
 mysql-connector-python
 gradio
+requests
