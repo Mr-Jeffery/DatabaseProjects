@@ -1,10 +1,10 @@
 /project1/Cpp/build
 /project1/Cpp/lib/
 /project1/setenv.sh
-/project1/setenv.ps1
 /project1/Python/.env
 /project1/Data/fakerides.json
 /project1/Python/fakerides.json
 /project2/.env
 project2/backend/__pycache__/
 project2/~$Price.xlsx
+project2/setenv.sh
