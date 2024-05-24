@@ -223,7 +223,7 @@ def get_current_boardings(db: Session):
     return {"passengers": passengers, "cards": cards}
 
 def calculate_price(db: Session, start_station: models.Station, end_station: models.Station):
-    db_price = db.query(models.Price).filter(and_(models.Price.station1 == start_station.chinese_name, models.Price.station2 == end_station.chinese_name)).first()
+    db_price = db.query(models.Price).filter(and_(models.Price.station1_id == start_station.id, models.Price.station2_id == end_station.id)).first()
     if db_price:
         return db_price.price
     else:

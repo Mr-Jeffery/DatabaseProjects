@@ -14,6 +14,7 @@ metadata.drop_all(bind=engine)
 
 class Card(Base):
     __tablename__ = 'cards'
+    __table_args__ = {'extend_existing': True} 
     code = Column(String(9), primary_key=True)
     money = Column(Float, nullable=False)
     create_time = Column(DateTime, nullable=False)
@@ -22,8 +23,9 @@ class Card(Base):
 
 class Passenger(Base):
     __tablename__ = 'passengers'
-    name = Column(String(255), nullable=False)
+    __table_args__ = {'extend_existing': True} 
     id = Column(String(18), primary_key=True)
+    name = Column(String(255), nullable=False)
     phone_number = Column(String(11), nullable=False)
     gender = Column(String(255), nullable=False)
     district = Column(String(255), nullable=False)
@@ -34,6 +36,7 @@ class Passenger(Base):
 
 class Station(Base):
     __tablename__ = 'stations'
+    __table_args__ = {'extend_existing': True} 
     id = Column(Integer, primary_key=True)
     name = Column(String(255))
     district = Column(String(255))
@@ -43,6 +46,7 @@ class Station(Base):
 
 class Line(Base):
     __tablename__ = 'lines'
+    __table_args__ = {'extend_existing': True} 
     id = Column(Integer, primary_key=True)
     name = Column(String(255))
     start_time = Column(DateTime)
@@ -55,15 +59,12 @@ class Line(Base):
 
 class LineDetail(Base):
     __tablename__ = 'line_details'
+    __table_args__ = {'extend_existing': True} 
     line_id = Column(Integer, ForeignKey('lines.id'), primary_key=True)
-    order = Column(Integer)
     station_id = Column(Integer, ForeignKey('stations.id'), primary_key=True)
+    station_order = Column(Integer)
     
-# class LineDetail(Base):
-#     __tablename__ = 'line_details'
-#     line_name = Column(Integer, ForeignKey('lines.id'), primary_key=True)
-#     order = Column(Integer)
-#     station_name = Column(Integer, ForeignKey('stations.id'), primary_key=True)
+
     
 
 class RideBase(Base):
@@ -76,35 +77,41 @@ class RideBase(Base):
 
 class PassengerRide(RideBase):
     __tablename__ = 'passenger_rides'
+    __table_args__ = {'extend_existing': True} 
     passenger_id = Column(String(18), ForeignKey('passengers.id'), primary_key=True)
 
 class CardRide(RideBase):
     __tablename__ = 'card_rides'
+    __table_args__ = {'extend_existing': True} 
     card_code = Column(String(9), ForeignKey('cards.code'), primary_key=True)
 
 class BusStation(Base):
     __tablename__ = 'bus_stations'
+    __table_args__ = {'extend_existing': True} 
     id = Column(Integer, primary_key=True)
     name = Column(String(255))
     district = Column(String(255))
 
 class BusLine(Base):
     __tablename__ = 'bus_lines'
+    __table_args__ = {'extend_existing': True} 
     name = Column(String(255), primary_key=True)
 
 class BusLineDetail(Base):
     __tablename__ = 'bus_line_details'
+    __table_args__ = {'extend_existing': True} 
     bus_line_name = Column(String(255), ForeignKey('bus_lines.name'), primary_key=True)
     bus_station_name = Column(Integer, ForeignKey('bus_stations.id'), primary_key=True)
 
-class Exit(Base):
-    __tablename__ = 'exits'
-    station_name = Column(Integer, ForeignKey('stations.id'), primary_key=True)
-    name = Column(String(255), primary_key=True)
-    textt = Column(Text)
+# class Exit(Base):
+#     __tablename__ = 'exits'
+#     station_name = Column(Integer, ForeignKey('stations.id'), primary_key=True)
+#     name = Column(String(255), primary_key=True)
+#     textt = Column(Text)
     
 class Price(Base):
     __tablename__ = 'prices'
-    station1 = Column(Integer, ForeignKey('stations.id'), primary_key=True)
-    station2 = Column(Integer, ForeignKey('stations.id'), primary_key=True)
+    __table_args__ = {'extend_existing': True} 
+    station1_id = Column(Integer, ForeignKey('stations.id'), primary_key=True)
+    station2_id = Column(Integer, ForeignKey('stations.id'), primary_key=True)
     price = Column(Float, nullable=False)

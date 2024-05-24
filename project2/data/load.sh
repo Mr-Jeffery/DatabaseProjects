@@ -8,13 +8,13 @@ mysql --local-infile=1 -e "
                 money DECIMAL(19,2) NOT NULL, 
                 create_time TIMESTAMP NOT NULL);
         CREATE TABLE IF NOT EXISTS passengers (
-                id_number CHAR(18) PRIMARY KEY NOT NULL,
+                id CHAR(18) PRIMARY KEY NOT NULL,
                 name CHAR(255) NOT NULL,
                 phone_number CHAR(11) NOT NULL, 
                 gender CHAR(255) NOT NULL, 
                 district CHAR(255) NOT NULL );
         CREATE TABLE IF NOT EXISTS \`lines\` ( 
-                line_id INT PRIMARY KEY,
+                id INT PRIMARY KEY,
                 name CHAR(255),
                 start_time TIME, 
                 end_time TIME, 
@@ -25,40 +25,40 @@ mysql --local-infile=1 -e "
                 intro TEXT
                 );
         CREATE TABLE IF NOT EXISTS stations (
-                station_id   integer      not null,
+                id   integer      not null,
                 chinese_name CHAR(255)  not null,
                 name         VARCHAR(255) not null,
                 district     CHAR(255)  not null,
                 intro        text         not null,
                 constraint stations_pk
-                        primary key (station_id)
+                        primary key (id)
                 );
         CREATE TABLE IF NOT EXISTS passenger_rides (
-                rail_user        VARCHAR(256) not null,
+                id        VARCHAR(256) not null,
                 price            DOUBLE       not null,
                 start_time       TIMESTAMP    not null,
                 end_time         TIMESTAMP    not null,
                 start_station_id INTEGER      not null,
                 end_station_id   INTEGER      not null,
                 constraint rides_pk
-                        primary key (rail_user, start_station_id, start_time)
+                        primary key (id, start_station_id, start_time)
                 );
         CREATE TABLE IF NOT EXISTS card_rides (
-                rail_user        VARCHAR(256) not null,
+                code        VARCHAR(256) not null,
                 price            DOUBLE       not null,
                 start_time       TIMESTAMP    not null,
                 end_time         TIMESTAMP    not null,
                 start_station_id INTEGER      not null,
                 end_station_id   INTEGER      not null,
                 constraint rides_pk
-                        primary key (rail_user, start_station_id, start_time)
+                        primary key (code, start_station_id, start_time)
                 );
         CREATE TABLE IF NOT EXISTS line_details ( 
                 line_id INT, 
                 station_id INT,
                 station_order INT
-                -- ,FOREIGN KEY (line_name) REFERENCES \`lines\`(name)
-                -- ,FOREIGN KEY (station_name) REFERENCES stations(chinese_name)
+                -- ,FOREIGN KEY (line_id) REFERENCES \`lines\`(id)
+                -- ,FOREIGN KEY (station_id) REFERENCES stations(id)
                 );
         CREATE TABLE IF NOT EXISTS bus_stations (name CHAR(255) PRIMARY KEY, district CHAR(255));
         CREATE TABLE IF NOT EXISTS bus_lines (name CHAR(255) PRIMARY KEY);
@@ -68,7 +68,7 @@ mysql --local-infile=1 -e "
                 bus_station_name CHAR(255)
                 -- ,FOREIGN KEY (bus_station_name) REFERENCES bus_stations(name), 
                 );
-        CREATE TABLE IF NOT EXISTS price (
+        CREATE TABLE IF NOT EXISTS prices (
                 station1_id INT,
                 station2_id INT,
                 price DOUBLE PRECISION
@@ -83,6 +83,6 @@ mysql --local-infile=1 -e "
             LOAD DATA LOCAL INFILE 'bus_lines.csv' INTO TABLE bus_lines  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
             LOAD DATA LOCAL INFILE 'bus_stations.csv' INTO TABLE bus_stations  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
             LOAD DATA LOCAL INFILE 'BusOrder.csv' INTO TABLE bus_line_details  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
-            LOAD DATA LOCAL INFILE 'price.csv' INTO TABLE price  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
+            LOAD DATA LOCAL INFILE 'prices.csv' INTO TABLE prices  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
             " -u $DB_USER -h $DB_HOST -P 3306 -p$DB_PASSWORD $DB_NAME
 )
