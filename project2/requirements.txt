@@ -5,4 +5,3 @@ mysqlclient
 mysql-connector-python
 gradio
 requests
-charmap
