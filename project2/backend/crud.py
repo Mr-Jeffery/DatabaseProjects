@@ -222,9 +222,15 @@ def get_current_boardings(db: Session):
     cards = db.query(models.CardRide).filter(models.CardRide.end_time == None).all()
     return {"passengers": passengers, "cards": cards}
 
-def calculate_price(start_station, end_station):
-    # Implement price calculation logic based on Price.xlsx
-    return 0  # Placeholder
+def calculate_price(db: Session, start_station: models.Station, end_station: models.Station):
+    db_price = db.query(models.Price).filter(and_(models.Price.station1 == start_station.chinese_name, models.Price.station2 == end_station.chinese_name)).first()
+    if db_price:
+        return db_price.price
+    else:
+        return None
+
+
+
 
 # import re
 

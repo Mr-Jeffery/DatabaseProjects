@@ -56,8 +56,15 @@ class Line(Base):
 class LineDetail(Base):
     __tablename__ = 'line_details'
     line_id = Column(Integer, ForeignKey('lines.id'), primary_key=True)
-    station_id = Column(Integer, ForeignKey('stations.id'), primary_key=True)
     order = Column(Integer)
+    station_id = Column(Integer, ForeignKey('stations.id'), primary_key=True)
+    
+# class LineDetail(Base):
+#     __tablename__ = 'line_details'
+#     line_name = Column(Integer, ForeignKey('lines.id'), primary_key=True)
+#     order = Column(Integer)
+#     station_name = Column(Integer, ForeignKey('stations.id'), primary_key=True)
+    
 
 class RideBase(Base):
     __abstract__ = True
@@ -96,3 +103,8 @@ class Exit(Base):
     name = Column(String(255), primary_key=True)
     textt = Column(Text)
     
+class Price(Base):
+    __tablename__ = 'prices'
+    station1 = Column(Integer, ForeignKey('stations.id'), primary_key=True)
+    station2 = Column(Integer, ForeignKey('stations.id'), primary_key=True)
+    price = Column(Float, nullable=False)
