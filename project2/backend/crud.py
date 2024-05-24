@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import and_, func
 from . import models, schemas
 
 def get_station(db: Session, station_id: int):
@@ -76,11 +77,31 @@ def delete_line(db: Session, line_id: int):
     return db_line
 
 def add_station_to_line(db: Session, line_id: int, station_id: int):
+    # Check if the station is already in the line
+    if db.query(models.LineDetail).filter(and_(models.LineDetail.line_id == line_id, models.LineDetail.station_id == station_id)).first():
+        raise ValueError(f"Station with id {station_id} is already in line with id {line_id}")
+
+    # Get the current highest order in the line
+    max_order = db.query(func.max(models.LineDetail.order)).filter(models.LineDetail.line_id == line_id).scalar()
+    new_order = max_order + 1 if max_order is not None else 0
+
+    # Add the new station
+    new_station = models.LineDetail(line_id=line_id, station_id=station_id, order=new_order)
+    db.add(new_station)
+
+    db.commit()
+
+def insert_station_to_line(db: Session, line_id: int, station_id: int, order: int):
     db_line = db.query(models.Line).filter(models.Line.id == line_id).first()
     if any(station.id == station_id for station in db_line.stations):
         raise ValueError(f"Station with id {station_id} is already in line with id {line_id}")
-    db_station = db.query(models.Station).filter(models.Station.id == station_id).first()
-    db_line.stations.append(db_station)
+
+    # Increment the order of the subsequent stations
+    db.query(models.LineDetail).filter(and_(models.LineDetail.line_id == line_id, models.LineDetail.order >= order)).update({"order": models.LineDetail.order + 1})
+
+    new_station = models.LineDetail(line_id=line_id, station_id=station_id, order=order)
+    db.add(new_station)
+
     db.commit()
     
 
@@ -91,26 +112,26 @@ def remove_station_from_line(db: Session, line_id: int, station_id: int):
     db.commit()
 
 def get_nth_station_ahead(db: Session, line_id: int, station_id: int, n: int):
-    db_line = db.query(models.Line).filter(models.Line.id == line_id).first()
-    station_ids = [station.id for station in db_line.stations]
+    line_details = db.query(models.LineDetail).filter(models.LineDetail.line_id == line_id).order_by(models.LineDetail.order).all()
+    station_ids = [detail.station_id for detail in line_details]
     try:
         index = station_ids.index(station_id)
     except ValueError:
         raise ValueError(f"Station with id {station_id} not found in line with id {line_id}")
-    if index - n >= 0:
-        return db_line.stations[index + n]
+    if index + n < len(station_ids):
+        return db.query(models.Station).filter(models.Station.id == station_ids[index + n]).first()
     else:
         return None
 
 def get_nth_station_behind(db: Session, line_id: int, station_id: int, n: int):
-    db_line = db.query(models.Line).filter(models.Line.id == line_id).first()
-    station_ids = [station.id for station in db_line.stations]
+    line_details = db.query(models.LineDetail).filter(models.LineDetail.line_id == line_id).order_by(models.LineDetail.order).all()
+    station_ids = [detail.station_id for detail in line_details]
     try:
         index = station_ids.index(station_id)
     except ValueError:
         raise ValueError(f"Station with id {station_id} not found in line with id {line_id}")
     if index - n >= 0:
-        return db_line.stations[index - n]
+        return db.query(models.Station).filter(models.Station.id == station_ids[index - n]).first()
     else:
         return None
 

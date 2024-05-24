@@ -57,6 +57,7 @@ class LineDetail(Base):
     __tablename__ = 'line_details'
     line_id = Column(Integer, ForeignKey('lines.id'), primary_key=True)
     station_id = Column(Integer, ForeignKey('stations.id'), primary_key=True)
+    order = Column(Integer)
 
 class RideBase(Base):
     __abstract__ = True
