@@ -41,10 +41,10 @@ mysql --local-infile=1 -e "CREATE TABLE IF NOT EXISTS cards(
                     url TEXT,
                     intro TEXT);
             CREATE TABLE IF NOT EXISTS stations (
-                    name CHAR(255) PRIMARY KEY, 
+                    name CHAR(255), 
                     district CHAR(255), 
                     intro TEXT, 
-                    chinese_name CHAR(255));
+                    chinese_name CHAR(255) PRIMARY KEY);
             CREATE TABLE IF NOT EXISTS rides (
                     rail_user CHAR(255), 
                     start_station CHAR(255), 
@@ -54,22 +54,27 @@ mysql --local-infile=1 -e "CREATE TABLE IF NOT EXISTS cards(
                     end_time TIMESTAMP);
             CREATE TABLE IF NOT EXISTS line_details ( 
                     line_name CHAR(255), 
-                    station_name CHAR(255), 
                     station_order INT,
+                    station_name CHAR(255),
                     FOREIGN KEY (line_name) REFERENCES \`lines\`(name), 
-                    FOREIGN KEY (station_name) REFERENCES stations(name));
+                    FOREIGN KEY (station_name) REFERENCES stations(chinese_name)
+                    );
             CREATE TABLE IF NOT EXISTS bus_stations (name CHAR(255) PRIMARY KEY, district CHAR(255));
             CREATE TABLE IF NOT EXISTS bus_lines (name CHAR(255) PRIMARY KEY);
             CREATE TABLE IF NOT EXISTS bus_line_details (
                     bus_line_name CHAR(255), 
-                    bus_station_name CHAR(255), 
                     station_order INT,
-                    FOREIGN KEY (bus_station_name) REFERENCES bus_stations(name));
+                    bus_station_name CHAR(255)
+                    -- ,FOREIGN KEY (bus_station_name) REFERENCES bus_stations(name), 
+                    );
             LOAD DATA LOCAL INFILE 'cards.csv' INTO TABLE cards  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
             LOAD DATA LOCAL INFILE 'passengers.csv' INTO TABLE passengers  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
             LOAD DATA LOCAL INFILE 'lines.csv' INTO TABLE \`lines\`  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
             LOAD DATA LOCAL INFILE 'stations.csv' INTO TABLE stations  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
             LOAD DATA LOCAL INFILE 'rides.csv' INTO TABLE rides  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
             LOAD DATA LOCAL INFILE 'shenzhen_metro.csv' INTO TABLE line_details  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
+            LOAD DATA LOCAL INFILE 'bus_lines.csv' INTO TABLE bus_lines  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
+            LOAD DATA LOCAL INFILE 'bus_stations.csv' INTO TABLE bus_stations  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
+            LOAD DATA LOCAL INFILE 'BusOrder.csv' INTO TABLE bus_line_details  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
             " -u $DB_USER -h $DB_HOST -P 3306 -p$DB_PASSWORD $DB_NAME
 )
