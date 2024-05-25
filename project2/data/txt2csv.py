@@ -19,14 +19,14 @@ def remove_duplicate(filename):
 
         new_rows = []
         for row in reader:
-            intro = row[4]
+            intro = row[8]
             # Split the intro into two halves
             mid = len(intro) // 2
             first_half = intro[:mid]
             second_half = intro[mid:]
             # If the two halves are the same, keep only the first half
             if first_half == second_half:
-                row[4] = first_half
+                row[8] = first_half
             new_rows.append(row)
 
     # Write the new rows back to the file
@@ -35,4 +35,4 @@ def remove_duplicate(filename):
         writer.writerow(header)
         writer.writerows(new_rows)
 
-remove_duplicate('stations.csv')
+remove_duplicate('lines.csv')
