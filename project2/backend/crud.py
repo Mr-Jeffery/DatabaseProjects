@@ -112,7 +112,7 @@ def remove_station_from_line(db: Session, line_id: int, station_id: int):
     db.commit()
 
 def get_nth_station_ahead(db: Session, line_id: int, station_id: int, n: int):
-    line_details = db.query(models.LineDetail).filter(models.LineDetail.line_id == line_id).order_by(models.LineDetail.order).all()
+    line_details = db.query(models.LineDetail).filter(models.LineDetail.line_id == line_id).order_by(models.LineDetail.station_order).all()
     station_ids = [detail.station_id for detail in line_details]
     try:
         index = station_ids.index(station_id)
@@ -124,7 +124,7 @@ def get_nth_station_ahead(db: Session, line_id: int, station_id: int, n: int):
         return None
 
 def get_nth_station_behind(db: Session, line_id: int, station_id: int, n: int):
-    line_details = db.query(models.LineDetail).filter(models.LineDetail.line_id == line_id).order_by(models.LineDetail.order).all()
+    line_details = db.query(models.LineDetail).filter(models.LineDetail.line_id == line_id).order_by(models.LineDetail.station_order).all()
     station_ids = [detail.station_id for detail in line_details]
     try:
         index = station_ids.index(station_id)
