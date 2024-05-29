@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Float, DateTime, CheckConstraint, Text, Boolean
+from sqlalchemy import Column, ForeignKey, Integer, String, Float, DateTime, CheckConstraint, Text, Boolean, DECIMAL as Decimal
 from sqlalchemy.orm import relationship
 from .database import Base, engine
 from sqlalchemy import MetaData
@@ -16,7 +16,7 @@ class Card(Base):
     __tablename__ = 'cards'
     __table_args__ = {'extend_existing': True} 
     code = Column(String(9), primary_key=True)
-    money = Column(Float, nullable=False)
+    balance = Column(Decimal(19,2), nullable=False)
     create_time = Column(DateTime, nullable=False)
     rides = relationship('CardRide', backref='card')
     # __table_args__ = (CheckConstraint("code ~ '^[0-9]{9}$'"),)
@@ -71,7 +71,7 @@ class RideBase(Base):
     __abstract__ = True
     start_station = Column(Integer, ForeignKey('stations.id'))
     end_station = Column(Integer, ForeignKey('stations.id'))
-    price = Column(Float)
+    price = Column(Decimal(4,2))
     start_time = Column(DateTime, primary_key=True)
     end_time = Column(DateTime)
 
@@ -114,4 +114,4 @@ class Price(Base):
     __table_args__ = {'extend_existing': True} 
     station1_id = Column(Integer, ForeignKey('stations.id'), primary_key=True)
     station2_id = Column(Integer, ForeignKey('stations.id'), primary_key=True)
-    price = Column(Float, nullable=False)
+    price = Column(Decimal(19,2), nullable=False)

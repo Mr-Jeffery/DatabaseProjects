@@ -98,11 +98,20 @@ class CardRideUpdate(CardRideBase):
 class CardRide(CardRideBase):
     class Config:
         orm_mode = True
+
+class PassengerRideBase(RideBase):
+    passenger_id: str = Field(..., max_length=18)
+
+class PassengerRideCreate(PassengerRideBase):
+    pass
+
+class PassengerRideUpdate(PassengerRideBase):
+    pass
         
 class Boarding(BaseModel):
-    start_station: int
+    start_station_id: int
     start_time: datetime
 
 class ExitInfo(BaseModel):
-    end_station: int
+    end_station_id: int
     end_time: datetime

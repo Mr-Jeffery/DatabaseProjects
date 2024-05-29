@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, func
+from sqlalchemy import and_, or_, func
 from . import models, schemas
 
 def get_station(db: Session, station_id: int):
@@ -42,7 +42,7 @@ def delete_station(db: Session, station_id: int):
     return db_station
 
 def get_station_by_name(db: Session, station_name: str):
-    return db.query(models.Station).filter(models.Station.name.ilike(f"%{station_name}%")).first()
+    return db.query(models.Station).filter(or_(models.Station.name.ilike(f"%{station_name}%"), models.Station.chinese_name.ilike(f"%{station_name}%"))).first()
 
 def get_line(db: Session, line_id: int):
     return db.query(models.Line).filter(models.Line.id == line_id).first()
@@ -82,11 +82,11 @@ def add_station_to_line(db: Session, line_id: int, station_id: int):
         raise ValueError(f"Station with id {station_id} is already in line with id {line_id}")
 
     # Get the current highest order in the line
-    max_order = db.query(func.max(models.LineDetail.order)).filter(models.LineDetail.line_id == line_id).scalar()
+    max_order = db.query(func.max(models.LineDetail.station_order)).filter(models.LineDetail.line_id == line_id).scalar()
     new_order = max_order + 1 if max_order is not None else 0
 
     # Add the new station
-    new_station = models.LineDetail(line_id=line_id, station_id=station_id, order=new_order)
+    new_station = models.LineDetail(line_id=line_id, station_id=station_id, station_order=new_order)
     db.add(new_station)
 
     db.commit()
@@ -97,9 +97,9 @@ def insert_station_to_line(db: Session, line_id: int, station_id: int, order: in
         raise ValueError(f"Station with id {station_id} is already in line with id {line_id}")
 
     # Increment the order of the subsequent stations
-    db.query(models.LineDetail).filter(and_(models.LineDetail.line_id == line_id, models.LineDetail.order >= order)).update({"order": models.LineDetail.order + 1})
+    db.query(models.LineDetail).filter(and_(models.LineDetail.line_id == line_id, models.LineDetail.station_order >= order)).update({"station_order": models.LineDetail.station_order + 1})
 
-    new_station = models.LineDetail(line_id=line_id, station_id=station_id, order=order)
+    new_station = models.LineDetail(line_id=line_id, station_id=station_id, station_order=order)
     db.add(new_station)
 
     db.commit()
@@ -208,11 +208,13 @@ def exit_passenger(db: Session, passenger_id: str, exit_info: schemas.ExitInfo):
     return ride
 
 def exit_card(db: Session, card_code: str, exit_info: schemas.ExitInfo):
+    card = db.query(models.Card).filter(models.Card.code == card_code).first()
     ride = db.query(models.CardRide).filter(models.CardRide.card_code == card_code, models.CardRide.end_time == None).first()
-    if ride:
+    if ride and card:
         ride.end_station = exit_info.end_station
         ride.end_time = exit_info.end_time
         ride.price = calculate_price(ride.start_station, ride.end_station)
+        card.balance -= ride.price
         db.commit()
     return ride
 

@@ -5,7 +5,7 @@ time (
 mysql --local-infile=1 -e "
         CREATE TABLE IF NOT EXISTS cards( 
                 code CHAR(9) PRIMARY KEY,
-                money DECIMAL(19,2) NOT NULL, 
+                balance DECIMAL(19,2) NOT NULL, 
                 create_time TIMESTAMP NOT NULL);
         CREATE TABLE IF NOT EXISTS passengers (
                 id CHAR(18) PRIMARY KEY NOT NULL,
@@ -14,7 +14,7 @@ mysql --local-infile=1 -e "
                 gender CHAR(255) NOT NULL, 
                 district CHAR(255) NOT NULL );
         CREATE TABLE IF NOT EXISTS \`lines\` ( 
-                id INT PRIMARY KEY,
+                id INT PRIMARY KEY AUTO_INCREMENT,
                 name CHAR(255),
                 start_time TIME, 
                 end_time TIME, 
@@ -25,7 +25,7 @@ mysql --local-infile=1 -e "
                 intro TEXT
                 );
         CREATE TABLE IF NOT EXISTS stations (
-                id   integer      not null,
+                id   integer      not null AUTO_INCREMENT,
                 chinese_name CHAR(255)  not null,
                 name         VARCHAR(255) not null,
                 district     CHAR(255)  not null,
@@ -35,7 +35,7 @@ mysql --local-infile=1 -e "
                 );
         CREATE TABLE IF NOT EXISTS passenger_rides (
                 id        VARCHAR(256) not null,
-                price            DOUBLE       not null,
+                price            DECIMAL(19,2)       not null,
                 start_time       TIMESTAMP    not null,
                 end_time         TIMESTAMP    not null,
                 start_station_id INTEGER      not null,
@@ -45,7 +45,7 @@ mysql --local-infile=1 -e "
                 );
         CREATE TABLE IF NOT EXISTS card_rides (
                 code        VARCHAR(256) not null,
-                price            DOUBLE       not null,
+                price            DECIMAL(19,2)       not null,
                 start_time       TIMESTAMP    not null,
                 end_time         TIMESTAMP    not null,
                 start_station_id INTEGER      not null,
@@ -71,7 +71,7 @@ mysql --local-infile=1 -e "
         CREATE TABLE IF NOT EXISTS prices (
                 station1_id INT,
                 station2_id INT,
-                price DOUBLE PRECISION
+                price DECIMAL(19,2)
                 );        
             LOAD DATA LOCAL INFILE 'cards.csv' INTO TABLE cards  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
             LOAD DATA LOCAL INFILE 'passengers.csv' INTO TABLE passengers  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
