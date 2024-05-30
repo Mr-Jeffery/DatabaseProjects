@@ -30,6 +30,7 @@ mysql --local-infile=1 -e "
                 name         VARCHAR(255) not null,
                 district     CHAR(255)  not null,
                 intro        text         not null,
+                status        CHAR(255),
                 constraint stations_pk
                         primary key (id)
                 );
@@ -84,5 +85,6 @@ mysql --local-infile=1 -e "
             LOAD DATA LOCAL INFILE 'bus_stations.csv' INTO TABLE bus_stations  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
             LOAD DATA LOCAL INFILE 'BusOrder.csv' INTO TABLE bus_line_details  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
             LOAD DATA LOCAL INFILE 'prices.csv' INTO TABLE prices  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
+            UPDATE stations SET status = 'Operational';
             " -u $DB_USER -h $DB_HOST -P 3306 -p$DB_PASSWORD $DB_NAME
 )

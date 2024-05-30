@@ -44,7 +44,7 @@ class StationBase(BaseModel):
     district: Optional[str] = Field(None, max_length=255)
     intro: Optional[str] = Field(None, max_length=1023)
     chinese_name: Optional[str] = Field(None, max_length=255)
-
+    status: Optional[str] = Field(None, max_length=255)
 class StationCreate(StationBase):
     pass
 
@@ -66,6 +66,7 @@ class LineBase(BaseModel):
     first_opening: Optional[datetime]
     url: Optional[str] = Field(None, max_length=255)
     intro: Optional[str] = Field(None, max_length=2047)
+    # status: Optional[str] = Field(None, max_length=255)
 
 class LineCreate(LineBase):
     pass

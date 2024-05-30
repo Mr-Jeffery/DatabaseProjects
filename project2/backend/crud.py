@@ -14,12 +14,15 @@ def get_stations_by_name(db: Session, station_name: str):
 def get_stations(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Station).offset(skip).limit(limit).all()
 
+def get_station_by_id(db: Session, station_id: int):
+    return db.query(models.Station).filter(models.Station.id == station_id).first()
+
 # name: Optional[str] = Field(None, max_length=255)
 # district: Optional[str] = Field(None, max_length=255)
 # intro: Optional[str] = Field(None, max_length=1023)
 # chinese_name: Optional[str] = Field(None, max_length=255)
 def create_station(db: Session, station: schemas.StationCreate):
-    db_station = models.Station(name=station.name, district=station.district, intro=station.intro, chinese_name=station.chinese_name)
+    db_station = models.Station(name=station.name, district=station.district, intro=station.intro, chinese_name=station.chinese_name, status=station.status)
     db.add(db_station)
     db.commit()
     db.refresh(db_station)
@@ -28,6 +31,10 @@ def create_station(db: Session, station: schemas.StationCreate):
 def update_station(db: Session, station_id: int, station: schemas.StationUpdate):
     db_station = db.query(models.Station).filter(models.Station.id == station_id).first()
     db_station.name = station.name
+    db_station.district = station.district
+    db_station.intro = station.intro
+    db_station.chinese_name = station.chinese_name
+    db_station.status = station.status
     db.commit()
     db.refresh(db_station)
     return db_station

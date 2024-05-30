@@ -42,6 +42,7 @@ class Station(Base):
     district = Column(String(255))
     intro = Column(String(1023))
     chinese_name = Column(String(255))
+    status = Column(String(255), default="Operational")
     lines = relationship('Line', secondary='line_details', backref='stations')
 
 class Line(Base):
