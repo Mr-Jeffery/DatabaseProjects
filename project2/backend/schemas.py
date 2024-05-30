@@ -59,11 +59,11 @@ class Station(StationBase):
 
 class LineBase(BaseModel):
     name: Optional[str] = Field(None, max_length=255)
-    start_time: Optional[datetime]
-    end_time: Optional[datetime]
-    mileage: Optional[float]
+    start_time: Optional[datetime] = Field(None)
+    end_time: Optional[datetime] = Field(None)
+    mileage: Optional[float] = Field(None)
     color: Optional[str] = Field(None, max_length=255)
-    first_opening: Optional[datetime]
+    first_opening: Optional[datetime]= Field(None, max_length=255)
     url: Optional[str] = Field(None, max_length=255)
     intro: Optional[str] = Field(None, max_length=2047)
     # status: Optional[str] = Field(None, max_length=255)

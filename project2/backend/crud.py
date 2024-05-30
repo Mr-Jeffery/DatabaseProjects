@@ -68,6 +68,7 @@ def create_line(db: Session, line: schemas.LineCreate):
     db_line = models.Line(name=line.name, color=line.color, start_time=line.start_time, end_time=line.end_time, mileage=None, first_opening=None, url=None, intro=None)
     db.add(db_line)
     db.commit()
+    return db_line
 
 def update_line(db: Session, line_id: int, line: schemas.LineUpdate):
     db_line = db.query(models.Line).filter(models.Line.id == line_id).first()
@@ -189,7 +190,7 @@ def get_all_boardings(db: Session):
     return db.query(models.Passenger).filter(models.Passenger.on_board == True).all()
 
 def get_all_line_stations(db: Session, line_id: int):
-    return db.query(models.Station).join(models.Line.stations).filter(models.Line.id == line_id).all()
+    return db.query(models.LineDetail.station_id).filter(models.LineDetail.line_id == line_id).order_by(models.LineDetail.station_order).all()
 
 # Boarding Functionality
 def board_passenger(db: Session, boarding: schemas.Boarding):
