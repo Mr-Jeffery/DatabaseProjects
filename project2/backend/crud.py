@@ -145,12 +145,18 @@ def get_nth_station_behind(db: Session, line_id: int, station_id: int, n: int):
 
 
 def create_passenger(db: Session, passenger: schemas.PassengerCreate):
-    db_passenger = models.Passenger(**passenger.dict())
+    db_passenger = models.Passenger(name=passenger.name, id=passenger.id, phone_number=passenger.phone_number,gender=passenger.gender, district=passenger.district)
     db.add(db_passenger)
     db.commit()
     db.refresh(db_passenger)
     return db_passenger
-
+                    # new_passenger = schemas.PassengerCreate(
+                    #     name=(name),
+                    #     id=(id),
+                    #     phone_number=(phone_number),
+                    #     gender=(gender),
+                    #     district=(district)
+                    # )
 def get_passenger(db: Session, passenger_id: int):
     return db.query(models.Passenger).filter(models.Passenger.id == passenger_id).first()
 
@@ -186,15 +192,15 @@ def get_all_lines(db: Session):
 def get_all_passengers(db: Session):
     return db.query(models.Passenger).all()
 
-def get_all_boardings(db: Session):
-    return db.query(models.Passenger).filter(models.Passenger.on_board == True).all()
+# def get_all_boardings(db: Session):
+#     return db.query(models.Passenger).filter(models.Passenger.on_board == True).all()
 
 def get_all_line_stations(db: Session, line_id: int):
     return db.query(models.LineDetail.station_id).filter(models.LineDetail.line_id == line_id).order_by(models.LineDetail.station_order).all()
 
 # Boarding Functionality
 def board_passenger(db: Session, boarding: schemas.Boarding):
-    passenger_ride = models.PassengerRide(**boarding.dict())
+    passenger_ride = models.PassengerRide(id=boarding.passengerOrCardsId, start_station_id=boarding.start_station_id, start_time=boarding.start_time)
     db.add(passenger_ride)
     db.commit()
     return passenger_ride
@@ -207,11 +213,11 @@ def board_card(db: Session, boarding: schemas.Boarding):
 
 # Exit Functionality
 def exit_passenger(db: Session, passenger_id: str, exit_info: schemas.ExitInfo):
-    ride = db.query(models.PassengerRide).filter(models.PassengerRide.passenger_id == passenger_id, models.PassengerRide.end_time == None).first()
+    ride = db.query(models.PassengerRide).filter(models.PassengerRide.id == passenger_id, models.PassengerRide.end_time == None).first()
     if ride:
-        ride.end_station = exit_info.end_station
+        ride.end_station_id = exit_info.end_station_id
         ride.end_time = exit_info.end_time
-        ride.price = calculate_price(ride.start_station, ride.end_station)
+        ride.price = calculate_price_id(db,ride.start_station_id, ride.end_station_id)
         db.commit()
     return ride
 
@@ -230,10 +236,17 @@ def exit_card(db: Session, card_code: str, exit_info: schemas.ExitInfo):
 def get_current_boardings(db: Session):
     passengers = db.query(models.PassengerRide).filter(models.PassengerRide.end_time == None).all()
     cards = db.query(models.CardRide).filter(models.CardRide.end_time == None).all()
+    # print(passengers, cards)
     return {"passengers": passengers, "cards": cards}
 
 def calculate_price(db: Session, start_station: models.Station, end_station: models.Station):
     db_price = db.query(models.Price).filter(and_(models.Price.station1_id == start_station.id, models.Price.station2_id == end_station.id)).first()
+    if db_price:
+        return db_price.price
+    else:
+        return None
+def calculate_price_id(db: Session, start_station_id: int, end_station_id: int):
+    db_price = db.query(models.Price).filter(and_(models.Price.station1_id == start_station_id, models.Price.station2_id == end_station_id)).first()
     if db_price:
         return db_price.price
     else:

@@ -28,15 +28,16 @@ class PassengerBase(BaseModel):
     district: str
 
 class PassengerCreate(PassengerBase):
-    pass
+    class Config:
+        orm_mode = True
 
 class PassengerUpdate(PassengerBase):
     pass
 
-# schemas.py
-class PassengerCreate(BaseModel):
-    class Config:
-        orm_mode = True
+# # schemas.py
+# class PassengerCreate(BaseModel):
+#     class Config:
+#         orm_mode = True
 
 # Stations
 class StationBase(BaseModel):
@@ -81,14 +82,14 @@ class Line(LineBase):
         orm_mode = True
 
 class RideBase(BaseModel):
-    start_station: int
-    end_station: int
+    start_station_id: int
+    end_station_id: int
     price: Optional[float]
     start_time: datetime
     end_time: Optional[datetime]
 
 class CardRideBase(RideBase):
-    card_code: str = Field(..., max_length=9)
+    code: str = Field(..., max_length=9)
 
 class CardRideCreate(CardRideBase):
     pass
@@ -101,7 +102,9 @@ class CardRide(CardRideBase):
         orm_mode = True
 
 class PassengerRideBase(RideBase):
-    passenger_id: str = Field(..., max_length=18)
+    id: str = Field(..., max_length=18)
+    class Config:
+        orm_mode = True
 
 class PassengerRideCreate(PassengerRideBase):
     pass
@@ -112,6 +115,7 @@ class PassengerRideUpdate(PassengerRideBase):
 class Boarding(BaseModel):
     start_station_id: int
     start_time: datetime
+    passengerOrCardsId: str = Field(..., max_length=18)
 
 class ExitInfo(BaseModel):
     end_station_id: int

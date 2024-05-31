@@ -26,7 +26,7 @@ mysql --local-infile=1 -e "
                 );
         CREATE TABLE IF NOT EXISTS stations (
                 id   integer      not null AUTO_INCREMENT,
-                chinese_name CHAR(255)  not null,
+                chinese_name CHAR(255),
                 name         VARCHAR(255) not null,
                 district     CHAR(255)  not null,
                 intro        text         not null,
@@ -36,21 +36,21 @@ mysql --local-infile=1 -e "
                 );
         CREATE TABLE IF NOT EXISTS passenger_rides (
                 id        VARCHAR(256) not null,
-                price            DECIMAL(19,2)       not null,
+                price            DECIMAL(19,2),
                 start_time       TIMESTAMP    not null,
-                end_time         TIMESTAMP    not null,
+                end_time         TIMESTAMP,
                 start_station_id INTEGER      not null,
-                end_station_id   INTEGER      not null,
+                end_station_id   INTEGER,
                 constraint rides_pk
                         primary key (id, start_station_id, start_time)
                 );
         CREATE TABLE IF NOT EXISTS card_rides (
                 code        VARCHAR(256) not null,
-                price            DECIMAL(19,2)       not null,
+                price            DECIMAL(19,2),
                 start_time       TIMESTAMP    not null,
-                end_time         TIMESTAMP    not null,
+                end_time         TIMESTAMP,
                 start_station_id INTEGER      not null,
-                end_station_id   INTEGER      not null,
+                end_station_id   INTEGER,
                 constraint rides_pk
                         primary key (code, start_station_id, start_time)
                 );

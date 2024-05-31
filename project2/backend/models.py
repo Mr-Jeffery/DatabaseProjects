@@ -30,7 +30,7 @@ class Passenger(Base):
     gender = Column(String(255), nullable=False)
     district = Column(String(255), nullable=False)
     rides = relationship('PassengerRide', backref='passenger')
-    on_board = Column(Boolean, default=False)
+    # on_board = Column(Boolean, default=False)
     # __table_args__ = (CheckConstraint("id_number ~ '^[0-9]{17}[0-9X]?$'"),)
 
 
@@ -70,21 +70,21 @@ class LineDetail(Base):
 
 class RideBase(Base):
     __abstract__ = True
-    start_station = Column(Integer, ForeignKey('stations.id'))
-    end_station = Column(Integer, ForeignKey('stations.id'))
-    price = Column(Decimal(4,2))
+    start_station_id = Column(Integer, ForeignKey('stations.id'))
+    end_station_id = Column(Integer, ForeignKey('stations.id'), nullable=True)
+    price = Column(Decimal(4,2), nullable=True)
     start_time = Column(DateTime, primary_key=True)
-    end_time = Column(DateTime)
+    end_time = Column(DateTime, nullable=True)
 
 class PassengerRide(RideBase):
     __tablename__ = 'passenger_rides'
     __table_args__ = {'extend_existing': True} 
-    passenger_id = Column(String(18), ForeignKey('passengers.id'), primary_key=True)
+    id = Column(String(18), ForeignKey('passengers.id'), primary_key=True)
 
 class CardRide(RideBase):
     __tablename__ = 'card_rides'
     __table_args__ = {'extend_existing': True} 
-    card_code = Column(String(9), ForeignKey('cards.code'), primary_key=True)
+    code = Column(String(9), ForeignKey('cards.code'), primary_key=True)
 
 class BusStation(Base):
     __tablename__ = 'bus_stations'
