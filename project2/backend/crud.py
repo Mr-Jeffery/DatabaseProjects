@@ -51,6 +51,8 @@ def delete_station(db: Session, station_id: int):
 def get_station_by_name(db: Session, station_name: str):
     return db.query(models.Station).filter(or_(models.Station.name.ilike(f"%{station_name}%"), models.Station.chinese_name.ilike(f"%{station_name}%"))).first()
 
+def get_card_by_code(db: Session, card_code: int):
+    return db.query(models.Card).filter(models.Card.code == card_code).first()
 def get_line(db: Session, line_id: int):
     return db.query(models.Line).filter(models.Line.id == line_id).first()
 
@@ -150,6 +152,13 @@ def create_passenger(db: Session, passenger: schemas.PassengerCreate):
     db.commit()
     db.refresh(db_passenger)
     return db_passenger
+
+def create_card(db: Session, card: schemas.CardCreate):
+    db_card = models.Card(code=card.code, balance=card.balance, create_time=card.create_time)
+    db.add(db_card)
+    db.commit()
+    db.refresh(db_card)
+    return db_card
                     # new_passenger = schemas.PassengerCreate(
                     #     name=(name),
                     #     id=(id),
@@ -172,12 +181,29 @@ def update_passenger(db: Session, passenger_id: int, passenger: schemas.Passenge
         db.refresh(db_passenger)
     return db_passenger
 
+def update_card(db: Session, card_code: int, card: schemas.CardUpdate):
+    db_card = db.query(models.Card).filter(models.Card.code == card_code).first()
+    if db_card:
+        for key, value in card.dict().items():
+            setattr(db_card, key, value)
+        db.commit()
+        db.refresh(db_card)
+    return db_card
+
+
 def delete_passenger(db: Session, passenger_id: int):
     db_passenger = db.query(models.Passenger).filter(models.Passenger.id == passenger_id).first()
     if db_passenger:
         db.delete(db_passenger)
         db.commit()
     return db_passenger
+def delete_card(db: Session, card_code: int):
+    db_card = db.query(models.Card).filter(models.Card.code == card_code).first()
+    if db_card:
+        db.delete(db_card)
+        db.commit()
+    return db_card
+
 
 
 # Existing CRUD operations for stations and lines (unchanged)
@@ -192,11 +218,15 @@ def get_all_lines(db: Session):
 def get_all_passengers(db: Session):
     return db.query(models.Passenger).all()
 
+def get_all_cards(db: Session):
+    return  db.query(models.Card).all()
+
 # def get_all_boardings(db: Session):
 #     return db.query(models.Passenger).filter(models.Passenger.on_board == True).all()
 
 def get_all_line_stations(db: Session, line_id: int):
     return db.query(models.LineDetail.station_id).filter(models.LineDetail.line_id == line_id).order_by(models.LineDetail.station_order).all()
+
 
 # Boarding Functionality
 def board_passenger(db: Session, boarding: schemas.Boarding):
@@ -206,7 +236,7 @@ def board_passenger(db: Session, boarding: schemas.Boarding):
     return passenger_ride
 
 def board_card(db: Session, boarding: schemas.Boarding):
-    card_ride = models.CardRide(**boarding.dict())
+    card_ride = models.CardRide(code=boarding.passengerOrCardsId, start_station_id=boarding.start_station_id, start_time=boarding.start_time)
     db.add(card_ride)
     db.commit()
     return card_ride
@@ -223,11 +253,11 @@ def exit_passenger(db: Session, passenger_id: str, exit_info: schemas.ExitInfo):
 
 def exit_card(db: Session, card_code: str, exit_info: schemas.ExitInfo):
     card = db.query(models.Card).filter(models.Card.code == card_code).first()
-    ride = db.query(models.CardRide).filter(models.CardRide.card_code == card_code, models.CardRide.end_time == None).first()
+    ride = db.query(models.CardRide).filter(models.CardRide.code == card_code, models.CardRide.end_time == None).first()
     if ride and card:
-        ride.end_station = exit_info.end_station
+        ride.end_station_id = exit_info.end_station_id
         ride.end_time = exit_info.end_time
-        ride.price = calculate_price(ride.start_station, ride.end_station)
+        ride.price = calculate_price_id(db,ride.start_station_id, ride.end_station_id)
         card.balance -= ride.price
         db.commit()
     return ride

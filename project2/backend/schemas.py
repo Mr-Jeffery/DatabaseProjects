@@ -34,6 +34,17 @@ class PassengerCreate(PassengerBase):
 class PassengerUpdate(PassengerBase):
     pass
 
+class CardBase(BaseModel):
+    code: str = Field(..., max_length=9)
+    balance: float
+    create_time: datetime
+
+class CardCreate(CardBase):
+    pass
+
+class CardUpdate(CardBase):
+    pass
+
 # # schemas.py
 # class PassengerCreate(BaseModel):
 #     class Config:
