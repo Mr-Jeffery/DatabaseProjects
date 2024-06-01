@@ -42,7 +42,7 @@ class Station(Base):
     district = Column(String(255))
     intro = Column(String(1023))
     chinese_name = Column(String(255))
-    status = Column(String(255), default="Operational")
+    status = Column(String(255), default="operational")
     lines = relationship('Line', secondary='line_details', backref='stations')
 
 class Line(Base):
@@ -75,16 +75,31 @@ class RideBase(Base):
     price = Column(Decimal(4,2), nullable=True)
     start_time = Column(DateTime, primary_key=True)
     end_time = Column(DateTime, nullable=True)
-
+    
 class PassengerRide(RideBase):
     __tablename__ = 'passenger_rides'
     __table_args__ = {'extend_existing': True} 
+    id = Column(String(18), ForeignKey('passengers.id'), primary_key=True)
+    relationship('PassengerBusinessRideDetail', backref='passenger_rides')
+    
+class PassengerBusinessRideDetail(RideBase):
+    __tablename__ = 'passenger_ride_details'
+    __table_args__ = {'extend_existing': True} 
+    ride_start_station_id = Column(Integer, ForeignKey('passenger_rides.start_station_id'), primary_key=True)
+    ride_start_time = Column(DateTime, ForeignKey('passenger_rides.start_time'), primary_key=True)
     id = Column(String(18), ForeignKey('passengers.id'), primary_key=True)
 
 class CardRide(RideBase):
     __tablename__ = 'card_rides'
     __table_args__ = {'extend_existing': True} 
     code = Column(String(9), ForeignKey('cards.code'), primary_key=True)
+    
+class CardBusinessRideDetail(RideBase):
+    __tablename__ = 'passenger_ride_details'
+    __table_args__ = {'extend_existing': True} 
+    ride_start_station_id = Column(Integer, ForeignKey('card_rides.start_station_id'), primary_key=True)
+    ride_start_time = Column(DateTime, ForeignKey('card_rides.start_time'), primary_key=True)
+    code = Column(String(18), ForeignKey('card_rides.code'), primary_key=True)
 
 class BusStation(Base):
     __tablename__ = 'bus_stations'

@@ -7,9 +7,7 @@ def get_station(db: Session, station_id: int):
 
 def get_stations_by_name(db: Session, station_name: str):
     # if contains station_name in the station_name column
-    #return db.query(models.Station).filter(station_name in models.Station.name).all()
     return db.query(models.Station).filter(models.Station.name.ilike(f"%{station_name}%")).all()
-    #return db.query(models.Line).filter(models.Line.name.ilike(f"%{line_name}%")).all()
 
 def get_stations(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Station).offset(skip).limit(limit).all()
@@ -17,10 +15,6 @@ def get_stations(db: Session, skip: int = 0, limit: int = 100):
 def get_station_by_id(db: Session, station_id: int):
     return db.query(models.Station).filter(models.Station.id == station_id).first()
 
-# name: Optional[str] = Field(None, max_length=255)
-# district: Optional[str] = Field(None, max_length=255)
-# intro: Optional[str] = Field(None, max_length=1023)
-# chinese_name: Optional[str] = Field(None, max_length=255)
 def create_station(db: Session, station: schemas.StationCreate):
     db_station = models.Station(name=station.name, district=station.district, intro=station.intro, chinese_name=station.chinese_name, status=station.status)
     db.add(db_station)
@@ -159,13 +153,7 @@ def create_card(db: Session, card: schemas.CardCreate):
     db.commit()
     db.refresh(db_card)
     return db_card
-                    # new_passenger = schemas.PassengerCreate(
-                    #     name=(name),
-                    #     id=(id),
-                    #     phone_number=(phone_number),
-                    #     gender=(gender),
-                    #     district=(district)
-                    # )
+
 def get_passenger(db: Session, passenger_id: int):
     return db.query(models.Passenger).filter(models.Passenger.id == passenger_id).first()
 
@@ -197,6 +185,7 @@ def delete_passenger(db: Session, passenger_id: int):
         db.delete(db_passenger)
         db.commit()
     return db_passenger
+
 def delete_card(db: Session, card_code: int):
     db_card = db.query(models.Card).filter(models.Card.code == card_code).first()
     if db_card:
@@ -221,8 +210,6 @@ def get_all_passengers(db: Session):
 def get_all_cards(db: Session):
     return  db.query(models.Card).all()
 
-# def get_all_boardings(db: Session):
-#     return db.query(models.Passenger).filter(models.Passenger.on_board == True).all()
 
 def get_all_line_stations(db: Session, line_id: int):
     return db.query(models.LineDetail.station_id).filter(models.LineDetail.line_id == line_id).order_by(models.LineDetail.station_order).all()
@@ -247,7 +234,7 @@ def exit_passenger(db: Session, passenger_id: str, exit_info: schemas.ExitInfo):
     if ride:
         ride.end_station_id = exit_info.end_station_id
         ride.end_time = exit_info.end_time
-        ride.price = calculate_price_id(db,ride.start_station_id, ride.end_station_id)
+        ride.price = calculate_price(db,ride.start_station_id, ride.end_station_id)
         db.commit()
     return ride
 
@@ -257,7 +244,7 @@ def exit_card(db: Session, card_code: str, exit_info: schemas.ExitInfo):
     if ride and card:
         ride.end_station_id = exit_info.end_station_id
         ride.end_time = exit_info.end_time
-        ride.price = calculate_price_id(db,ride.start_station_id, ride.end_station_id)
+        ride.price = calculate_price(db,ride.start_station_id, ride.end_station_id)
         card.balance -= ride.price
         db.commit()
     return ride
@@ -269,36 +256,11 @@ def get_current_boardings(db: Session):
     # print(passengers, cards)
     return {"passengers": passengers, "cards": cards}
 
-def calculate_price(db: Session, start_station: models.Station, end_station: models.Station):
-    db_price = db.query(models.Price).filter(and_(models.Price.station1_id == start_station.id, models.Price.station2_id == end_station.id)).first()
-    if db_price:
-        return db_price.price
-    else:
-        return None
-def calculate_price_id(db: Session, start_station_id: int, end_station_id: int):
+
+def calculate_price(db: Session, start_station_id: int, end_station_id: int):
     db_price = db.query(models.Price).filter(and_(models.Price.station1_id == start_station_id, models.Price.station2_id == end_station_id)).first()
     if db_price:
         return db_price.price
     else:
         return None
 
-
-
-
-
-
-# import re
-
-# def is_valid_id(id_number):
-#     # This regular expression matches a string of 17 digits followed by a digit or 'X'
-#     pattern = r'^[0-9]{17}[0-9X]?$'
-#     return re.match(pattern, id_number) is not None
-
-# def create_user(db: Session, user: schemas.UserCreate):
-#     if not is_valid_id(user.id_number):
-#         raise ValueError("Invalid ID number")
-#     db_user = models.User(id_number=user.id_number, ...)
-#     db.add(db_user)
-#     db.commit()
-#     db.refresh(db_user)
-#     return db_user
