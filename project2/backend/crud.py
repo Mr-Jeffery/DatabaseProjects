@@ -1,7 +1,9 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_, func
+from typing import List, Optional
 from . import models, schemas
-
+from backend.models import CardRide, PassengerRide
+from datetime import datetime
 def get_station(db: Session, station_id: int):
     return db.query(models.Station).filter(models.Station.id == station_id).first()
 
@@ -214,6 +216,47 @@ def get_all_cards(db: Session):
 def get_all_line_stations(db: Session, line_id: int):
     return db.query(models.LineDetail.station_id).filter(models.LineDetail.line_id == line_id).order_by(models.LineDetail.station_order).all()
 
+
+def get_rides_by_parameters(
+    db: Session, 
+    start_station_id: Optional[int] = None, 
+    end_station_id: Optional[int] = None,
+    start_time: Optional[datetime] = None, 
+    end_time: Optional[datetime] = None,
+    passenger_id: Optional[str] = None,
+    card_code: Optional[str] = None
+) -> List:
+    passenger_query = db.query(PassengerRide)
+    card_query = db.query(CardRide)
+    
+    if start_station_id is not None:
+        passenger_query = passenger_query.filter(PassengerRide.start_station_id == start_station_id)
+        card_query = card_query.filter(CardRide.start_station_id == start_station_id)
+    
+    if end_station_id is not None:
+        passenger_query = passenger_query.filter(PassengerRide.end_station_id == end_station_id)
+        card_query = card_query.filter(CardRide.end_station_id == end_station_id)
+    
+    if start_time is not None and end_time is not None:
+        passenger_query = passenger_query.filter(and_(PassengerRide.start_time >= start_time, PassengerRide.start_time <= end_time))
+        card_query = card_query.filter(and_(CardRide.start_time >= start_time, CardRide.start_time <= end_time))
+    elif start_time is not None:
+        passenger_query = passenger_query.filter(PassengerRide.start_time >= start_time)
+        card_query = card_query.filter(CardRide.start_time >= start_time)
+    elif end_time is not None:
+        passenger_query = passenger_query.filter(PassengerRide.start_time <= end_time)
+        card_query = card_query.filter(CardRide.start_time <= end_time)
+    
+    if passenger_id is not None:
+        passenger_query = passenger_query.filter(PassengerRide.id == passenger_id)
+    
+    if card_code is not None:
+        card_query = card_query.filter(CardRide.code == card_code)
+    
+    passenger_results = passenger_query.all()
+    card_results = card_query.all()
+    
+    return passenger_results, card_results
 
 # Boarding Functionality
 def board_passenger(db: Session, boarding: schemas.Boarding):
