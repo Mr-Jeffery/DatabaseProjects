@@ -131,3 +131,4 @@ class Price(Base):
     station1_id = Column(Integer, ForeignKey('stations.id'), primary_key=True)
     station2_id = Column(Integer, ForeignKey('stations.id'), primary_key=True)
     price = Column(Decimal(19,2), nullable=False)
+    

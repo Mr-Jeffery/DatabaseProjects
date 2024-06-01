@@ -35,7 +35,7 @@ mysql --local-infile=1 -e "
                         primary key (id)
                 );
         CREATE TABLE IF NOT EXISTS passenger_rides (
-                id        VARCHAR(256) not null,
+                id        VARCHAR(18) not null,
                 price            DECIMAL(19,2),
                 start_time       TIMESTAMP    not null,
                 end_time         TIMESTAMP,
@@ -44,8 +44,21 @@ mysql --local-infile=1 -e "
                 constraint rides_pk
                         primary key (id, start_station_id, start_time)
                 );
+        CREATE TABLE IF NOT EXISTS passenger_ride_details (
+                id        VARCHAR(16)        not null,
+                price            DECIMAL(19,2),
+                start_time       TIMESTAMP    not null,
+                end_time         TIMESTAMP,
+                start_station_id INTEGER      not null,
+                end_station_id   INTEGER,
+                ride_start_station_id INTEGER not null,
+                ride_start_time TIMESTAMP     not null,
+                FOREIGN KEY (id, ride_start_station_id, ride_start_time) REFERENCES passenger_rides (id, start_station_id, start_time),
+                constraint rides_pk
+                        primary key (id, ride_start_station_id, ride_start_time)
+                );
         CREATE TABLE IF NOT EXISTS card_rides (
-                code        VARCHAR(256) not null,
+                code        VARCHAR(9) not null,
                 price            DECIMAL(19,2),
                 start_time       TIMESTAMP    not null,
                 end_time         TIMESTAMP,
@@ -53,6 +66,19 @@ mysql --local-infile=1 -e "
                 end_station_id   INTEGER,
                 constraint rides_pk
                         primary key (code, start_station_id, start_time)
+                );
+        CREATE TABLE IF NOT EXISTS card_ride_details (
+                code        VARCHAR(9)        not null,
+                price            DECIMAL(19,2),
+                start_time       TIMESTAMP    not null,
+                end_time         TIMESTAMP,
+                start_station_id INTEGER      not null,
+                end_station_id   INTEGER,
+                ride_start_station_id INTEGER not null,
+                ride_start_time TIMESTAMP     not null,
+                FOREIGN KEY (code, ride_start_station_id, ride_start_time) REFERENCES card_rides(code, start_station_id, start_time),
+                constraint rides_pk
+                        primary key (code, ride_start_station_id, ride_start_time)
                 );
         CREATE TABLE IF NOT EXISTS line_details ( 
                 line_id INT, 
@@ -73,7 +99,8 @@ mysql --local-infile=1 -e "
                 station1_id INT,
                 station2_id INT,
                 price DECIMAL(19,2)
-                );        
+                );
+                
             LOAD DATA LOCAL INFILE 'cards.csv' INTO TABLE cards  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
             LOAD DATA LOCAL INFILE 'passengers.csv' INTO TABLE passengers  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
             LOAD DATA LOCAL INFILE 'lines.csv' INTO TABLE \`lines\`  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
