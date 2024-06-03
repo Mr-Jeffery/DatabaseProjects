@@ -224,7 +224,8 @@ def get_rides_by_parameters(
     start_time: Optional[datetime] = None, 
     end_time: Optional[datetime] = None,
     passenger_id: Optional[str] = None,
-    card_code: Optional[str] = None
+    card_code: Optional[str] = None,
+    limit = 200
 ) -> List:
     passenger_query = db.query(PassengerRide)
     card_query = db.query(CardRide)
@@ -253,8 +254,9 @@ def get_rides_by_parameters(
     if card_code is not None:
         card_query = card_query.filter(CardRide.code == card_code)
     
-    passenger_results = passenger_query.all()
-    card_results = card_query.all()
+    passenger_results = passenger_query.limit(limit).all()
+    card_results = card_query.limit(limit).all()
+    
     
     return passenger_results, card_results
 
