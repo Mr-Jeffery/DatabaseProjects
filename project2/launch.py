@@ -78,7 +78,7 @@ with gr.Blocks() as demo:
                     stations = crud.get_stations(db)
                     station_info = ""
                     for station in stations:
-                        station_info += f"ID: {station.id}, Name: {station.name}, District: {station.district}, Intro: {station.intro}, Chinese Name: {station.chinese_name}, status: {station.status}\n"
+                        station_info += f"ID: {station.id}, \nChinese Name: {station.chinese_name}, \nName: {station.name}, \nDistrict: {station.district}, \nstatus: {station.status},\nIntro: {station.intro}\n"
                     return station_info
                 except Exception as e:
                     db.rollback()
@@ -100,7 +100,7 @@ with gr.Blocks() as demo:
                     stations = crud.get_stations_by_name(db, station_name)
                     station_info = ""
                     for station in stations:
-                        station_info += f"ID: {station.id}, Name: {station.name}, District: {station.district}, Intro: {station.intro}, Chinese Name: {station.chinese_name}, status: {station.status}\n"
+                        station_info += f"ID: {station.id}, \nChinese Name: {station.chinese_name}, \nName: {station.name}, \nDistrict: {station.district}, \nstatus: {station.status},\nIntro: {station.intro}\n"
                     return station_info
                 except Exception as e:
                     db.rollback()
@@ -206,7 +206,7 @@ with gr.Blocks() as demo:
                     lines = crud.get_lines(db)
                     line_info = ""
                     for line in lines:
-                        line_info += f"ID: {line.id}, Name: {line.name}, Color: {line.color}, Start Time: {line.start_time}, End Time: {line.end_time}\n"
+                        line_info += f"ID: {line.id}, \nName: {line.name}, \nColor: {line.color}, \nStart Time: {line.start_time}, \nEnd Time: {line.end_time}\n"
                     return line_info
                 except Exception as e:
                     db.rollback()
@@ -227,7 +227,7 @@ with gr.Blocks() as demo:
                     lines= crud.get_lines_by_name(db, line_name)
                     line_info = ""
                     for line in lines:
-                        line_info += f"ID: {line.id}, Name: {line.name}, Color: {line.color}, Start Time: {line.start_time}, End Time: {line.end_time}\n"
+                        line_info += f"ID: {line.id}, \nName: {line.name}, \nColor: {line.color}, \nStart Time: {line.start_time}, \nEnd Time: {line.end_time}\n"
                     return line_info
                 except Exception as e:
                     db.rollback()
@@ -861,4 +861,4 @@ with gr.Blocks() as demo:
 
             calculate_path_btn.click(calculate_shortest_path, inputs=[start_station_name, end_station_name], outputs=calculate_path_output)
 
-demo.launch(server_name="10.16.214.232",server_port=54723)
+demo.launch(server_name="10.16.214.232",server_port=54723,share=True,auth=("admin", "pass1234"))

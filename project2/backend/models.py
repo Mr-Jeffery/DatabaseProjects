@@ -132,3 +132,9 @@ class Price(Base):
     station2_id = Column(Integer, ForeignKey('stations.id'), primary_key=True)
     price = Column(Decimal(19,2), nullable=False)
     
+class User(Base):
+    __tablename__ = 'users'
+    __table_args__ = {'extend_existing': True}
+    id = Column(Integer, primary_key=True)
+    username = Column(String(255), nullable=False, unique=True)
+    password = Column(String(255), nullable=False)

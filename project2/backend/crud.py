@@ -9,7 +9,7 @@ def get_station(db: Session, station_id: int):
 
 def get_stations_by_name(db: Session, station_name: str):
     # if contains station_name in the station_name column
-    return db.query(models.Station).filter(models.Station.name.ilike(f"%{station_name}%")).all()
+    return db.query(models.Station).filter(or_(models.Station.name.ilike(f"%{station_name}%"),models.Station.chinese_name.ilike(f"%{station_name}%"))).all()
 
 def get_stations(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Station).offset(skip).limit(limit).all()
@@ -306,4 +306,10 @@ def calculate_price(db: Session, start_station_id: int, end_station_id: int):
         return db_price.price
     else:
         return None
+    
+def log_in(db: Session, username: str, password: str):
+    user = db.query(models.User).filter(models.User.username == username).first()
+    if user and user.password == password:
+        return True
+    return False
 
