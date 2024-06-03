@@ -103,7 +103,7 @@ mysql --local-infile=1 -e "
         CREATE TABLE IF NOT EXISTS users (
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 username CHAR(255) NOT NULL,
-                password CHAR(255) NOT NULL,
+                password CHAR(255) NOT NULL
                 );
         
         INSERT INTO users (username, password) VALUES ('luckychen', 'new_password');

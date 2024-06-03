@@ -861,4 +861,11 @@ with gr.Blocks() as demo:
 
             calculate_path_btn.click(calculate_shortest_path, inputs=[start_station_name, end_station_name], outputs=calculate_path_output)
 
-demo.launch(server_name="10.16.214.232",server_port=54723,share=True,auth=("admin", "pass1234"))
+def auth_fn(username, password):
+    if crud.log_in(username, password):
+        db_user=username
+        db_password=password
+        return True
+    else:
+        return False
+demo.launch(server_name="10.16.214.232",server_port=54723,share=True,auth=auth_fn,auth_message="Please log in to use the system.")
