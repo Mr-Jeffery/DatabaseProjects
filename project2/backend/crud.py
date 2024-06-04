@@ -302,7 +302,7 @@ def get_current_boardings(db: Session):
     return {"passengers": passengers, "cards": cards}
 
 def board_business_passenger_ride(db: Session, ride_id: int, boarding: schemas.Boarding):
-    passenger_ride = models.PassengerRideDetail(ride_id=ride_id, start_station_id=boarding.start_station_id, start_time=boarding.start_time)
+    passenger_ride = models.PassengerBusinessRideDetail(ride_id=ride_id, start_station_id=boarding.start_station_id, start_time=boarding.start_time)
     db.add(passenger_ride)
     db.commit()
     return passenger_ride
@@ -314,7 +314,7 @@ def board_business_card_ride(db: Session, ride_id: int, boarding: schemas.Boardi
     return card_ride
 
 def exit_business_passenger_ride(db: Session, ride_id: int, exit_info: schemas.ExitInfo):
-    ride = db.query(models.PassengerRideDetail).filter(models.PassengerRideDetail.ride_id == ride_id, models.PassengerRideDetail.end_time == None).first()
+    ride = db.query(models.PassengerBusinessRideDetail).filter(models.PassengerRideDetail.ride_id == ride_id, models.PassengerRideDetail.end_time == None).first()
     if ride:
         ride.end_station_id = exit_info.end_station_id
         ride.end_time = exit_info.end_time
