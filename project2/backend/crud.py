@@ -301,8 +301,8 @@ def get_current_boardings(db: Session):
     # print(passengers, cards)
     return {"passengers": passengers, "cards": cards}
 
-def board_business_passenger_ride(db: Session, boarding: schemas.Boarding):
-    passenger_ride = models.PassengerRideDetail(ride_id=boarding.ride_id, start_station_id=boarding.start_station_id, start_time=boarding.start_time)
+def board_business_passenger_ride(db: Session, ride_id: int, boarding: schemas.Boarding):
+    passenger_ride = models.PassengerRideDetail(ride_id=ride_id, start_station_id=boarding.start_station_id, start_time=boarding.start_time)
     db.add(passenger_ride)
     db.commit()
     return passenger_ride

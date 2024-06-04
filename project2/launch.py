@@ -16,89 +16,69 @@ import json
 import heapq
 import pickle
 from datetime import datetime
-load_dotenv()  # take environment variables from .env.
 
-# db_name = os.getenv('DB_NAME')
-# db_user = os.getenv('DB_USER')
-# db_password = os.getenv('DB_PASSWORD')
-# db_host = os.getenv('DB_HOST')
-# db_port = os.getenv('DB_PORT')
-# # create connection 
-# conn = mydb.connect(
-#     host=db_host,
-#     port=db_port,
-#     user=db_user,
-#     password=db_password,
-#     database=db_name
-# )
-# conn.ping(reconnect=True)
-# print(conn.is_connected())
-# # ALTER DATABASE project2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
-# # ALTER TABLE project2.`lines` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-# # ALTER TABLE project2.bus_lines CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-# # ALTER TABLE project2.bus_line_details CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-# # ALTER TABLE project2.bus_stations CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-# # ALTER TABLE project2.card_rides CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-# # ALTER TABLE project2.cards CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-# # ALTER TABLE project2.stations CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-# # ALTER TABLE project2.passengers CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-# # ALTER TABLE project2.line_details CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-# # ALTER TABLE project2.passenger_rides CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-# # ALTER TABLE project2.prices CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-# SQLALCHEMY_DATABASE_URL = f"mysql+mysqlconnector://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}?charset=utf8mb4"
-# print(SQLALCHEMY_DATABASE_URL)
-# engine = create_engine(
-#     SQLALCHEMY_DATABASE_URL
-# )
-# SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# ALTER DATABASE project2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+# ALTER TABLE project2.`lines` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+# ALTER TABLE project2.bus_lines CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+# ALTER TABLE project2.bus_line_details CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+# ALTER TABLE project2.bus_stations CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+# ALTER TABLE project2.card_rides CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+# ALTER TABLE project2.cards CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+# ALTER TABLE project2.stations CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+# ALTER TABLE project2.passengers CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+# ALTER TABLE project2.line_details CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+# ALTER TABLE project2.passenger_rides CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+# ALTER TABLE project2.prices CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-# Base = declarative_base()
+def calculate_shortest_path(start_station_name, end_station_name):
+    try:
+        db = SessionLocal()
+        # Load the graph
+        with open('graph.pkl', 'rb') as f:
+            graph = pickle.load(f)
 
+        # Get the stations
+        start_station = crud.get_station_by_name(db, (start_station_name))
+        end_station = crud.get_station_by_name(db, (end_station_name))
 
-# Utility function to sanitize inputs
-# def (input_string):
-#     return str(input_string)
-    #return input_string
-    #return input_string.tochar().encode('utf-8').decode('utf-8')
-    #return input_string.encode('utf-8').decode('utf-8')
+        # Dijkstra's algorithm
+        def shortest_path(start, end):
+            queue = [(0, start, [])]
+            seen = set()
+            while queue:
+                (cost, node, path) = heapq.heappop(queue)
+                if node not in seen:
+                    seen.add(node)
+                    path = path + [node]
+                    if node == end:
+                        return cost, path
+                    for next_node, next_cost in graph[node]:
+                        if next_node not in seen:
+                            heapq.heappush(queue, (cost + next_cost, next_node, path))
+            return float('inf'), []
+        # Calculate the shortest path
+        cost, path = shortest_path(start_station.id, end_station.id)
+        path_name=path
+        realcost=crud.calculate_price(db,start_station.id, end_station.id)
+        path_name=[crud.get_station_by_id(db,station_id).chinese_name for station_id in path]
+        return f"The shortest path from {start_station_name} to {end_station_name} is {path_name} with a cost of {realcost} CNY."
+    except Exception as e:
+        db.rollback()
+        return str(e)
+    finally:
+        db.close()
 
-    #return input_string
-# Utility function to sanitize inputs
-# def tochar(input_string):
-#     return list(input_string)
-with gr.Blocks() as demo:
-    # with gr.Tab("Station Management"):
-    
-    #     with gr.Group():
-    #         gr.Markdown("### View All Stations")
-    #         view_stations_btn = gr.Button("View All Stations")
-    #         view_stations_output = gr.Textbox()
-
-    #         def get_all_stations():
-    #             db = database.SessionLocal()
-    #             try:
-    #                 stations = crud.get_stations(db)
-    #                 station_info = ""
-    #                 for station in stations:
-    #                     station_info += f"ID: {station.id}, \nChinese Name: {station.chinese_name}, \nName: {station.name}, \nDistrict: {station.district}, \nstatus: {station.status},\nIntro: {station.intro}\n"
-    #                 return station_info
-    #             except Exception as e:
-    #                 db.rollback()
-    #                 return str(e)
-    #             finally:
-    #                 db.close()
-
-    #         view_stations_btn.click(get_all_stations, inputs=None, outputs=view_stations_output)
+with gr.Blocks() as demo:        
     with gr.Tab("Station Management"):
     
         with gr.Group():
             gr.Markdown("### View All Stations")
             view_stations_btn = gr.Button("View All Stations")
-            view_stations_output = gr.Dataframe()
+            view_stations_output = gr.Dataframe(pd.DataFrame([], columns=["ID", "Chinese Name", "Name", "District", "Status", "Intro"]))
             def get_all_stations():
                 db = database.SessionLocal()
                 try:
-                    stations = crud.get_stations(db)
+                    stations = crud.get_stations(db,limit=500)
                     station_info = []
                     for station in stations:
                         station_info.append([
@@ -109,7 +89,8 @@ with gr.Blocks() as demo:
                             station.status,
                             station.intro
                         ])
-                    return station_info
+                    df = pd.DataFrame(station_info, columns=["ID", "Chinese Name", "Name", "District", "Status", "Intro"])
+                    return df
                 except Exception as e:
                     db.rollback()
                     return str(e)
@@ -937,12 +918,28 @@ with gr.Blocks() as demo:
             calculate_path_btn = gr.Button("Calculate Shortest Path")
             calculate_path_output = gr.Textbox()
             calculate_path_btn.click(calculate_shortest_path, inputs=[start_station_name, end_station_name], outputs=calculate_path_output)
-
-def auth_fn(db,username: str, password: str):
-    if crud.log_in(username, password):
-        # db_user=username
-        # db_password=password
-        return True
-    else:
+            
+def auth_fn(username, password):
+    global SessionLocal
+    db_name = os.getenv('DB_NAME')
+    db_host = os.getenv('DB_HOST')
+    db_port = os.getenv('DB_PORT')
+    db_user=username
+    db_password=password
+    SQLALCHEMY_DATABASE_URL = f"mysql+mysqlconnector://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}?charset=utf8mb4"
+    # print(SQLALCHEMY_DATABASE_URL)
+    try:
+        engine = create_engine(
+            SQLALCHEMY_DATABASE_URL
+        )
+        SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+        db = SessionLocal()
+        if crud.log_in(db, username, password):
+            return True
+        else:
+            return False
+    except SQLAlchemyError:
         return False
-demo.launch(server_name="10.16.214.232",server_port=54723,share=True,auth=auth_fn,auth_message="Please log in to use the system.")
+    
+demo.launch(server_name="10.16.214.232",server_port=54723,share=True,auth=auth_fn,auth_message="Please log in to use the system.") 
+# demo.launch(server_name="10.16.214.232",server_port=54723) 
