@@ -98,15 +98,15 @@ mysql --local-infile=1 -e "
                         primary key (ride_id)
                 );
         CREATE TABLE IF NOT EXISTS passenger_ride_details (
-                normal_ride_id INT AUTO_INCREMENT,
+                ride_id INT not null,
                 price            DECIMAL(19,2),
                 start_time       TIMESTAMP    not null,
                 end_time         TIMESTAMP,
                 start_station_id INTEGER      not null,
                 end_station_id   INTEGER,
-                FOREIGN KEY (normal_ride_id) REFERENCES passenger_rides (ride_id),
+                FOREIGN KEY (ride_id) REFERENCES passenger_rides (ride_id),
                 constraint rides_pk
-                        primary key (normal_ride_id)
+                        primary key (ride_id)
                 );
         CREATE TABLE IF NOT EXISTS card_rides (
                 ride_id INT AUTO_INCREMENT,
@@ -120,15 +120,15 @@ mysql --local-infile=1 -e "
                         primary key (ride_id)
                 );
         CREATE TABLE IF NOT EXISTS card_ride_details (
-                normal_ride_id INT AUTO_INCREMENT,
+                ride_id INT not null,
                 price            DECIMAL(19,2),
                 start_time       TIMESTAMP    not null,
                 end_time         TIMESTAMP,
                 start_station_id INTEGER      not null,
                 end_station_id   INTEGER,
-                FOREIGN KEY (normal_ride_id) REFERENCES card_rides (ride_id),
+                FOREIGN KEY (ride_id) REFERENCES card_rides (ride_id),
                 constraint rides_pk
-                        primary key (normal_ride_id)
+                        primary key (ride_id)
                 );
         CREATE TABLE IF NOT EXISTS line_details ( 
                 line_id INT, 
