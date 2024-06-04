@@ -319,6 +319,7 @@ def exit_business_passenger_ride(db: Session, ride_id: int, exit_info: schemas.E
         ride.end_station_id = exit_info.end_station_id
         ride.end_time = exit_info.end_time
         ride.price = calculate_price(db,ride.start_station_id, ride.end_station_id) * 2
+
         db.commit()
     return ride
 
@@ -344,3 +345,5 @@ def log_in(db: Session, username: str, password: str):
         return True
     return False
 
+def get_passenger_by_id(db: Session, passenger_id: str):
+    return db.query(models.Passenger).filter(models.Passenger.id == passenger_id).first()

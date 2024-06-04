@@ -585,10 +585,12 @@ with gr.Blocks() as demo:
                         passenger_id = gr.Textbox(label="Passenger ID")
                         start_station = gr.Textbox(label="Start Station")
                         start_time = gr.Textbox(label="Start Time (YYYY-MM-DD HH:MM)")
+                        gr.Markdown("#### Board Business Carriage (You can only board business carriage if you have already on board)")
+                        carriage = gr.Radio(['Yes', 'No'], label="Carriage selection")
                         board_passenger_btn = gr.Button("Board Passenger")
                         board_passenger_output = gr.Textbox()
 
-                        def board_passenger(passenger_id, start_station, start_time):
+                        def board_passenger(passenger_id, start_station, start_time,carriage):
                             start_time1 = datetime.strptime(start_time, "%Y-%m-%d %H:%M")
                             db = SessionLocal()
                             try:
@@ -597,25 +599,32 @@ with gr.Blocks() as demo:
                                     passengerOrCardsId=passenger_id,
                                     start_station_id=crud.get_station_by_name(db, start_station).id
                                 )
-                                ride = crud.board_passenger(db, boarding)
-                                return f"Passenger '{ride.id}' boarded at {ride.start_station_id}, named {start_station} at {ride.start_time}"
+                                if carriage=='No':
+                                    ride = crud.board_passenger(db, boarding)
+                                    return f"Passenger '{ride.id}' boarded at {ride.start_station_id}, named {start_station} at {ride.start_time}"
+                                if carriage=='Yes':
+                                    ride = db.query(models.PassengerRide).filter(models.PassengerRide.end_time == None, models.PassengerRide.id == passenger_id).first()
+                                    id=ride.ride_id
+                                    crud.board_business_card_ride(db,id,boarding)
+                                    return f"Passenger '{ride.id}' boarded business carriage at {ride.start_station_id}, named {start_station} at {ride.start_time} for business ride"
                             except Exception as e:
                                 db.rollback()
                                 return str(e)
                             finally:
                                 db.close()
 
-                        board_passenger_btn.click(board_passenger, inputs=[passenger_id, start_station, start_time], outputs=board_passenger_output)
+                        board_passenger_btn.click(board_passenger, inputs=[passenger_id, start_station, start_time,carriage], outputs=board_passenger_output)
 
                     with gr.Group():
                         gr.Markdown("### Exit Passenger")
                         passenger_id = gr.Textbox(label="Passenger ID")
                         end_station = gr.Textbox(label="End Station")
                         end_time = gr.Textbox(label="End Time (YYYY-MM-DD HH:MM)")
+                        gr.Markdown("#### Exit Business Carriage (You can only exit business carriage if you have already on board of bussiness)")
+                        carriage = gr.Radio(['Yes', 'No'], label="Carriage selection")
                         exit_passenger_btn = gr.Button("Exit Passenger")
-                        exit_passenger_output = gr.Textbox()
-                        carriage = gr.Radio(['Bussiness Carriage', 'Closed'], label="Carriage selection")
-                        def exit_passenger(passenger_id, end_station, end_time):
+                        exit_passenger_output = gr.Textbox()                   
+                        def exit_passenger(passenger_id, end_station, end_time,carriage):
                             end_time1 = datetime.strptime(end_time, "%Y-%m-%d %H:%M")
                             db = SessionLocal()
                             try:
@@ -623,8 +632,15 @@ with gr.Blocks() as demo:
                                     end_station_id=crud.get_station_by_name(db, end_station).id,
                                     end_time=end_time1
                                 )
-                                ride = crud.exit_passenger(db, passenger_id, exit_info)
-                                return f"Passenger '{ride.id}' exited at {ride.end_station_id} named: {end_station} with fare: {ride.price}"
+                                if carriage=='No':
+                                    ride = crud.exit_passenger(db, passenger_id, exit_info)
+                                    return f"Passenger '{ride.id}' exited at {ride.end_station_id} named: {end_station} with fare: {ride.price}"
+                                if carriage=='Yes':
+                                    business = db.query(models.PassengerRide).filter(models.PassengerRide.end_time == None, models.PassengerRide.id == passenger_id).first()
+                                    id=business.ride_id
+                                    ride=crud.exit_business_passenger_ride(db,id,exit_info)
+                                    #passenger=crud.get_passenger_by_id(db,passenger_id)
+                                    return f"Passenger '{ride.id}' exited business carriage at {ride.end_station_id} named: {end_station} with fare: {ride.price} for business ride"
                             except Exception as e:
                                 db.rollback()
                                 return str(e)
@@ -635,40 +651,54 @@ with gr.Blocks() as demo:
                 with gr.Column():
                     with gr.Group():
                         gr.Markdown("### Board Card")
+                        #carriage = gr.Radio(['Bussiness Carriage', 'Closed'], label="Carriage selection")
                         card_code = gr.Textbox(label="Card code")
                         start_station = gr.Textbox(label="Start Station")
                         start_time = gr.Textbox(label="Start Time (YYYY-MM-DD HH:MM)")
                         board_card_btn = gr.Button("Board Card")
-                        board_card_output = gr.Textbox()
 
-                        def board_card(card_code, start_station, start_time):
+                        gr.Markdown("#### Board Business Carriage (You can only board business carriage if you have already on board)")
+                        carriage = gr.Radio(['Yes', 'No'], label="Carriage selection")
+                        board_card_output = gr.Textbox()         
+                        def board_card(card_code, start_station, start_time,carriage):
                             start_time1 = datetime.strptime(start_time, "%Y-%m-%d %H:%M")
                             db = SessionLocal()
                             try:
+                     
                                 boarding = schemas.Boarding(
                                     start_time=start_time1,
                                     passengerOrCardsId=card_code,
                                     start_station_id=crud.get_station_by_name(db, start_station).id
                                 )
-                                ride = crud.board_card(db, boarding)
-                                return f"Card '{ride.code}' boarded at {ride.start_station_id}, named {start_station} at {ride.start_time}"
+                                if carriage=='No':
+                                    ride = crud.board_card(db, boarding)
+                                    return f"Card '{ride.code}' boarded at {ride.start_station_id}, named {start_station} at {ride.start_time}"
+                                if carriage=='Yes':
+                                    card = db.query(models.CardRide).filter(models.CardRide.end_time == None, models.CardRide.code == card_code).first()
+                                    id=card.ride_id
+                                    crud.board_business_card_ride(db,id,boarding)
+                                    return f"Card '{ride.code}' boarded business carriage at {ride.start_station_id}, named {start_station} at {ride.start_time}"
                             except Exception as e:
                                 db.rollback()
                                 return str(e)
                             finally:
                                 db.close()
 
-                        board_card_btn.click(board_card, inputs=[card_code, start_station, start_time], outputs=board_card_output)
 
+                        board_card_btn.click(board_card, inputs=[card_code, start_station, start_time,carriage], outputs=board_card_output)
+
+                        
                     with gr.Group():
                         gr.Markdown("### Exit Card")
                         card_code = gr.Textbox(label="Card Code")
                         end_station = gr.Textbox(label="End Station")
                         end_time = gr.Textbox(label="End Time (YYYY-MM-DD HH:MM)")
                         exit_card_btn = gr.Button("Exit Card")
-                        exit_card_output = gr.Textbox()
 
-                        def exit_card(card_code, end_station, end_time):
+                        gr.Markdown("#### Exit Business Carriage (You can only exit business carriage if you have already on board of bussiness)")
+                        carriage = gr.Radio(['Yes', 'No'], label="Carriage selection")
+                        exit_card_output = gr.Textbox()                      
+                        def exit_card(card_code, end_station, end_time,carriage):
                             end_time1 = datetime.strptime(end_time, "%Y-%m-%d %H:%M")
                             db = SessionLocal()
                             try:
@@ -676,16 +706,25 @@ with gr.Blocks() as demo:
                                     end_station_id=crud.get_station_by_name(db, end_station).id,
                                     end_time=end_time1
                                 )
-                                ride = crud.exit_card(db, card_code, exit_info)
-                                balance = crud.get_card_by_code(db, card_code).balance
-                                return f"Card '{ride.code}' exited at {ride.end_station_id} named: {end_station} with fare: {ride.price} and balance: {balance}"
+                                if carriage=='No':
+                                    ride = crud.exit_card(db, card_code, exit_info)
+                                    balance = crud.get_card_by_code(db, card_code).balance
+                                    return f"Card '{ride.code}' exited at {ride.end_station_id} named: {end_station} with fare: {ride.price} and balance: {balance}"
+                                if carriage=='Yes':
+                                    business = db.query(models.CardRide).filter(models.CardRide.end_time == None, models.CardRide.code == card_code).first()
+                                    id=business.ride_id
+                                    ride=crud.exit_business_card_ride(db,id,exit_info)
+                                    card = crud.get_card_by_code(db, card_code)
+                                    card.balance = card.balance - ride.price
+                                    balance = crud.get_card_by_code(db, card_code).balance
+                                    return f"Card '{ride.code}' exited business carriage at {ride.end_station_id} named: {end_station} with fare: {ride.price} and balance: {balance}"
                             except Exception as e:
                                 db.rollback()
                                 return str(e)
                             finally:
                                 db.close()
 
-                        exit_card_btn.click(exit_card, inputs=[card_code, end_station, end_time], outputs=exit_card_output)
+                        exit_card_btn.click(exit_card, inputs=[card_code, end_station, end_time,carriage], outputs=exit_card_output)
 
 
     with gr.Tab("User Management"):
