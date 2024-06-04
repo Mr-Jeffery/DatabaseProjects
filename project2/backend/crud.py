@@ -216,6 +216,11 @@ def get_all_cards(db: Session):
 def get_all_line_stations(db: Session, line_id: int):
     return db.query(models.LineDetail.station_id).filter(models.LineDetail.line_id == line_id).order_by(models.LineDetail.station_order).all()
 
+def get_passenger_ride_by_ride_id(db: Session, ride_id: int):
+    return db.query(models.PassengerRide).filter(models.PassengerRide.ride_id == ride_id).first()
+
+def get_card_ride_by_ride_id(db: Session, ride_id: int):
+    return db.query(models.CardRide).filter(models.CardRide.ride_id == ride_id).first()
 
 def get_rides_by_parameters(
     db: Session, 
@@ -298,8 +303,11 @@ def exit_card(db: Session, card_code: str, exit_info: schemas.ExitInfo):
 def get_current_boardings(db: Session):
     passengers = db.query(models.PassengerRide).filter(models.PassengerRide.end_time == None).all()
     cards = db.query(models.CardRide).filter(models.CardRide.end_time == None).all()
+    business_passengers = db.query(models.PassengerBusinessRideDetail).filter(models.PassengerBusinessRideDetail.end_time == None).all()
+    business_cards = db.query(models.CardBusinessRideDetail).filter(models.CardBusinessRideDetail.end_time == None).all()
+    
     # print(passengers, cards)
-    return {"passengers": passengers, "cards": cards}
+    return {"passengers": passengers, "cards": cards, "business_passengers": business_passengers, "business_cards": business_cards}
 
 def board_business_passenger_ride(db: Session, ride_id: int, boarding: schemas.Boarding):
     passenger_ride = models.PassengerBusinessRideDetail(ride_id=ride_id, start_station_id=boarding.start_station_id, start_time=boarding.start_time)

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Float, DateTime, CheckConstraint, Text, Boolean, DECIMAL as Decimal
+from sqlalchemy import Column, ForeignKey, Integer, String, Float, DateTime, Time, CheckConstraint, Text, Boolean, DECIMAL as Decimal
 from sqlalchemy.orm import relationship
 from .database import Base, engine
 from sqlalchemy import MetaData
@@ -50,8 +50,8 @@ class Line(Base):
     __table_args__ = {'extend_existing': True} 
     id = Column(Integer, primary_key=True)
     name = Column(String(255))
-    start_time = Column(DateTime)
-    end_time = Column(DateTime)
+    start_time = Column(Time)
+    end_time = Column(Time)
     mileage = Column(Float)
     color = Column(String(255))
     first_opening = Column(DateTime)

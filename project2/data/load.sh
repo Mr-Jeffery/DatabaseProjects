@@ -97,6 +97,9 @@ mysql --local-infile=1 -e "
                 constraint rides_pk
                         primary key (ride_id)
                 );
+
+        CREATE INDEX end_time_index ON passenger_rides (end_time);
+        
         CREATE TABLE IF NOT EXISTS passenger_ride_details (
                 ride_id INT not null,
                 price            DECIMAL(19,2),
@@ -108,6 +111,7 @@ mysql --local-infile=1 -e "
                 constraint rides_pk
                         primary key (ride_id)
                 );
+        
         CREATE TABLE IF NOT EXISTS card_rides (
                 ride_id INT AUTO_INCREMENT,
                 code        VARCHAR(9) not null,
@@ -119,6 +123,9 @@ mysql --local-infile=1 -e "
                 constraint rides_pk
                         primary key (ride_id)
                 );
+
+        CREATE INDEX end_time_index ON card_rides (end_time);
+
         CREATE TABLE IF NOT EXISTS card_ride_details (
                 ride_id INT not null,
                 price            DECIMAL(19,2),

@@ -101,7 +101,10 @@ with gr.Blocks() as demo:
 
         with gr.Group():
             gr.Markdown("### Search Station")
-            station_name = gr.Textbox(label="Station Name")
+            db = SessionLocal()
+            all_stations = [station.chinese_name for station in crud.get_stations(db,limit=500)]
+            db.close()
+            station_name = gr.Dropdown(all_stations, label="Station Name")
             search_station_btn = gr.Button("Search Station")
             view_stations_output = gr.Dataframe(pd.DataFrame([], columns=["ID", "Chinese Name", "Name", "District", "Status", "Intro"]))
             def search_station(name):
@@ -486,7 +489,7 @@ with gr.Blocks() as demo:
                 gr.Markdown("### View Current Boardings")
                 view_boardings_btn = gr.Button("View Current Boardings")
                 # view_boardings_output = gr.Textbox()
-                view_boardings_output = gr.DataFrame(pd.DataFrame([], columns=["ID", "Start Station", "Start Time"]))
+                view_boardings_output = gr.DataFrame(pd.DataFrame([], columns=["ID", "Type", "Start Station ID", "Start Station", "Start Time"]))
 
                 def get_boardings():
                     db = SessionLocal()
@@ -497,19 +500,39 @@ with gr.Blocks() as demo:
                             # boarding_info += f"Passenger ID: {passenger.id}, Start Station: {passenger.start_station_id}, named: {crud.get_station_by_id(db, passenger.start_station_id).name} at {passenger.start_time}\n"
                             boarding_info.append([
                                 passenger.id,
+                                "Passenger",
                                 passenger.start_station_id,
-                                crud.get_station_by_id(db, passenger.start_station_id).name,
+                                crud.get_station_by_id(db, passenger.start_station_id).chinese_name,
                                 passenger.start_time
                             ])
                         for card in boardings["cards"]:
                             # boarding_info += f"Card ID: {card.code}, Start Station: {card.start_station_id}, named: {crud.get_station_by_id(db, card.start_station_id).name} at {card.start_time}\n"
                             boarding_info.append([
                                 card.code,
+                                "Card",
                                 card.start_station_id,
-                                crud.get_station_by_id(db, card.start_station_id).name,
+                                crud.get_station_by_id(db, card.start_station_id).chinese_name,
                                 card.start_time
                             ])
-                        df = pd.DataFrame(boarding_info, columns=["ID", "Start Station", "Start Time"])
+                        for business_passenger in boardings["business_passengers"]:
+                            # boarding_info += f"Business ID: {business.id}, Start Station: {business.start_station_id}, named: {crud.get_station_by_id(db, business.start_station_id).name} at {business.start_time}\n"
+                            boarding_info.append([
+                                crud.get_passenger_ride_by_ride_id(db, business_passenger.ride_id).id,
+                                "Business Passenger",
+                                business_passenger.start_station_id,
+                                crud.get_station_by_id(db, business_passenger.start_station_id).chinese_name,
+                                business_passenger.start_time
+                            ])
+                        for business_card in boardings["business_cards"]:
+                            # boarding_info += f"Business Card ID: {business_card.code}, Start Station: {business_card.start_station_id}, named: {crud.get_station_by_id(db, business_card.start_station_id).name} at {business_card.start_time}\n"
+                            boarding_info.append([
+                                crud.get_card_ride_by_ride_id(db, business_card.ride_id).code,
+                                "Business Card",
+                                business_card.start_station_id,
+                                crud.get_station_by_id(db, business_card.start_station_id).chinese_name,
+                                business_card.start_time
+                            ])
+                        df = pd.DataFrame(boarding_info, columns=["ID/Code", "Type", "Start Station ID", "Start Station", "Start Time"])
                         return df
                         # return boarding_info
                     except Exception as e:
@@ -522,8 +545,12 @@ with gr.Blocks() as demo:
 
             with gr.Group():
                 gr.Markdown("### Search Rides")
-                start_station_input = gr.Textbox(label="Start Station")
-                end_station_input = gr.Textbox(label="End Station")
+                db = SessionLocal()
+                all_stations = [station.chinese_name for station in crud.get_stations(db,limit=500)]
+                db.close()
+                station_name = gr.Dropdown(all_stations, label="Station Name")
+                start_station_input = gr.Dropdown(all_stations, label="Start Station Name")
+                end_station_input = gr.Dropdown(all_stations, label="End Station Name")
                 start_time_input = gr.Textbox(label="Start Time (YYYY-MM-DD HH:MM)")
                 end_time_input = gr.Textbox(label="End Time (YYYY-MM-DD HH:MM)")
                 passenger_id_input = gr.Number(label="Passenger ID")
@@ -580,11 +607,15 @@ with gr.Blocks() as demo:
            
      
             with gr.Row():
+                db = SessionLocal()
+                stations = [station.chinese_name for station in crud.get_stations(db,limit=500)]
+                db.close()
                 with gr.Column():
                     with gr.Group():
                         gr.Markdown("### Board Passenger")
                         passenger_id = gr.Textbox(label="Passenger ID")
-                        start_station = gr.Textbox(label="Start Station")
+                        # start_station = gr.Textbox(label="Start Station")
+                        start_station = gr.Dropdown(stations, label="Start Station Name")
                         start_time = gr.Textbox(label="Start Time (YYYY-MM-DD HH:MM)")
                         gr.Markdown("#### Board Business Carriage (You can only board business carriage if you have already on board)")
                         carriage = gr.Radio(['Yes', 'No'], label="Carriage selection")
@@ -619,13 +650,13 @@ with gr.Blocks() as demo:
                     with gr.Group():
                         gr.Markdown("### Exit Passenger")
                         passenger_id = gr.Textbox(label="Passenger ID")
-                        end_station = gr.Textbox(label="End Station")
+                        end_station = gr.Dropdown(stations, label="End Station Name")
                         end_time = gr.Textbox(label="End Time (YYYY-MM-DD HH:MM)")
                         gr.Markdown("#### Exit Business Carriage (You can only exit business carriage if you have already on board of bussiness)")
                         carriage = gr.Radio(['Yes', 'No'], label="Carriage selection")
                         exit_passenger_btn = gr.Button("Exit Passenger")
                         exit_passenger_output = gr.Textbox()                   
-                        def exit_passenger(passenger_id, end_station, end_time,carriage):
+                        def exit_passenger(passenger_id, end_station, end_time ,carriage):
                             end_time1 = datetime.strptime(end_time, "%Y-%m-%d %H:%M")
                             db = SessionLocal()
                             try:
@@ -648,14 +679,14 @@ with gr.Blocks() as demo:
                                 return str(e)
                             finally:
                                 db.close()
-                        exit_passenger_btn.click(exit_passenger, inputs=[passenger_id, end_station, end_time], outputs=exit_passenger_output)
+                        exit_passenger_btn.click(exit_passenger, inputs=[passenger_id, end_station, end_time, carriage], outputs=exit_passenger_output)
 
                 with gr.Column():
                     with gr.Group():
                         gr.Markdown("### Board Card")
                         #carriage = gr.Radio(['Bussiness Carriage', 'Closed'], label="Carriage selection")
                         card_code = gr.Textbox(label="Card code")
-                        start_station = gr.Textbox(label="Start Station")
+                        start_station = gr.Dropdown(stations, label="Start Station Name")
                         start_time = gr.Textbox(label="Start Time (YYYY-MM-DD HH:MM)")
 
 
@@ -694,7 +725,7 @@ with gr.Blocks() as demo:
                     with gr.Group():
                         gr.Markdown("### Exit Card")
                         card_code = gr.Textbox(label="Card Code")
-                        end_station = gr.Textbox(label="End Station")
+                        end_station = gr.Dropdown(stations, label="End Station Name")
                         end_time = gr.Textbox(label="End Time (YYYY-MM-DD HH:MM)")
 
 
@@ -733,7 +764,7 @@ with gr.Blocks() as demo:
                             finally:
                                 db.close()
 
-                        exit_card_btn.click(exit_card, inputs=[card_code, end_station, end_time,carriage], outputs=exit_card_output)
+                        exit_card_btn.click(exit_card, inputs=[card_code, end_station, end_time, carriage], outputs=exit_card_output)
 
 
     with gr.Tab("User Management"):
@@ -831,7 +862,7 @@ with gr.Blocks() as demo:
                             db = SessionLocal()
                             try:
                                 passengers = crud.get_all_passengers(db)
-                                passenger_info = ""
+                                passenger_info = []
                                 for passenger in passengers:
                                     # passenger_info += f"ID: {passenger.id}, Name: {passenger.name}, Phone Number: {passenger.phone_number}, Gender: {passenger.gender}, District: {passenger.district}\n"
                                     passenger_info.append([
@@ -958,11 +989,11 @@ with gr.Blocks() as demo:
         with gr.Group():
             gr.Markdown("### Calculate Shortest Path")
             db = SessionLocal()
-            stations = [station.chinese_name for station in crud.get_stations(db,limit=500)]
+            all_stations = [station.chinese_name for station in crud.get_stations(db,limit=500)]
             # start_station_name = gr.Textbox(label="Start Station Name")
             # end_station_name = gr.Textbox(label="End Station Name")
-            start_station_name = gr.Dropdown(stations, label="Start Station Name")
-            end_station_name = gr.Dropdown(stations, label="End Station Name" )
+            start_station_name = gr.Dropdown(all_stations, label="Start Station Name")
+            end_station_name = gr.Dropdown(all_stations, label="End Station Name" )
             calculate_path_btn = gr.Button("Calculate Shortest Path")
             calculate_path_output = gr.Textbox()
             calculate_path_btn.click(calculate_shortest_path, inputs=[start_station_name, end_station_name], outputs=calculate_path_output)
