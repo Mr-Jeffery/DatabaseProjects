@@ -7,12 +7,64 @@ mysql --local-infile=1 -e "
                 code CHAR(9) PRIMARY KEY,
                 balance DECIMAL(19,2) NOT NULL, 
                 create_time TIMESTAMP NOT NULL);
+
+        DELIMITER //
+                CREATE TRIGGER check_card_code
+                BEFORE INSERT ON cards
+                FOR EACH ROW
+                BEGIN
+                IF NEW.code NOT REGEXP '^[0-9]{9}$' THEN
+                        SIGNAL SQLSTATE '45000'
+                        SET MESSAGE_TEXT = 'Invalid card code. It should be in the form of ^[0-9]{9}$';
+                END IF;
+                IF NEW.balance < 0 THEN
+                        SIGNAL SQLSTATE '45000'
+                        SET MESSAGE_TEXT = 'Invalid card balance. It should be greater than or equal to 0';
+                END IF;
+                END;
+                //
+                CREATE TRIGGER prevent_code_update
+                BEFORE UPDATE ON cards
+                FOR EACH ROW
+                BEGIN
+                IF OLD.code != NEW.code THEN
+                        SIGNAL SQLSTATE '45000'
+                        SET MESSAGE_TEXT = 'Cannot change code field';
+                END IF;
+                END;
+                //
+        DELIMITER ;
+
         CREATE TABLE IF NOT EXISTS passengers (
                 id CHAR(18) PRIMARY KEY NOT NULL,
                 name CHAR(255) NOT NULL,
                 phone_number CHAR(11) NOT NULL, 
                 gender CHAR(255) NOT NULL, 
                 district CHAR(255) NOT NULL );
+
+        DELIMITER //
+                CREATE TRIGGER check_passenger_id
+                BEFORE INSERT ON passengers
+                FOR EACH ROW
+                BEGIN
+                IF NEW.id NOT REGEXP '^[0-9]{17}[0-9X]?$' THEN
+                        SIGNAL SQLSTATE '45000'
+                        SET MESSAGE_TEXT = 'Invalid passenger id. It should be in the form of ^[0-9]{17}[0-9X]?$';
+                END IF;
+                END;
+                //
+                CREATE TRIGGER prevent_id_update
+                BEFORE UPDATE ON passengers
+                FOR EACH ROW
+                BEGIN
+                IF OLD.id != NEW.id THEN
+                        SIGNAL SQLSTATE '45000'
+                        SET MESSAGE_TEXT = 'Cannot change id field';
+                END IF;
+                END;
+                //
+        DELIMITER ;
+
         CREATE TABLE IF NOT EXISTS \`lines\` ( 
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 name CHAR(255),
@@ -35,6 +87,7 @@ mysql --local-infile=1 -e "
                         primary key (id)
                 );
         CREATE TABLE IF NOT EXISTS passenger_rides (
+                ride_id        INT AUTO_INCREMENT,
                 id        VARCHAR(18) not null,
                 price            DECIMAL(19,2),
                 start_time       TIMESTAMP    not null,
@@ -42,22 +95,21 @@ mysql --local-infile=1 -e "
                 start_station_id INTEGER      not null,
                 end_station_id   INTEGER,
                 constraint rides_pk
-                        primary key (id, start_station_id, start_time)
+                        primary key (ride_id)
                 );
         CREATE TABLE IF NOT EXISTS passenger_ride_details (
-                id        VARCHAR(16)        not null,
+                normal_ride_id INT AUTO_INCREMENT,
                 price            DECIMAL(19,2),
                 start_time       TIMESTAMP    not null,
                 end_time         TIMESTAMP,
                 start_station_id INTEGER      not null,
                 end_station_id   INTEGER,
-                ride_start_station_id INTEGER not null,
-                ride_start_time TIMESTAMP     not null,
-                FOREIGN KEY (id, ride_start_station_id, ride_start_time) REFERENCES passenger_rides (id, start_station_id, start_time),
+                FOREIGN KEY (normal_ride_id) REFERENCES passenger_rides (ride_id),
                 constraint rides_pk
-                        primary key (id, ride_start_station_id, ride_start_time)
+                        primary key (normal_ride_id)
                 );
         CREATE TABLE IF NOT EXISTS card_rides (
+                ride_id INT AUTO_INCREMENT,
                 code        VARCHAR(9) not null,
                 price            DECIMAL(19,2),
                 start_time       TIMESTAMP    not null,
@@ -65,20 +117,18 @@ mysql --local-infile=1 -e "
                 start_station_id INTEGER      not null,
                 end_station_id   INTEGER,
                 constraint rides_pk
-                        primary key (code, start_station_id, start_time)
+                        primary key (ride_id)
                 );
         CREATE TABLE IF NOT EXISTS card_ride_details (
-                code        VARCHAR(9)        not null,
+                normal_ride_id INT AUTO_INCREMENT,
                 price            DECIMAL(19,2),
                 start_time       TIMESTAMP    not null,
                 end_time         TIMESTAMP,
                 start_station_id INTEGER      not null,
                 end_station_id   INTEGER,
-                ride_start_station_id INTEGER not null,
-                ride_start_time TIMESTAMP     not null,
-                FOREIGN KEY (code, ride_start_station_id, ride_start_time) REFERENCES card_rides(code, start_station_id, start_time),
+                FOREIGN KEY (normal_ride_id) REFERENCES card_rides (ride_id),
                 constraint rides_pk
-                        primary key (code, ride_start_station_id, ride_start_time)
+                        primary key (normal_ride_id)
                 );
         CREATE TABLE IF NOT EXISTS line_details ( 
                 line_id INT, 
@@ -108,6 +158,7 @@ mysql --local-infile=1 -e "
         
         INSERT INTO users (username, password) VALUES ('luckychen', 'new_password');
         INSERT INTO users (username, password) VALUES ('jeffery', '1qaz2wsx');
+        INSERT INTO users (username, password) VALUES ('guest', '123456');
                 
         LOAD DATA LOCAL INFILE 'cards.csv' INTO TABLE cards  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
         LOAD DATA LOCAL INFILE 'passengers.csv' INTO TABLE passengers  FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
