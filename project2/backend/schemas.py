@@ -93,6 +93,7 @@ class Line(LineBase):
         orm_mode = True
 
 class RideBase(BaseModel):
+    ride_id: Optional[int]
     start_station_id: int
     end_station_id: int
     price: Optional[float]

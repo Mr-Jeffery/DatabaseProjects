@@ -301,6 +301,35 @@ def get_current_boardings(db: Session):
     # print(passengers, cards)
     return {"passengers": passengers, "cards": cards}
 
+def board_business_passenger_ride(db: Session, boarding: schemas.Boarding):
+    passenger_ride = models.PassengerRideDetail(ride_id=boarding.ride_id, start_station_id=boarding.start_station_id, start_time=boarding.start_time)
+    db.add(passenger_ride)
+    db.commit()
+    return passenger_ride
+
+def board_business_card_ride(db: Session, ride_id: int, boarding: schemas.Boarding):
+    card_ride = models.CardBusinessRideDetail(ride_id=ride_id, start_station_id=boarding.start_station_id, start_time=boarding.start_time)
+    db.add(card_ride)
+    db.commit()
+    return card_ride
+
+def exit_business_passenger_ride(db: Session, ride_id: int, exit_info: schemas.ExitInfo):
+    ride = db.query(models.PassengerRideDetail).filter(models.PassengerRideDetail.ride_id == ride_id, models.PassengerRideDetail.end_time == None).first()
+    if ride:
+        ride.end_station_id = exit_info.end_station_id
+        ride.end_time = exit_info.end_time
+        ride.price = calculate_price(db,ride.start_station_id, ride.end_station_id) * 2
+        db.commit()
+    return ride
+
+def exit_business_card_ride(db: Session, ride_id: int, exit_info: schemas.ExitInfo):
+    ride = db.query(models.CardBusinessRideDetail).filter(models.CardBusinessRideDetail.ride_id == ride_id, models.CardBusinessRideDetail.end_time == None).first()
+    if ride:
+        ride.end_station_id = exit_info.end_station_id
+        ride.end_time = exit_info.end_time
+        ride.price = calculate_price(db,ride.start_station_id, ride.end_station_id) * 2
+        db.commit()
+    return ride
 
 def calculate_price(db: Session, start_station_id: int, end_station_id: int):
     db_price = db.query(models.Price).filter(and_(models.Price.station1_id == start_station_id, models.Price.station2_id == end_station_id)).first()
