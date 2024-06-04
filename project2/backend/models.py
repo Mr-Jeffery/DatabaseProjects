@@ -70,36 +70,34 @@ class LineDetail(Base):
 
 class RideBase(Base):
     __abstract__ = True
+    ride_id = Column(Integer, primary_key=True)
     start_station_id = Column(Integer, ForeignKey('stations.id'))
     end_station_id = Column(Integer, ForeignKey('stations.id'), nullable=True)
     price = Column(Decimal(4,2), nullable=True)
-    start_time = Column(DateTime, primary_key=True)
+    start_time = Column(DateTime)
     end_time = Column(DateTime, nullable=True)
     
 class PassengerRide(RideBase):
     __tablename__ = 'passenger_rides'
     __table_args__ = {'extend_existing': True} 
-    id = Column(String(18), ForeignKey('passengers.id'), primary_key=True)
+    id = Column(String(18), ForeignKey('passengers.id'))
     relationship('PassengerBusinessRideDetail', backref='passenger_rides')
     
 class PassengerBusinessRideDetail(RideBase):
     __tablename__ = 'passenger_ride_details'
     __table_args__ = {'extend_existing': True} 
-    ride_start_station_id = Column(Integer, ForeignKey('passenger_rides.start_station_id'), primary_key=True)
-    ride_start_time = Column(DateTime, ForeignKey('passenger_rides.start_time'), primary_key=True)
-    id = Column(String(18), ForeignKey('passengers.id'), primary_key=True)
+    normal_ride_id = Column(Integer, ForeignKey('passenger_rides.ride_id'))
 
 class CardRide(RideBase):
     __tablename__ = 'card_rides'
     __table_args__ = {'extend_existing': True} 
-    code = Column(String(9), ForeignKey('cards.code'), primary_key=True)
+    code = Column(String(9), ForeignKey('cards.code'))
+    relationship('CardBusinessRideDetail', backref='card_rides')
     
 class CardBusinessRideDetail(RideBase):
-    __tablename__ = 'passenger_ride_details'
+    __tablename__ = 'card_ride_details'
     __table_args__ = {'extend_existing': True} 
-    ride_start_station_id = Column(Integer, ForeignKey('card_rides.start_station_id'), primary_key=True)
-    ride_start_time = Column(DateTime, ForeignKey('card_rides.start_time'), primary_key=True)
-    code = Column(String(18), ForeignKey('card_rides.code'), primary_key=True)
+    normal_ride_id = Column(Integer, ForeignKey('card_rides.ride_id'), primary_key=True)
 
 class BusStation(Base):
     __tablename__ = 'bus_stations'
