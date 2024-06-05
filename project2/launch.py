@@ -33,6 +33,26 @@ from datetime import datetime
 def calculate_shortest_path(start_station_name, end_station_name):
     try:
         db = SessionLocal()
+        # from collections import defaultdict
+        # import heapq
+        # data = db.query(models.LineDetail).order_by(models.LineDetail.station_order).all()
+        # edges = defaultdict(list)
+        # for d in data:
+        #     edges[d.line_id].append((d.station_order, d.station_id))
+
+        # # Create the graph
+        # graph = defaultdict(list)
+        # for line in edges:
+        #     edges[line].sort()
+        #     for i in range(len(edges[line])-1):
+        #         graph[edges[line][i][1]].append((edges[line][i+1][1], 1))
+        #         graph[edges[line][i+1][1]].append((edges[line][i][1], 1))
+
+        # import pickle
+
+        # # Save the graph
+        # with open('graph.pkl', 'wb') as f:
+        #     pickle.dump(graph, f)
         # Load the graph
         with open('graph.pkl', 'rb') as f:
             graph = pickle.load(f)
@@ -101,10 +121,7 @@ with gr.Blocks() as demo:
 
         with gr.Group():
             gr.Markdown("### Search Station")
-            db = SessionLocal()
-            all_stations = [station.chinese_name for station in crud.get_stations(db,limit=500)]
-            db.close()
-            station_name = gr.Dropdown(all_stations, label="Station Name")
+            station_name = gr.Textbox(label="Station Name")
             search_station_btn = gr.Button("Search Station")
             view_stations_output = gr.Dataframe(pd.DataFrame([], columns=["ID", "Chinese Name", "Name", "District", "Status", "Intro"]))
             def search_station(name):
@@ -404,7 +421,7 @@ with gr.Blocks() as demo:
             place_station_output = gr.Textbox()
 
             def place_station_on_line(line_id, station_id, order):
-                order=order+1# as compensation for the order
+                # order=order+1# as compensation for the order
                 db = SessionLocal()
                 try:
                     result = crud.insert_station_to_line(db, line_id=line_id, station_id=station_id,order=order)
@@ -548,9 +565,11 @@ with gr.Blocks() as demo:
                 db = SessionLocal()
                 all_stations = [station.chinese_name for station in crud.get_stations(db,limit=500)]
                 db.close()
-                station_name = gr.Dropdown(all_stations, label="Station Name")
-                start_station_input = gr.Dropdown(all_stations, label="Start Station Name")
-                end_station_input = gr.Dropdown(all_stations, label="End Station Name")
+                # station_name = gr.Dropdown(all_stations, label="Station Name")
+                start_station_input = gr.Textbox(label="Start Station Name")
+                end_station_input = gr.Textbox(label="End Station Name")
+                # start_station_input = gr.Dropdown(all_stations, label="Start Station Name")
+                # end_station_input = gr.Dropdown(all_stations, label="End Station Name")
                 start_time_input = gr.Textbox(label="Start Time (YYYY-MM-DD HH:MM)")
                 end_time_input = gr.Textbox(label="End Time (YYYY-MM-DD HH:MM)")
                 passenger_id_input = gr.Number(label="Passenger ID")
@@ -669,11 +688,11 @@ with gr.Blocks() as demo:
                                     return f"Passenger '{ride.id}' exited at {ride.end_station_id} named: {end_station} with fare: {ride.price}"
                                 if carriage=='Yes':
                                     business = db.query(models.PassengerRide).filter(models.PassengerRide.end_time == None, models.PassengerRide.id == passenger_id).first()
-                                    id=business.ride_id
-                                    ride=crud.exit_business_passenger_ride(db,id,exit_info)
+                                    ride_id=business.ride_id
+                                    ride=crud.exit_business_passenger_ride(db,ride_id,exit_info)
 
                                     #passenger=crud.get_passenger_by_id(db,passenger_id)
-                                    return f"Passenger '{ride.id}' exited business carriage at {ride.end_station_id} named: {end_station} with fare: {ride.price} for business ride"
+                                    return f"Passenger '{passenger_id}' exited business carriage at {ride.end_station_id} named: {end_station} with fare: {ride.price} for business ride"
                             except Exception as e:
                                 db.rollback()
                                 return str(e)
@@ -804,21 +823,20 @@ with gr.Blocks() as demo:
 
                     with gr.Group():
                         gr.Markdown("### Update Passenger")
-                        passenger_id = gr.Number(label="Passenger ID")
+                        passenger_id = gr.Textbox(label="Passenger ID")
                         name = gr.Textbox(label="Name")
-                        id = gr.Textbox(label="ID")
-                        phone_number = gr.Textbox(label="Phone Number")
+                        phone_number = gr.Number(label="Phone Number")
                         gender = gr.Textbox(label="Gender")
                         district = gr.Textbox(label="District")
                         update_passenger_btn = gr.Button("Update Passenger")
                         update_passenger_output = gr.Textbox()
 
-                        def modify_passenger(passenger_id, name, id, phone_number, gender, district):
+                        def modify_passenger(passenger_id, name, phone_number, gender, district):
                             db = SessionLocal()
                             try:
                                 passenger_update = schemas.PassengerUpdate(
                                     name=name,
-                                    id=id,
+                                    id=passenger_id,
                                     phone_number=phone_number,
                                     gender=gender,
                                     district=district
@@ -831,7 +849,7 @@ with gr.Blocks() as demo:
                             finally:
                                 db.close()
 
-                        update_passenger_btn.click(modify_passenger, inputs=[passenger_id, name, id, phone_number, gender, district], outputs=update_passenger_output)
+                        update_passenger_btn.click(modify_passenger, inputs=[passenger_id, name, phone_number, gender, district], outputs=update_passenger_output)
 
                     with gr.Group():
                         gr.Markdown("### Delete Passenger")
@@ -888,7 +906,7 @@ with gr.Blocks() as demo:
                     with gr.Group():
                         gr.Markdown("### Add Card")
                         card_code = gr.Textbox(label="Card Code")
-                        start_time = gr.Textbox(label="Create Time")
+                        start_time = gr.Textbox(label="Create Time (YYYY-MM-DD HH:MM)")
                         balance = gr.Number(label="Balance")
                         add_card_btn = gr.Button("Add Card")
                         add_card_output = gr.Textbox()

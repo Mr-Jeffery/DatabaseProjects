@@ -255,9 +255,11 @@ def get_rides_by_parameters(
     
     if passenger_id is not None:
         passenger_query = passenger_query.filter(PassengerRide.id == passenger_id)
+        card_query = card_query.filter(CardRide.code == 1)
     
     if card_code is not None:
         card_query = card_query.filter(CardRide.code == card_code)
+        passenger_query = passenger_query.filter(PassengerRide.id == 1)
     
     passenger_results = passenger_query.limit(limit).all()
     card_results = card_query.limit(limit).all()
@@ -282,9 +284,14 @@ def board_card(db: Session, boarding: schemas.Boarding):
 def exit_passenger(db: Session, passenger_id: str, exit_info: schemas.ExitInfo):
     ride = db.query(models.PassengerRide).filter(models.PassengerRide.id == passenger_id, models.PassengerRide.end_time == None).first()
     if ride:
+        business_ride = db.query(models.PassengerBusinessRideDetail).filter(models.PassengerBusinessRideDetail.ride_id == ride.ride_id, models.PassengerBusinessRideDetail.end_time == None).first()
         ride.end_station_id = exit_info.end_station_id
         ride.end_time = exit_info.end_time
         ride.price = calculate_price(db,ride.start_station_id, ride.end_station_id)
+        if business_ride:
+            business_ride.end_station_id = exit_info.end_station_id
+            business_ride.end_time = exit_info.end_time
+            ride.price += 20
         db.commit()
     return ride
 
@@ -292,9 +299,14 @@ def exit_card(db: Session, card_code: str, exit_info: schemas.ExitInfo):
     card = db.query(models.Card).filter(models.Card.code == card_code).first()
     ride = db.query(models.CardRide).filter(models.CardRide.code == card_code, models.CardRide.end_time == None).first()
     if ride and card:
+        business_ride = db.query(models.CardBusinessRideDetail).filter(models.CardBusinessRideDetail.ride_id == ride.ride_id, models.CardBusinessRideDetail.end_time == None).first()
         ride.end_station_id = exit_info.end_station_id
         ride.end_time = exit_info.end_time
         ride.price = calculate_price(db,ride.start_station_id, ride.end_station_id)
+        if business_ride:
+            business_ride.end_station_id = exit_info.end_station_id
+            business_ride.end_time = exit_info.end_time
+            ride.price += 20
         card.balance -= ride.price
         db.commit()
     return ride
@@ -322,7 +334,7 @@ def board_business_card_ride(db: Session, ride_id: int, boarding: schemas.Boardi
     return card_ride
 
 def exit_business_passenger_ride(db: Session, ride_id: int, exit_info: schemas.ExitInfo):
-    ride = db.query(models.PassengerBusinessRideDetail).filter(models.PassengerRideDetail.ride_id == ride_id, models.PassengerRideDetail.end_time == None).first()
+    ride = db.query(models.PassengerBusinessRideDetail).filter(models.PassengerBusinessRideDetail.ride_id == ride_id, models.PassengerBusinessRideDetail.end_time == None).first()
     if ride:
         ride.end_station_id = exit_info.end_station_id
         ride.end_time = exit_info.end_time
@@ -337,6 +349,9 @@ def exit_business_card_ride(db: Session, ride_id: int, exit_info: schemas.ExitIn
         ride.end_station_id = exit_info.end_station_id
         ride.end_time = exit_info.end_time
         ride.price = calculate_price(db,ride.start_station_id, ride.end_station_id) * 2
+        normal_ride = db.query(models.CardRide).filter(models.CardRide.ride_id == ride_id).first()
+        card = db.query(models.Card).filter(models.Card.code == normal_ride.code).first()
+        card.balance -= ride.price
         db.commit()
     return ride
 

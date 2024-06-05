@@ -94,6 +94,8 @@ mysql --local-infile=1 -e "
                 end_time         TIMESTAMP,
                 start_station_id INTEGER      not null,
                 end_station_id   INTEGER,
+                -- FOREIGN KEY (start_station_id) REFERENCES stations(id),
+                -- FOREIGN KEY (end_station_id) REFERENCES stations(id),
                 constraint rides_pk
                         primary key (ride_id)
                 );
@@ -120,6 +122,8 @@ mysql --local-infile=1 -e "
                 end_time         TIMESTAMP,
                 start_station_id INTEGER      not null,
                 end_station_id   INTEGER,
+                -- FOREIGN KEY (start_station_id) REFERENCES stations(id),
+                -- FOREIGN KEY (end_station_id) REFERENCES stations(id),
                 constraint rides_pk
                         primary key (ride_id)
                 );
