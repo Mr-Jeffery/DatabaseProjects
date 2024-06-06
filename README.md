@@ -79,6 +79,14 @@ GRANT FILE ON *.* TO 'client'@'%';
 You can replace `client` with whatever username you like, `'%'` means from any ip, you can also replace it with a specific ip if you like. 
   More specific [here](https://tableplus.com/blog/2018/10/how-to-create-a-superuser-in-mysql.html)
 
+You can only grant part of the privileges for a specific user like following:
+```sql
+GRANT SELECT ON project2.* TO 'guest'@'%';
+REVOKE SELECT on project2.users FROM 'guest'@'%';
+FLUSH PRIVILEGES;
+```
+The above code will allow `'guest'@'%'` to access database `project2` except table `users`.
+
 From the client side, we should install `mysql-client` and header file:
 ```bash
 sudo apt install mysql-client
