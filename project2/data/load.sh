@@ -94,8 +94,8 @@ mysql --local-infile=1 -e "
                 end_time         TIMESTAMP,
                 start_station_id INTEGER      not null,
                 end_station_id   INTEGER,
-                -- FOREIGN KEY (start_station_id) REFERENCES stations(id),
-                -- FOREIGN KEY (end_station_id) REFERENCES stations(id),
+                FOREIGN KEY (start_station_id) REFERENCES stations(id),
+                FOREIGN KEY (end_station_id) REFERENCES stations(id),
                 constraint rides_pk
                         primary key (ride_id)
                 );
@@ -122,8 +122,8 @@ mysql --local-infile=1 -e "
                 end_time         TIMESTAMP,
                 start_station_id INTEGER      not null,
                 end_station_id   INTEGER,
-                -- FOREIGN KEY (start_station_id) REFERENCES stations(id),
-                -- FOREIGN KEY (end_station_id) REFERENCES stations(id),
+                FOREIGN KEY (start_station_id) REFERENCES stations(id),
+                FOREIGN KEY (end_station_id) REFERENCES stations(id),
                 constraint rides_pk
                         primary key (ride_id)
                 );
@@ -145,16 +145,16 @@ mysql --local-infile=1 -e "
                 line_id INT, 
                 station_id INT,
                 station_order INT
-                -- ,FOREIGN KEY (line_id) REFERENCES \`lines\`(id)
-                -- ,FOREIGN KEY (station_id) REFERENCES stations(id)
+                ,FOREIGN KEY (line_id) REFERENCES \`lines\`(id)
+                ,FOREIGN KEY (station_id) REFERENCES stations(id)
                 );
         CREATE TABLE IF NOT EXISTS bus_stations (name CHAR(255) PRIMARY KEY, district CHAR(255));
         CREATE TABLE IF NOT EXISTS bus_lines (name CHAR(255) PRIMARY KEY);
         CREATE TABLE IF NOT EXISTS bus_line_details (
                 bus_line_name CHAR(255), 
                 station_order INT,
-                bus_station_name CHAR(255)
-                -- ,FOREIGN KEY (bus_station_name) REFERENCES bus_stations(name), 
+                bus_station_name CHAR(255),
+                FOREIGN KEY (bus_station_name) REFERENCES bus_stations(name)
                 );
         CREATE TABLE IF NOT EXISTS prices (
                 station1_id INT,
