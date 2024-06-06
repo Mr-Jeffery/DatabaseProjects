@@ -572,7 +572,7 @@ with gr.Blocks() as demo:
                 # end_station_input = gr.Dropdown(all_stations, label="End Station Name")
                 start_time_input = gr.Textbox(label="Start Time (YYYY-MM-DD HH:MM)")
                 end_time_input = gr.Textbox(label="End Time (YYYY-MM-DD HH:MM)")
-                passenger_id_input = gr.Number(label="Passenger ID")
+                passenger_id_input = gr.Textbox(label="Passenger ID")
                 card_code_input = gr.Number(label="Card Code")
                 search_rides_btn = gr.Button("Search Rides")
                 # search_rides_output = gr.Textbox()
@@ -598,7 +598,7 @@ with gr.Blocks() as demo:
                                 # ride.start_station_id,
                                 crud.get_station_by_id(db,ride.start_station_id).chinese_name,
                                 # ride.end_station_id,
-                                crud.get_station_by_id(db,ride.end_station_id).chinese_name,
+                                crud.get_station_by_id(db,ride.end_station_id).chinese_name if crud.get_station_by_id(db, ride2.end_station_id) is not None else 'Still on board',
                                 ride.start_time,
                                 ride.end_time
                             ])
@@ -609,7 +609,7 @@ with gr.Blocks() as demo:
                                 # ride2.start_station_id,
                                 crud.get_station_by_id(db,ride2.start_station_id).chinese_name,
                                 # ride2.end_station_id,
-                                crud.get_station_by_id(db,ride2.end_station_id).chinese_name,
+                                crud.get_station_by_id(db, ride2.end_station_id).chinese_name if crud.get_station_by_id(db, ride2.end_station_id) is not None else 'Still on board',
                                 ride2.start_time,
                                 ride2.end_time
                             ])           
